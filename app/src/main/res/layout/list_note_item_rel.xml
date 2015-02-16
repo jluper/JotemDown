@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/note_list_bg_style"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <ImageView
+        android:id="@+id/note_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_gravity="center_vertical"
+        android:contentDescription="@string/note_edited"
+        android:padding="5sp"
+        android:src="@drawable/notepad" />
+
+    <TextView
+        android:id="@+id/note_date"
+        style="@style/note_date_style"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" 
+        android:layout_alignParentTop="true" 
+        android:layout_toRightOf="@id/note_icon"
+        android:layout_marginTop="3sp"/>
+
+    <TextView
+        android:id="@+id/note_title"
+        style="@style/note_title_style"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/note_icon"
+        android:layout_below="@id/note_date" />
+
+</RelativeLayout>

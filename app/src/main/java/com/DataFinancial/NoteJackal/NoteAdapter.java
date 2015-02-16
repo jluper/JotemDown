@@ -1,0 +1,279 @@
+package com.DataFinancial.NoteJackal;
+
+import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.text.Html;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.ListAdapter;
+import android.widget.TextView;
+
+import java.util.List;
+
+//import android.R;
+
+public class NoteAdapter extends BaseAdapter implements ListAdapter {
+
+	private List<Note> notes;
+	private Context context;
+    private Utils util;
+    private DatabaseReminders dbRem;
+    private String hasReminder = "false";
+
+	public NoteAdapter(Context context, List<Note> notes) {
+
+        util = new Utils();
+		this.notes = notes;
+		this.context = context;
+        dbRem = new DatabaseReminders(context);
+		// //Log.d(MainActivity.DEBUGTAG, "Notes in adapter: " +
+		// notes.toString());
+	}
+
+	@Override
+	public int getCount() {
+
+		return notes.size();
+	}
+
+	@Override
+	public Object getItem(int position) {
+
+		return notes.get(position);
+	}
+
+	@Override
+	public long getItemId(int position) {
+
+		return notes.get(position).getId();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.widget.Adapter#getView(int, android.view.View,
+	 * android.view.ViewGroup)
+	 */
+	@Override
+	public View getView(int position, View convertView, ViewGroup parent) {
+
+        View row = convertView;
+        PlaceHolder holder = null;
+
+        //if we don't currently have a row View to reuse...
+		if (row == null) {
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            row = inflater.inflate(R.layout.list_note_item_rel, parent, false);
+
+            holder = new PlaceHolder();
+            holder.dateView = (TextView) row.findViewById(R.id.note_date);
+            holder.titleView = (TextView) row.findViewById(R.id.note_title);
+            holder.noteIconView = (ImageView) row.findViewById(R.id.note_icon);
+
+            row.setTag(holder);
+        } else {
+            // otherwise use an existing tag
+            holder = (PlaceHolder) row.getTag();
+        }
+
+        //Get the data from the list of notes
+		Note note = notes.get(position);
+
+	    Integer  rowPosition = position;
+        holder.noteIconView.setTag(rowPosition);
+		String editDate = util.convertDate(note.getEditDate(), "yy/MM/dd", "MM/dd/yy");
+        String createDate = util.convertDate(note.getCreateDate(), "yy/MM/dd", "MM/dd/yy");
+
+		String title = note.getBody();
+		String strHelp = (String) this.context.getResources().getText(R.string.txt_help_search);
+		Boolean help = title.substring(0, strHelp.length()).equals(strHelp);
+		
+		if (!help) {
+			if (title.length() > 75) {
+				title = title.substring(0,75) + "...";
+				String[] s;
+				if ((s = title.split("\n")).length > 2) {        	
+					title = s[0] + "\n" + s[1] + "...";
+				}
+			}	
+		} else {
+			title = note.getBody().substring(0,note.getBody().indexOf('/')-1);
+		}
+
+		String dateHeader;
+		if (editDate == null) {
+			dateHeader = "Created: " + createDate;
+		} else {
+			dateHeader = "Created: " + createDate + "       Edited: " + editDate;
+		}
+
+		//reminder = null;
+		hasReminder = note.getHasReminder();
+        Log.d(MainActivity.DEBUGTAG, "has reminder  in adapter= " + hasReminder);
+        Drawable noteIcon;
+		int image_code = note.getPriority() + (note.getLatitude().isEmpty() ? 0 : 1)*2 + (hasReminder.equals("false") ? 0 : 1)*4 + (help ? 8 : 0);
+		switch(image_code) {
+		case 0:
+			noteIcon = context.getResources().getDrawable(R.drawable.notepad);
+			break;
+		case 1:
+			noteIcon = context.getResources().getDrawable(R.drawable.notepad_p);
+			break;
+		case 2:
+			noteIcon = context.getResources().getDrawable(R.drawable.notepad_g);
+			break;
+		case 3:
+			noteIcon = context.getResources().getDrawable(R.drawable.notepad_g_p);
+			break;
+		case 4:
+			noteIcon = context.getResources().getDrawable(R.drawable.notepad_r);
+			break;
+		case 5:
+			noteIcon = context.getResources().getDrawable(R.drawable.notepad_p_r);
+			break;
+		case 6:
+			noteIcon = context.getResources().getDrawable(R.drawable.notepad_g_r);
+			break;
+		case 7:
+			noteIcon = context.getResources().getDrawable(R.drawable.notepad_g_p_r);
+			break;
+		case 8:
+			noteIcon = context.getResources().getDrawable(R.drawable.notepad_q);
+			break;
+		default:
+			noteIcon = context.getResources().getDrawable(R.drawable.notepad);
+			break;
+		}
+
+		holder.noteIconView.setImageDrawable(noteIcon);
+		holder.dateView.setText(dateHeader);
+	
+		if (!help) {
+			holder.titleView.setText(title);
+		} else {
+			holder.titleView.setText(Html.fromHtml(title));
+		}
+
+		return row;
+	}
+
+
+    private static class PlaceHolder {
+        TextView dateView;
+        TextView titleView ;
+        ImageView noteIconView;
+
+    }
+
+//    @Override
+//    public View getView(int position, View convertView, ViewGroup parent) {
+//
+//        View row = convertView;
+//        PlaceHolder holder = null;
+//
+//        if (row == null) {
+//            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//            View view = inflater.inflate(R.layout.list_note_item_rel, null);
+//
+//            holder = new PlaceHolder();
+//
+//
+//        }
+//
+//
+//        Note note = notes.get(position);
+//
+//        //Utils util = new Utils();
+//
+//        TextView dateView = (TextView) view.findViewById(R.id.note_date);
+//        TextView titleView = (TextView) view.findViewById(R.id.note_title);
+//
+//        ImageView moreIconView = (ImageView) view.findViewById(R.id.note_icon);
+//        String createDate = util.convertDate(note.getCreateDate(), "yy/MM/dd", "MM/dd/yy");
+//        String editDate = util.convertDate(note.getEditDate(), "yy/MM/dd", "MM/dd/yy");
+//
+//        String title = note.getBody();
+//        String strHelp = (String) this.context.getResources().getText(R.string.txt_help_search);
+//        Boolean help = title.substring(0, strHelp.length()).equals(strHelp);
+//
+//        if (!help) {
+//            if (title.length() > 75) {
+//                title = title.substring(0,75) + "...";
+//                String[] s;
+//                if ((s = title.split("\n")).length > 2) {
+//                    title = s[0] + "\n" + s[1] + "...";
+//                }
+//            }
+//        } else {
+//            title = note.getBody().substring(0,note.getBody().indexOf('/')-1);
+//        }
+//
+//
+//        Drawable noteIcon = context.getResources().getDrawable(R.drawable.notepad);
+//        String dateHeader;
+//        if (editDate == null) {
+//            dateHeader = "Created: " + createDate;
+//        } else {
+//            dateHeader = "Created: " + createDate + "       Edited: " + editDate;
+//        }
+//
+//        DatabaseReminders dbRem = new DatabaseReminders(context);
+//        Reminder reminder = new Reminder();
+//        reminder = dbRem.getReminder(note.getId());
+//
+//        int image_code = note.getPriority() + (note.getLatitude().isEmpty() ? 0 : 1)*2 + (reminder == null ? 0 : 1)*4 + (help ? 8 : 0);
+//        switch(image_code) {
+//            case 0:
+//                noteIcon = context.getResources().getDrawable(R.drawable.notepad);
+//                break;
+//            case 1:
+//                noteIcon = context.getResources().getDrawable(R.drawable.notepad_p);
+//                break;
+//            case 2:
+//                noteIcon = context.getResources().getDrawable(R.drawable.notepad_g);
+//                break;
+//            case 3:
+//                noteIcon = context.getResources().getDrawable(R.drawable.notepad_g_p);
+//                break;
+//            case 4:
+//                noteIcon = context.getResources().getDrawable(R.drawable.notepad_r);
+//                break;
+//            case 5:
+//                noteIcon = context.getResources().getDrawable(R.drawable.notepad_p_r);
+//                break;
+//            case 6:
+//                noteIcon = context.getResources().getDrawable(R.drawable.notepad_g_r);
+//                break;
+//            case 7:
+//                noteIcon = context.getResources().getDrawable(R.drawable.notepad_g_p_r);
+//                break;
+//            case 8:
+//                noteIcon = context.getResources().getDrawable(R.drawable.notepad_q);
+//                break;
+//            default:
+//                noteIcon = context.getResources().getDrawable(R.drawable.notepad);
+//                break;
+//        }
+//
+//        moreIconView.setImageDrawable(noteIcon);
+//        dateView.setText(dateHeader);
+//
+//
+//        if (!help) {
+//            titleView.setText(title);
+//        } else {
+//            titleView.setText(Html.fromHtml(title));
+//        }
+//
+//
+//        if (help) {
+//            ;
+//        }
+//
+//        return view;
+//    }
+}

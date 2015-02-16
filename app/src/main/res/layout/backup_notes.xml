@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/black"
+    android:gravity="center_horizontal"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/lblBackupFile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="@dimen/top_margin_medium"
+        android:text="@string/lbl_backup_file"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/grey" />
+
+    <EditText
+        android:id="@+id/txtBackupFile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/rounded_corner"
+        android:inputType="textNoSuggestions"
+        android:paddingBottom="5dp"
+        android:paddingLeft="5dp"
+        android:paddingTop="5dp" >
+
+        <requestFocus />
+    </EditText>
+
+    <TextView
+        android:id="@+id/lblBackupAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|left"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="@dimen/top_margin_small"
+        android:text="@string/lbl_backup_address"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/grey" />
+
+    <EditText
+        android:id="@+id/txtBackupAddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/rounded_corner"
+        android:inputType="textEmailAddress"
+        android:paddingBottom="5dp"
+        android:paddingLeft="5dp"
+        android:paddingTop="5dp" >
+    </EditText>
+
+    <CheckBox
+        android:id="@+id/chkGoogleDrive"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|left"
+        android:layout_marginLeft="@dimen/top_margin_large"
+        android:layout_marginTop="@dimen/top_margin_small"
+        android:button="@drawable/selector_recur_check"
+        android:checked="false"
+        android:text="@string/chk_google_drive"
+        android:textColor="@color/grey" />
+
+    <Button
+        android:id="@+id/btnBackup"
+        style="@style/fancy_button"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/top_margin_large"
+        android:text="@string/btn_backup" />
+
+</LinearLayout>

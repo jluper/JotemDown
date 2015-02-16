@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/black"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/top_margin_large" >
+
+    <LinearLayout
+        android:id="@+id/ll_reminder_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/lblRestoreFile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="@string/lbl_restore_file"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/grey" />
+
+        <EditText
+            android:id="@+id/txtRestoreFile"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_toRightOf="@+id/lblRestoreFile"
+            android:layout_weight="1"
+            android:background="@drawable/rounded_corner"
+            android:imeOptions="flagNoExtractUi"
+            android:inputType="textNoSuggestions"
+            android:minEms="15"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp" >
+
+            <requestFocus />
+        </EditText>
+
+        <Button
+            android:id="@+id/btnRestore"
+            style="@style/fancy_button"
+            android:layout_marginRight="10dp"
+            android:layout_toRightOf="@+id/txtRestoreFile"
+            android:gravity="center"
+            android:text="@string/btn_restore" />
+    </LinearLayout>
+
+    <CheckBox
+        android:id="@+id/chkGoogleDrive"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|left"
+        android:layout_marginLeft="@dimen/top_margin_small"
+        android:button="@drawable/selector_recur_check"
+        android:checked="false"
+        android:text="@string/chk_google_drive"
+        android:textColor="@color/grey" />
+
+</LinearLayout>

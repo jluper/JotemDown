@@ -1,0 +1,60 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/top_margin_large"
+        android:background="@color/black"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/lblSelectFile"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|bottom"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="1"
+            android:text="@string/lbl_select_file"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/grey" />
+
+        <Button
+            android:id="@+id/btnRestoreDrive"
+            style="@style/fancy_button"
+            android:layout_gravity="right"
+            android:layout_marginRight="@dimen/top_margin_large"
+            android:enabled="false"
+            android:text="@string/btn_restore" />
+        
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/lstFiles"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/top_margin_medium"
+        android:choiceMode="singleChoice"
+        android:divider="@color/grey"
+        android:dividerHeight="1dp" >
+    </ListView>
+
+</LinearLayout>
+
+ <!--<Button>   
+            android:id="@+id/btnRestoreDrive"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginRight="@dimen/top_margin_large"
+            android:background="@color/grey"
+            android:enabled="false"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:text="@string/btn_restore"
+            android:textColor="@color/black" />
+    -->

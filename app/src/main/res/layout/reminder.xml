@@ -1,0 +1,162 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    tools:context=".ReminderActivity" >
+
+    <TextView
+        android:id="@+id/lbl_reminder_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:layout_marginTop="@dimen/top_margin_medium"
+        android:text="@string/lbl_reminder_date"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/grey" >
+    </TextView>
+
+    <LinearLayout
+        android:id="@+id/ll_reminder_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <EditText
+            android:id="@+id/txt_reminder_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/rounded_corner"
+            android:digits="0123456789/"
+            android:hint="@string/reminder_date_hint"
+            android:inputType="number|textPassword" >
+
+            <requestFocus />
+        </EditText>
+
+        <ImageButton
+            android:id="@+id/btn_reminder_date"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="5dp"
+            android:background="@android:color/transparent"
+            android:scaleType="fitCenter"
+            android:src="@drawable/calendar1" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/lbl_reminder_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:layout_marginTop="@dimen/top_margin_xsmall"
+        android:text="@string/lbl_reminder_time"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/grey" >
+    </TextView>
+
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <EditText
+            android:id="@+id/txt_reminder_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/rounded_corner"
+            android:digits="0123456789-"
+            android:hint="@string/reminder_time_hint"
+            android:inputType="number|textPassword" >
+        </EditText>
+
+        <ImageButton
+            android:id="@+id/btn_reminder_time"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="5dp"
+            android:background="@android:color/transparent"
+            android:scaleType="fitCenter"
+            android:src="@drawable/clock" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/lbl_reminder_phone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:layout_marginTop="@dimen/top_margin_xsmall"
+        android:text="@string/lbl_reminder_phone"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/grey" >
+    </TextView>
+
+    <LinearLayout
+        android:id="@+id/linearLayout3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <EditText
+            android:id="@+id/txt_reminder_phone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/rounded_corner"
+            android:hint="@string/reminder_phone_hint"
+            android:inputType="phone" >
+        </EditText>
+
+        <ImageButton
+            android:id="@+id/btn_reminder_phone"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="5dp"
+            android:background="@android:color/transparent"
+            android:scaleType="fitCenter"
+            android:src="@drawable/contacts" />
+    </LinearLayout>
+
+    <CheckBox
+        android:id="@+id/chk_recur_daily"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:layout_marginTop="@dimen/top_margin_xsmall"
+        android:button="@drawable/selector_recur_check"
+        android:text="@string/recur_daily"
+        android:textColor="@color/grey" >
+    </CheckBox>
+
+    <LinearLayout
+        android:id="@+id/linearLayout3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/top_margin_small" >
+
+        <Button
+            android:id="@+id/btn_reminder_add"
+            style="@style/fancy_button"
+            android:layout_width="0dp"
+            android:layout_marginRight="5dp"
+            android:layout_weight="1"
+            android:text="@string/lbl_reminder_add" />
+
+        <Button
+            android:id="@+id/btn_reminder_cancel"
+            style="@style/fancy_button"
+            android:layout_width="0dp"
+            android:layout_marginLeft="5dp"
+            android:layout_weight="1"
+            android:text="@string/lbl_reminder_cancel" />
+    </LinearLayout>
+
+</LinearLayout>
