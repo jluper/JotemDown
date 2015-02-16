@@ -1,18 +1,16 @@
 package com.DataFinancial.NoteJackal;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.graphics.Point;
 import android.util.Log;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class DatabaseReminders extends SQLiteOpenHelper {
 
@@ -235,7 +233,7 @@ public class DatabaseReminders extends SQLiteOpenHelper {
 	
 	  public long deleteReminderByNoteId(int noteId) {
 		  
-		  Log.d(MainActivity.DEBUGTAG, "deleteReminderByNoteId noteId = " + noteId);
+		  //Log.d(MainActivity.DEBUGTAG, "deleteReminderByNoteId noteId = " + noteId);
 		  SQLiteDatabase db = this.getWritableDatabase();
 		  
 		    long rowId = -1;
