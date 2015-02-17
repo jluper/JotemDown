@@ -49,6 +49,7 @@ public class MainActivity extends ActionBarActivity {
 	private static final int PHOTO_TAKEN_REQUEST = 2;
 	private static final int EDIT_NOTE = 4;
 	private static final int BROWSE_GALLERY_REQUEST = 3;
+    private static int selectedRow = 0;
 	private File imageFile;
 	private ImageButton searchButton;
 	private ImageButton sortButton;
@@ -58,12 +59,12 @@ public class MainActivity extends ActionBarActivity {
 	private DatabaseReminders dbReminders = new DatabaseReminders(this);
 	private String fromHelp = null;
 	private String searchText = null;
-	
+    private ListView noteList;
 	private enum sortOption {
 		COL_PRIORITY, COL_CREATE_DATE, COL_EDIT_DATE, COL_BODY
 	};
 
-	private static sortOption sortColumn = sortOption.COL_CREATE_DATE;
+	private static sortOption sortColumn = sortOption.COL_PRIORITY;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +79,9 @@ public class MainActivity extends ActionBarActivity {
 		actionBar.setDisplayShowTitleEnabled(true);
 
 		lblSort = (TextView) findViewById(R.id.lbl_sort);
-		lblSort.setText("Create Date");
+		lblSort.setText("Created");
+
+        noteList = (ListView) findViewById(R.id.note_list);
 
 		addSearchButtonListener();
 		addSortButtonListener();
@@ -100,7 +103,7 @@ public class MainActivity extends ActionBarActivity {
 			fromHelp = extras.getString("help");
 			searchText = (String) getResources().getText(
 					R.string.txt_help_search);
-			Log.d(MainActivity.DEBUGTAG, "searchtext in extras= " + searchText);
+			//Log.d(MainActivity.DEBUGTAG, "searchtext in extras= " + searchText);
 			loadNotes(searchText, DatabaseNotes.COL_ID, "ASC");
 		} else {
 			loadNotes(null, DatabaseNotes.COL_CREATE_DATE, "DESC");
@@ -117,8 +120,6 @@ public class MainActivity extends ActionBarActivity {
 	@Override
 	public void onResume() {
 		super.onResume(); // Always call the superclass method first
-
-
 	}
 
 	public void addSearchButtonListener() {
@@ -129,6 +130,9 @@ public class MainActivity extends ActionBarActivity {
 
 			@Override
 			public void onClick(View v) {
+
+                selectedRow = 0;
+
 				String searchText = ((EditText) findViewById(R.id.searchText))
 						.getText().toString();
 
@@ -156,7 +160,9 @@ public class MainActivity extends ActionBarActivity {
 			@Override
 			public void onClick(View v) {
 
-				String sort = DatabaseNotes.COL_CREATE_DATE;
+                selectedRow = 0;
+
+                String sort = DatabaseNotes.COL_CREATE_DATE;
 
 				String dir = "DESC";
 
@@ -206,9 +212,11 @@ public class MainActivity extends ActionBarActivity {
 
 		NoteAdapter adapter = new NoteAdapter(this, notes);
 
-		ListView noteList = (ListView) findViewById(R.id.note_list);
+		        //Log.d(DEBUGTAG, "Selected row loadNotes = " + selectedRow);
 
 		noteList.setAdapter(adapter);
+
+        noteList.setSelectionFromTop(selectedRow,0);
 
 		noteList.setOnItemClickListener(new OnItemClickListener() {
 
@@ -216,6 +224,8 @@ public class MainActivity extends ActionBarActivity {
 			public void onItemClick(AdapterView<?> adapter, View arg1, int pos,
 					long arg3) {
 
+                selectedRow = pos;
+                //Log.d(DEBUGTAG, "Selected row  on touch = " + selectedRow);
 				Note note = (Note) adapter.getItemAtPosition(pos);
 
 				Intent i = new Intent(MainActivity.this, NewNote.class);

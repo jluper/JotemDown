@@ -135,9 +135,10 @@ public class ReminderActivity extends ActionBarActivity   implements OnClickList
 
         @Override
 			public void onReceive(Context context, Intent intent) {
-				
-		        String message = intent.getStringExtra("message");		        
-		       
+
+            Log.d(MainActivity.DEBUGTAG, "in onReceive in reminderactivity");
+		        String message = intent.getStringExtra("message");
+                Toast.makeText(context, "in alarm receiver", Toast.LENGTH_LONG);
 		        if (message.equals("add_reminder")) {
 		        	String dateTime = intent.getStringExtra("date_time");
                     Log.d(MainActivity.DEBUGTAG, "in onReceive dateTime extra = " + dateTime);
@@ -174,7 +175,13 @@ public class ReminderActivity extends ActionBarActivity   implements OnClickList
       long diff = calendar.getTimeInMillis() - System.currentTimeMillis();
       
       //am.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-      am.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + diff, pendingIntent);
+       if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+           am.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + diff, pendingIntent);
+       } else {
+           am.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+       }
+
+       am.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + diff, pendingIntent);
 
   }
    

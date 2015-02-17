@@ -119,7 +119,7 @@ public class DatabaseNotes extends SQLiteOpenHelper {
 		           note.setLongitude(cursor.getString(6));
                    note.setHasReminder(cursor.getString(7));
 	 
-		          Log.d(MainActivity.DEBUGTAG, "in getAllNotes = " + note.toString());
+		          //Log.d(MainActivity.DEBUGTAG, "in getAllNotes = " + note.toString());
 	               // Add note to books
 	               notes.add(note);
 	           } while (cursor.moveToNext());

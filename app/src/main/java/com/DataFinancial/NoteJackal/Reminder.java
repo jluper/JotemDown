@@ -1,7 +1,5 @@
 package com.DataFinancial.NoteJackal;
 
-import android.util.Log;
-
 public class Reminder {
 
 	private int id;
@@ -32,8 +30,20 @@ public class Reminder {
 	public String getDate() {
 		return date;
 	}
-	public void setDate(String date) {
-		
+
+
+//    private static int rebootCount = 0;
+//
+//    public static int getRebootCount() {
+//        return rebootCount;
+//    }
+
+//    public static void setRebootCount(int rebootCount) {
+//        Reminder.rebootCount = rebootCount;
+//    }
+
+    public void setDate(String date) {
+
 		int index = time.indexOf('/');
 		if (index != 2) {
 			if (index == 1)
