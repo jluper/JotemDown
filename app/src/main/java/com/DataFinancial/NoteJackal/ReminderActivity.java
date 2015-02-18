@@ -93,9 +93,9 @@ public class ReminderActivity extends ActionBarActivity   implements OnClickList
     	Bundle extras = getIntent().getExtras(); 
 		if (extras != null) {
 			noteId = extras.getInt("id");
-			Log.d(MainActivity.DEBUGTAG, "note id from caller " + noteId );
 			Reminder rem = new Reminder();
 			rem = db.getReminder(noteId);
+
 			if (rem != null) {
 				reminder = rem;
 				txtDate.setText(Utils.convertDate(reminder.getDate(), "yy/MM/dd", "MM/dd/yy"));
@@ -111,21 +111,13 @@ public class ReminderActivity extends ActionBarActivity   implements OnClickList
 				
 				SharedPreferences prefs = getSharedPreferences(ImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
 				String lastPhone = prefs.getString(LAST_REMINDER_PHONE,  null);
-				//if (lastPhone)
+
 				txtPhone.setText(lastPhone);
 			}
 
             am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-			//setOnReminderBroadcastReceiver();
-				
-			////Log.d(MainActivity.DEBUGTAG, "note from reminder act  " + reminder.toString());
 		}
     }
-
-
-
-		
-		//IntentFilter intentFilter = new IntentFilter("com.DataFinancial.NoteJackal.reminder");
 
 
     public static class mReceiver extends BroadcastReceiver {
@@ -136,66 +128,46 @@ public class ReminderActivity extends ActionBarActivity   implements OnClickList
         @Override
 			public void onReceive(Context context, Intent intent) {
 
-            Log.d(MainActivity.DEBUGTAG, "in onReceive in reminderactivity");
-		        String message = intent.getStringExtra("message");
-                Toast.makeText(context, "in alarm receiver", Toast.LENGTH_LONG);
-		        if (message.equals("add_reminder")) {
+                String message = intent.getStringExtra("message");
+                if (message.equals("add_reminder")) {
 		        	String dateTime = intent.getStringExtra("date_time");
-                    Log.d(MainActivity.DEBUGTAG, "in onReceive dateTime extra = " + dateTime);
-		        	SimpleDateFormat format = new SimpleDateFormat("yy/MM/dd HH:mm", Locale.ENGLISH);
+                   	SimpleDateFormat format = new SimpleDateFormat("yy/MM/dd HH:mm", Locale.ENGLISH);
 		        	java.util.Date date;
 					try {
 						date = format.parse(dateTime);
-                        Log.d(MainActivity.DEBUGTAG, "in onReceive date = " + date.toString());
-						setReminderAlarm(context, date);
-					} catch (ParseException e) {
+                     } catch (ParseException e) {
 						Toast.makeText(context, "Unable to set reminder recurrence.", Toast.LENGTH_LONG)
 						.show();
 					}        	
 		        }		
 			}
 	};
-		//registering our receiver
-		//IntentFilter intentFilter = new IntentFilter(REMINDER_INTENT);
-		//this.registerReceiver(mReceiver, intentFilter);
 
-   
-   private static void setReminderAlarm(Context context, java.util.Date dateTime) {
-   	
-  	 Log.d(MainActivity.DEBUGTAG, "in setReminderAlarm in activity" + dateTime);
+   private void setReminderAlarm(Context context, java.util.Date dateTime) {
+
   	  pendingIntentRequestCode++;
   	  Intent alarmIntent = new Intent(context, ReminderAlarmReceiver.class);
       pendingIntent = PendingIntent.getBroadcast(context, pendingIntentRequestCode, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-      //AlarmManager am = (AlarmManager) am.getSystemService(Context.ALARM_SERVICE);
+      AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
       Calendar calendar = Calendar.getInstance();
       calendar.setTime(dateTime);
 
       long diff = calendar.getTimeInMillis() - System.currentTimeMillis();
-      
-      //am.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+
        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
            am.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + diff, pendingIntent);
        } else {
            am.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
        }
-
-       am.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + diff, pendingIntent);
-
   }
    
    
     @Override
     public void onResume() {
       
-      
-  	//Log.d(MainActivity.DEBUGTAG, "before registerReceiver");
-  	//IntentFilter intentFilter = new IntentFilter(REMINDER_INTENT);
-	//this.registerReceiver(mReceiver, intentFilter);
-	//Log.d(MainActivity.DEBUGTAG, "after registerReceiver");
-	
-	super.onResume();
+  	super.onResume();
     }
 
     protected void onPause() {
@@ -207,7 +179,6 @@ public class ReminderActivity extends ActionBarActivity   implements OnClickList
 	public void addAddReminderButtonListener() {
 
 		Button btnAdd = (Button) findViewById(R.id.btn_reminder_add);
-	
 		
 		btnAdd.setOnClickListener(new View.OnClickListener() {
 
@@ -217,8 +188,7 @@ public class ReminderActivity extends ActionBarActivity   implements OnClickList
 				Utils utils = new Utils();
 				String reminderDate = txtDate.getText().toString();
 				String reminderTime = txtTime.getText().toString();
-				////Log.d(MainActivity.DEBUGTAG, "clicked Add button: " + reminderDate + ", " + reminderTime + ", " + chkRecurDaily.isChecked());
-								
+
 				if (!utils.isValidDate(reminderDate)) {
 					 Toast.makeText(ReminderActivity.this,"Invalid date...", Toast.LENGTH_LONG).show();		
 					 return;
@@ -228,17 +198,12 @@ public class ReminderActivity extends ActionBarActivity   implements OnClickList
 					 Toast.makeText(ReminderActivity.this,"Invalid time...", Toast.LENGTH_LONG).show();		
 					 return;
 				}
-				
-				//EditText txtDate = (EditText) findViewById(R.id.txt_reminder_date);
-				//EditText txtTime = (EditText) findViewById(R.id.txt_reminder_time);
-				//CheckBox chkRecur = (CheckBox) findViewById(R.id.chk_recur_daily);
-					
+
 				reminder.setNoteId(noteId);
 		
 				String convertedDate = Utils.convertDate(reminderDate, "MM/dd/yy", "yy/MM/dd");
-				//Log.d(MainActivity.DEBUGTAG, "converted date = " + convertedDate);
+
 				reminder.setDate(convertedDate);
-				//Log.d(MainActivity.DEBUGTAG, "reminder date = " + reminder.getDate());
 				reminder.setTime(txtTime.getText().toString());
 				reminder.setRecur(chkRecurDaily.isChecked() ? "true" : "false");
 				reminder.setPhone(txtPhone.getText().toString());
@@ -250,36 +215,15 @@ public class ReminderActivity extends ActionBarActivity   implements OnClickList
 					java.util.Date dateTime = (java.util.Date) format.parse(strDateTime);
 					
 					if (update == false) {			
-						
-					
-						//Log.d(MainActivity.DEBUGTAG, "dateTime string = " + strDateTime);
-						//Log.d(MainActivity.DEBUGTAG, "dateTime = " + dateTime.toString());
-						
+
 						db.addReminder(reminder);
-                        Log.d(MainActivity.DEBUGTAG, "reminder in add = " + reminder.toString());
                         Note note = notesDb.getNote(reminder.getNoteId());
                         note.setHasReminder("true");
                         Log.d(MainActivity.DEBUGTAG, "1) note with reminder  in ReminderActivity= " + note.toString());
                         notesDb.updateNote(note);
-                        Log.d(MainActivity.DEBUGTAG, "2) note after update with reminder = " +  notesDb.getNote(note.getId()).toString());
 
 						setReminderAlarm(ReminderActivity.this, dateTime);
-// BEFORE ALARMS						
-//						
-//						
-//						reminder = db.getReminder(reminder.getNoteId());
-//						//Log.d(MainActivity.DEBUGTAG, "reminder from database = " + reminder.toString());
-//						btnCancel.setEnabled(true);
-						Toast.makeText(ReminderActivity.this,"Reminder added...", Toast.LENGTH_LONG).show();
-//						
-//						boolean srvcRunning = isReminderServiceRunning(ReminderService.class);
-//						//Log.d(MainActivity.DEBUGTAG, "(add reminder) is service running: " + srvcRunning);						
-//						Intent srvcIntent = new Intent(ReminderActivity.this, ReminderService.class);
-//						if (srvcRunning == true) {
-//							stopService(srvcIntent);
-//						}						
-//			        	startService(srvcIntent);
-			        	
+
 			        	Intent i = new Intent(ReminderActivity.this, MainActivity.class);
 						startActivity(i);
 						}
@@ -288,16 +232,6 @@ public class ReminderActivity extends ActionBarActivity   implements OnClickList
 						Toast.makeText(ReminderActivity.this,"Reminder updated...", Toast.LENGTH_LONG).show();	
 						reminder = db.getReminder(reminder.getNoteId());
 						setReminderAlarm(ReminderActivity.this, dateTime);
-						
-						//Log.d(MainActivity.DEBUGTAG, "reminder from database = " + reminder.toString());
-						
-//	BEFORE ALARMS		boolean srvcRunning = isReminderServiceRunning(ReminderService.class);
-//						//Log.d(MainActivity.DEBUGTAG, "(update reminder) is service running: " + srvcRunning);						
-//						Intent srvcIntent = new Intent(ReminderActivity.this, ReminderService.class);
-//						if (srvcRunning == true) {
-//							stopService(srvcIntent);
-//						}						
-//			        	startService(srvcIntent);
 			        	
 						Intent i = new Intent(ReminderActivity.this, MainActivity.class);
 						startActivity(i);
@@ -333,11 +267,9 @@ public class ReminderActivity extends ActionBarActivity   implements OnClickList
 				Toast.makeText(ReminderActivity.this,"Reminder deleted...", Toast.LENGTH_LONG).show();
 				Intent i = new Intent(ReminderActivity.this, MainActivity.class);
 				startActivity(i);
-				
 			}
 
 		});
-
 	}    
 	
     @Override
@@ -416,7 +348,7 @@ public class ReminderActivity extends ActionBarActivity   implements OnClickList
             	        Phone.CONTACT_ID + "=?",
             	        new String[]{id}, null);
             	
-            	String phone = "";
+            	String phone;
             	String type;
             	String homePhone = "";
             	String mobilePhone = "";
@@ -451,28 +383,7 @@ public class ReminderActivity extends ActionBarActivity   implements OnClickList
 
       
     
- // handler for received Intents for the "reminderEvent" event 
-//    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-//      @Override
-//      public void onReceive(Context context, Intent intent) {
-//        // Extract data included in the Intent
-//        String message = intent.getStringExtra("message");
-//        
-//        Log.d("receiver", "Got message: " + message);
-//        if (message.equals("add_reminder")) {
-//        	String dateTime = intent.getStringExtra("date_time");
-//        	SimpleDateFormat format = new SimpleDateFormat("yy/MM/dd", Locale.ENGLISH);
-//        	java.util.Date date;
-//			try {
-//				date = format.parse(dateTime);
-//				setReminderAlarm(date);
-//			} catch (ParseException e) {
-//				Toast.makeText(context, "Unable to set reminder recurrence.", Toast.LENGTH_LONG)
-//				.show();
-//			}        	
-//        }
-//      }
-//    };
+
 
     
   

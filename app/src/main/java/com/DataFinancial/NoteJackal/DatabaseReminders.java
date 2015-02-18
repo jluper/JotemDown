@@ -116,9 +116,9 @@ public class DatabaseReminders extends SQLiteOpenHelper {
 		String time = strTodayParts[1];
 				
 		String sql = String.format("SELECT %s, %s, %s, %s, %s, %s FROM %s ORDER BY %s ASC",  COL_ID, COL_NOTEID, COL_DATE, COL_TIME, COL_RECUR, COL_PHONE, TABLE_REMINDERS, COL_DATE);
-		//Log.d(MainActivity.DEBUGTAG, "sql = " + sql);
+
 		Cursor cursor = db.rawQuery(sql, null);
-		//Log.d(MainActivity.DEBUGTAG, "cursr cnt = " + cursor.getCount());
+
 		while (cursor.moveToNext()) {
 			Reminder reminder = new Reminder();
 			reminder.setId(cursor.getInt(0));
@@ -128,12 +128,7 @@ public class DatabaseReminders extends SQLiteOpenHelper {
 			reminder.setRecur(cursor.getString(4));
 			reminder.setPhone(cursor.getString(5));
 			
-			//Log.d(MainActivity.DEBUGTAG, "reminder in get before test = " + reminder.toString());
-			
-			//if ((reminder.getDate().compareTo(date) > 0) || (reminder.getDate().compareTo(date) == 0 && reminder.getTime().compareTo(time) >= 0)) {
-				//Log.d(MainActivity.DEBUGTAG, "reminder in get after = " + reminder.toString());
-				reminders.add(reminder);
-			//}					
+			reminders.add(reminder);
 		}
 		
 		db.close();		
@@ -144,12 +139,10 @@ public class DatabaseReminders extends SQLiteOpenHelper {
 	public Reminder getReminder(int noteID) {
 		
 		String sql = String.format("SELECT %s, %s, %s, %s, %s, %s FROM %s WHERE %s = %s ORDER BY %s",  COL_ID, COL_NOTEID, COL_DATE, COL_TIME, COL_RECUR, COL_PHONE, TABLE_REMINDERS, COL_NOTEID, noteID, COL_NOTEID);
-		//Log.d(MainActivity.DEBUGTAG, "select " + sql);
+
 		SQLiteDatabase db = getReadableDatabase();
 		Reminder reminder = new Reminder();
 		
-		//String sql = String.format("SELECT %s, %s, %s, %s FROM %s WHERE % = %s ORDER BY %s",  COL_NOTEID, COL_DATE, COL_TIME, COL_RECUR, TABLE_REMINDERS, COL_NOTEID, noteID, COL_NOTEID);
-		//Log.d(MainActivity.DEBUGTAG, "select " + sql);
 		Cursor cursor = db.rawQuery(sql, null);
 		
 	    if (cursor.getCount() > 0)  {
@@ -162,7 +155,7 @@ public class DatabaseReminders extends SQLiteOpenHelper {
 			reminder.setPhone(cursor.getString(5));
 	    }
 	    else {
-	    	//Log.d(MainActivity.DEBUGTAG, "No reminder found");
+
 	    	return null;
 	    }
 			
@@ -184,22 +177,18 @@ public class DatabaseReminders extends SQLiteOpenHelper {
 	  
 	    ContentValues values = new ContentValues();
 	    
-	    //values.put(COL_ID, note.getId());
 	    values.put(COL_NOTEID, reminder.getNoteId());
 	    values.put(COL_DATE, reminder.getDate());
 	    values.put(COL_TIME, reminder.getTime());
 	    values.put(COL_RECUR, reminder.getRecur());
 	    values.put(COL_PHONE, reminder.getPhone());
-	  		    
-	    //Log.d(MainActivity.DEBUGTAG, "values= " + values.toString());
-	   		    
+
 	    long rowId = -1;
 	    try {
 	    	
 	    	rowId = db.update(TABLE_REMINDERS, values, COL_ID + "=" + reminder.getId(), null);
 	    	
 		} catch (Exception e) {
-			
 			
 			return rowId;   // should be -1
 		}
@@ -212,9 +201,7 @@ public class DatabaseReminders extends SQLiteOpenHelper {
 	  
 	  public long deleteReminder(int id) {
 		  
-		  //Log.d(MainActivity.DEBUGTAG, "deleteReminder id = " +id);
-		  
-		  SQLiteDatabase db = this.getWritableDatabase();
+		    SQLiteDatabase db = this.getWritableDatabase();
 		  
 		    long rowId = -1;
 		    try {
@@ -233,8 +220,7 @@ public class DatabaseReminders extends SQLiteOpenHelper {
 	
 	  public long deleteReminderByNoteId(int noteId) {
 		  
-		  //Log.d(MainActivity.DEBUGTAG, "deleteReminderByNoteId noteId = " + noteId);
-		  SQLiteDatabase db = this.getWritableDatabase();
+		    SQLiteDatabase db = this.getWritableDatabase();
 		  
 		    long rowId = -1;
 		    try {
@@ -255,7 +241,6 @@ public class DatabaseReminders extends SQLiteOpenHelper {
 		  
 		  SQLiteDatabase db = this.getWritableDatabase();
 		  
-		  //Log.d(MainActivity.DEBUGTAG,"delete reminder");
 		    long rowId = -1;
 		    try {
 		    		    	
@@ -263,16 +248,12 @@ public class DatabaseReminders extends SQLiteOpenHelper {
 				Date today = new Date();
 				String[] dateTime;
 				dateTime = df.format(today).split(" ");
-				//Log.d(MainActivity.DEBUGTAG,"date = " +  dateTime[0] + "time = " + dateTime[1]);
-				
-		    
-	
+
 			} catch (Exception e) {
 				//Log.d(MainActivity.DEBUGTAG,"exception: " +  e.getMessage());		
 			}
 		    
-		    db.close();	    
-		   
+		    db.close();
 	  }
 }
 

@@ -20,10 +20,10 @@ import java.util.Locale;
 
 public class Utils {
 
+
 	
 	static public String convertDate(String date, String fromFormat, String toFormat) {
 
-		////Log.d(MainActivity.DEBUGTAG, "date in: " + date.toString());
 		SimpleDateFormat oldDateFormat = new SimpleDateFormat(fromFormat,
 				Locale.getDefault());
 		SimpleDateFormat newDateFormat = new SimpleDateFormat(toFormat,
@@ -38,7 +38,6 @@ public class Utils {
 			return (date);
 		}
 
-		////Log.d(MainActivity.DEBUGTAG, "date out: " + newDateFormat.format(oldDate));
 		return (newDateFormat.format(oldDate));
 	}
 	
@@ -74,7 +73,7 @@ public class Utils {
 		
 		  // valid date is in format mm/dd/yy		  
 		  String[] dateParts = target.split("/");
-		 // //Log.d(MainActivity.DEBUGTAG, "dateparts length = " + dateParts.length);
+
 		  if (dateParts.length != 3) {
 			   return false;
 		  }
@@ -82,7 +81,6 @@ public class Utils {
 		  if (dateParts[0].isEmpty() || dateParts[1].isEmpty() || dateParts[2].isEmpty()) 
 			  return false;
 		  
-		  ////Log.d(MainActivity.DEBUGTAG, "dateParts = " + dateParts[0] + ", " +dateParts[1] + ", " +dateParts[2]);
 	    //check the month
 		  int mm = Integer.parseInt(dateParts[0]);
 		try {			
@@ -91,7 +89,7 @@ public class Utils {
 		} catch (NumberFormatException e) {
 			return false;
 		}
-		// //Log.d(MainActivity.DEBUGTAG, "point 2");
+
 	    //check the day
 		try {
 			int dd = Integer.parseInt(dateParts[1]);
@@ -100,7 +98,7 @@ public class Utils {
 		} catch (NumberFormatException e) {
 			return false;
 		}
-		 ////Log.d(MainActivity.DEBUGTAG, "point 3");
+
 	    //check the year
 		try {
 			int yy = Integer.parseInt(dateParts[2]);
@@ -110,7 +108,7 @@ public class Utils {
 		} catch (NumberFormatException e) {
 			return false;
 		}		
-		 ////Log.d(MainActivity.DEBUGTAG, "point 4");
+
 		  return true;
 	}
 	  
@@ -126,8 +124,7 @@ public class Utils {
 		  if (timeParts[0].isEmpty() || timeParts[1].isEmpty())  
 			  return false;
 		  
-		  //Log.d(MainActivity.DEBUGTAG, "time point 1");
-	    //check the hr
+		//check the hr
 		try {
 			int hh = Integer.parseInt(timeParts[0]);
 			if (hh < 0 || hh > 24) 
@@ -135,8 +132,7 @@ public class Utils {
 		} catch (NumberFormatException e) {
 			return false;
 		}	  
-		  ////Log.d(MainActivity.DEBUGTAG, "time point 2");
-		
+
 	    //check the min
 		try {
 			int mm = Integer.parseInt(timeParts[1]);
@@ -170,8 +166,7 @@ public class Utils {
 	
 		public String incrementMinute(String time, int min) {
 
-            Log.d(MainActivity.DEBUGTAG, "ince minute 1");
-			String[] timeParts = time.split(":");
+           	String[] timeParts = time.split(":");
 			String strHour = timeParts[0];
 			String strMinute = timeParts[1];
 			int intMinute = (Integer.parseInt(strMinute) + min) % 60;
@@ -187,9 +182,9 @@ public class Utils {
 			if (strMinute.length() == 1) {
 				strMinute = "0" + strMinute;
 			}
-            Log.d(MainActivity.DEBUGTAG, "ince minute 3");
+
 			String newTime = String.valueOf(intHour) + ":" + String.valueOf(intMinute);
-            Log.d(MainActivity.DEBUGTAG, "ince minute 4");
+
 			return newTime;
 		}
 		
@@ -206,5 +201,6 @@ public class Utils {
 		    in.close();
 		    out.close();
 		}
+
 
 }

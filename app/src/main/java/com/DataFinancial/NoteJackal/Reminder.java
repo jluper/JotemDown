@@ -32,16 +32,6 @@ public class Reminder {
 	}
 
 
-//    private static int rebootCount = 0;
-//
-//    public static int getRebootCount() {
-//        return rebootCount;
-//    }
-
-//    public static void setRebootCount(int rebootCount) {
-//        Reminder.rebootCount = rebootCount;
-//    }
-
     public void setDate(String date) {
 
 		int index = time.indexOf('/');
