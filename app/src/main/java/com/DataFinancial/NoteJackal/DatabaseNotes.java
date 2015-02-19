@@ -25,6 +25,7 @@ public class DatabaseNotes extends SQLiteOpenHelper {
 	public static final String COL_LAT = "LATITUDE";
 	public static final String COL_LON = "LONGITUDE";
     public static final String COL_REMINDER = "REMINDER";
+    public static final String COL_IMAGE = "IMAGE";
 	private SQLiteDatabase db;
 	private File dbPath;
 	private Context context;
@@ -69,8 +70,8 @@ public class DatabaseNotes extends SQLiteOpenHelper {
 		
 		db = this.getWritableDatabase();
 		
-		String sqlNotesTable = String.format("create table if not exists %s (%s INTEGER PRIMARY KEY, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
-				TABLE_NOTES, COL_ID, COL_PRIORITY, COL_BODY, COL_CREATE_DATE, COL_EDIT_DATE, COL_LAT, COL_LON, COL_REMINDER);
+		String sqlNotesTable = String.format("create table if not exists %s (%s INTEGER PRIMARY KEY, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
+				TABLE_NOTES, COL_ID, COL_PRIORITY, COL_BODY, COL_CREATE_DATE, COL_EDIT_DATE, COL_LAT, COL_LON, COL_REMINDER, COL_IMAGE);
 
 		////Log.d(MainActivity.DEBUGTAG,"Create sql..." + sqlNotesTable);
 

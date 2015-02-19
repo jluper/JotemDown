@@ -6,14 +6,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.provider.Settings;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.util.Log;
@@ -21,9 +18,7 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -257,6 +252,14 @@ public class NewNote extends ActionBarActivity {
 			if (urlContact == null) {
 				optionsMenu.findItem(R.id.menu_goto_webpage).setVisible(false);
 			}
+
+            if (note.getImage().isEmpty()) {
+                optionsMenu.findItem(R.id.menu_view_image).setVisible(false);
+                optionsMenu.findItem(R.id.menu_add_image).setVisible(true);
+            } else {
+                optionsMenu.findItem(R.id.menu_add_image).setVisible(false);
+                optionsMenu.findItem(R.id.menu_view_image).setVisible(true);
+            }
 		}
 
 		return super.onPrepareOptionsMenu(menu);
@@ -353,10 +356,6 @@ public class NewNote extends ActionBarActivity {
 			Double lat = 0.0;
 			Double lon = 0.0;
 
-			// GetLocation geoTagger = new GetLocation(this);
-			// Location loc = geoTagger.getLocation();
-			// Log.d(MainActivity.DEBUGTAG, "note in menu_map = " +
-			// note.toString());
 			if (!note.getLatitude().isEmpty() && !note.getLongitude().isEmpty()) {
 				lat = Double.parseDouble(note.getLatitude());
 				lon = Double.parseDouble(note.getLongitude());
@@ -396,8 +395,6 @@ public class NewNote extends ActionBarActivity {
 			emailIntent.setData(Uri.parse("mailto:"));
 			emailIntent.setType("text/plain");
 			Log.d(MainActivity.DEBUGTAG, "valid email: " + emailContact);
-			// String emailSubject = "";
-			// String emailText = "";
 			emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
 			emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Subject");
 			emailIntent.putExtra(Intent.EXTRA_TEXT, "test text");
@@ -416,17 +413,21 @@ public class NewNote extends ActionBarActivity {
 
         if (id == R.id.menu_add_image) {
 
-            getNoteImage();
-//            Intent i = new Intent(NewNote.this, WebviewActivity.class);
-//            i.putExtra("url", urlContact);
-//
-//            startActivity(i);
+            browseGallery();
         }
 
         if (id == R.id.menu_view_image) {
 
             Intent i = new Intent(NewNote.this, NoteImageActivity.class);
-            i.putExtra("image_path", noteImagePath);
+            i.putExtra("id", note.getId());
+            i.putExtra("priority", note.getPriority());
+            i.putExtra("createDate", note.getCreateDate());
+            i.putExtra("editDate", note.getEditDate());
+            i.putExtra("body", note.getBody());
+            i.putExtra("latitude", note.getLatitude());
+            i.putExtra("longitude", note.getLongitude());
+            i.putExtra("hasReminder", note.getHasReminder());
+            i.putExtra("image", note.getImage());
             startActivity(i);
         }
 		return super.onOptionsItemSelected(item);
@@ -438,12 +439,8 @@ public class NewNote extends ActionBarActivity {
 		String noteBody = editText.getText().toString();
 		note.setBody(noteBody);
 
-		// String s = note.getCreateDate() + ", " + note.getPriority() + ", " +
-		// note.getEditDate() + ", " + note.getBody();
-		// //Log.d(MainActivity.DEBUGTAG, s);
-
 		long noteId = -1;
-		// //Log.d(MainActivity.DEBUGTAG, "note id= " + note.getId());
+
 		try {
 			if (editFunction == true) {
 				SimpleDateFormat dateFormat = new SimpleDateFormat("yy/MM/dd");
@@ -478,112 +475,60 @@ public class NewNote extends ActionBarActivity {
 		dlgBuilder.setMessage(R.string.dialog_delete_note);
 		dlgBuilder.setCancelable(true);
 		dlgBuilder.setPositiveButton(R.string.dialog_positive,
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
+        new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
 
-						db.deleteNote(note.getId());
+                db.deleteNote(note.getId());
 
-						dialog.cancel();
-						Intent i = new Intent(NewNote.this, MainActivity.class);
-						startActivity(i);
+                dialog.cancel();
+                Intent i = new Intent(NewNote.this, MainActivity.class);
+                startActivity(i);
 
-					}
-				});
+            }
+        });
 		dlgBuilder.setNegativeButton(R.string.dialog_negative,
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
+            new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
 
-						dialog.cancel();
-					}
-				});
+                    dialog.cancel();
+                }
+            });
 
 		confirmDelete = dlgBuilder.create();
 	}
 
-	public void buildConfirmLocSettingsDialog() {
+//	public void buildConfirmLocSettingsDialog() {
+//
+//		AlertDialog.Builder dlgBuilder = new AlertDialog.Builder(this);
+//		dlgBuilder.setTitle("Confirm Enable Location Settings");
+//		dlgBuilder.setIcon(R.drawable.btn_check_buttonless_on);
+//		dlgBuilder.setMessage(R.string.dialog_location_settings);
+//		dlgBuilder.setCancelable(true);
+//		dlgBuilder.setPositiveButton(R.string.dialog_positive,
+//        new DialogInterface.OnClickListener() {
+//            public void onClick(DialogInterface dialog, int id) {
+//
+//                Log.d(MainActivity.DEBUGTAG,
+//                        "confirm location settings dialog");
+//                dialog.cancel();
+//
+//                Intent intent = new Intent(
+//                Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+//                startActivity(intent);
+//
+//            }
+//        });
+//	    dlgBuilder.setNegativeButton(R.string.dialog_negative,
+//				new DialogInterface.OnClickListener() {
+//					public void onClick(DialogInterface dialog, int id) {
+//
+//						dialog.cancel();
+//					}
+//				});
+//
+//		confirmDelete = dlgBuilder.create();
+//	}
 
-		AlertDialog.Builder dlgBuilder = new AlertDialog.Builder(this);
-		dlgBuilder.setTitle("Confirm Enable Location Settings");
-		dlgBuilder.setIcon(R.drawable.btn_check_buttonless_on);
-		dlgBuilder.setMessage(R.string.dialog_location_settings);
-		dlgBuilder.setCancelable(true);
-		dlgBuilder.setPositiveButton(R.string.dialog_positive,
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-
-						Log.d(MainActivity.DEBUGTAG,
-								"confirm location settings dialog");
-						dialog.cancel();
-
-						Intent intent = new Intent(
-								Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-						startActivity(intent);
-
-						// LocationManager locManager = (LocationManager)
-						// getSystemService(Context.LOCATION_SERVICE);
-						// if (locManager != null) {
-						// Log.d(MainActivity.DEBUGTAG, " locationManager = " +
-						// locManager.toString());
-						// Location location =
-						// locManager.getLastKnownLocation(LOCATION_SERVICE);
-						// Log.d(MainActivity.DEBUGTAG, "location = " +
-						// location.toString());
-						//
-						// double lat = location.getLatitude();
-						// double lon = location.getLongitude();
-						// Log.d(MainActivity.DEBUGTAG, "lat = " + lat +
-						// "lon = " + lon);
-						// }
-						// else {
-						// Log.d(MainActivity.DEBUGTAG,
-						// " locationManager = null");
-						// }
-
-						// Intent i = new Intent(NewNote.this,
-						// MainActivity.class);
-						// startActivity(i);
-
-					}
-				});
-		dlgBuilder.setNegativeButton(R.string.dialog_negative,
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-
-						dialog.cancel();
-					}
-				});
-
-		confirmDelete = dlgBuilder.create();
-	}
-
-    private void getNoteImage() {
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        View v = getLayoutInflater().inflate(R.layout.replace_lock_image, null);
-        builder.setTitle(R.string.replace_lock_image);
-        builder.setView(v);
-        builder.setMessage(R.string.replace_image_dialog);
-
-        final AlertDialog dlg = builder.create();
-        dlg.show();
-
-        Button takePhoto = (Button) dlg.findViewById(R.id.take_photo);
-        Button browseGallery = (Button) dlg.findViewById(R.id.browse_gallery);
-
-        takePhoto.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                takePhoto();
-            }
-        });
-
-        browseGallery.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                browseGallery();
-
-            }
-        });
-
-    }
 
     private void browseGallery() {
         Intent i = new Intent(Intent.ACTION_PICK,
@@ -591,19 +536,10 @@ public class NewNote extends ActionBarActivity {
         startActivityForResult(i, MainActivity.BROWSE_GALLERY_REQUEST);
     }
 
-    private void takePhoto() {
-
-        File picsDirectory = getFilesDir();
-        imageFile = new File(picsDirectory,
-                getString(R.string.PASSPOINTS_PHOTO));
-
-        Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        i.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(imageFile));
-        startActivityForResult(i, MainActivity.PHOTO_TAKEN_REQUEST);
-    }
-
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
+
+        Log.d(MainActivity.DEBUGTAG, "onActivityResult = ");
 
         if (requestCode == MainActivity.BROWSE_GALLERY_REQUEST) {
             if (intent != null) {
@@ -614,6 +550,11 @@ public class NewNote extends ActionBarActivity {
                 cursor.moveToFirst();
                 int columnIndex = cursor.getColumnIndex(columns[0]);
                 noteImagePath = cursor.getString(columnIndex);
+
+                note.setImage(noteImagePath);
+                db.updateNote(note);
+
+                Log.d(MainActivity.DEBUGTAG, "Note image path = " + noteImagePath);
                 cursor.close();
 
                 Uri image = Uri.parse(noteImagePath);
@@ -630,18 +571,6 @@ public class NewNote extends ActionBarActivity {
                 //startActivity(i);
             } else {
                 Toast.makeText(this, "Gallery result: no data", Toast.LENGTH_LONG).show();
-            }
-        }
-
-        if (requestCode == MainActivity.PHOTO_TAKEN_REQUEST) {
-
-            if (intent != null) {
-                Bitmap photo = BitmapFactory.decodeFile(imageFile
-                        .getAbsolutePath());
-
-                if (photo != null) {
-                   Toast.makeText(this, R.string.PHOTO_NOT_SAVED, Toast.LENGTH_LONG).show();
-                }
             }
         }
     }

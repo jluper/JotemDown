@@ -17,6 +17,15 @@ public class Note  {
 	private String latitude;
 	private String longitude;
     private String hasReminder;
+    private String image;
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
 
     public String getHasReminder() {
         return hasReminder;
@@ -99,13 +108,13 @@ public class Note  {
 	public String toString() {
 		
 		String bdy = body.replace(System.getProperty("line.separator"), "|");
-		return id + "," + priority + "," + createDate + "," +  editDate + "," + bdy + ", " + latitude + ", " + longitude + ", " + hasReminder;
+		return id + "," + priority + "," + createDate + "," +  editDate + "," + bdy + ", " + latitude + ", " + longitude + ", " + hasReminder + image;
 	}
 	
 	public String toStringWoNewLine() {
 		
 		String bdy = body.replace(System.getProperty("line.separator"), "|");
-		return id + "," + priority + "," + createDate + "," +  editDate + "," + bdy+ ", " + latitude + ", " + longitude + ", " + hasReminder;
+		return id + "," + priority + "," + createDate + "," +  editDate + "," + bdy+ ", " + latitude + ", " + longitude + ", " + hasReminder + image;
 	}
 	
 	
@@ -124,6 +133,7 @@ public class Note  {
 		this.latitude = "";
 		this.longitude = "";
         this.hasReminder = "false";
+        this.image = "";
 	}
 		
 	public Note(String body) {
@@ -137,18 +147,9 @@ public class Note  {
 		this.latitude = "";
 		this.longitude = "";
         this.hasReminder = "false";
-				
-		
-//		int index = body.indexOf("\n");
-//		if (index > 0) {
-//			this.title = body.substring(0, body.indexOf("\n")) + " ...";
-//		} else {
-//			this.title = body;
-//		}
-	
+        this.image = "";
+
 		this.body = body;
-				
-		////Log.d(MainActivity.DEBUGTAG, "Note constructor");
 	}
 
 }

@@ -2,6 +2,7 @@ package com.DataFinancial.NoteJackal;
 
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
@@ -14,7 +15,9 @@ import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.view.Display;
 import android.view.Menu;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -104,8 +107,13 @@ public class LockImageActivity extends ActionBarActivity implements PointCollect
 				
 			//Log.d(MainActivity.DEBUGTAG, "imageHeight=" + imageHeight);
 			//Log.d(MainActivity.DEBUGTAG, "imageWidth=" + imageWidth);
-			
-			int inSampleSize = calculateInSampleSize(options, 2068, 1140);
+            Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+            int width = size.x;
+            int height = size.y;
+
+			int inSampleSize = calculateInSampleSize(options, width, height);
 			////Log.d(MainActivity.DEBUGTAG, "inSampleSize=" + inSampleSize);
 			
 			// we will create empty bitmap by using the option

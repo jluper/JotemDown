@@ -369,8 +369,7 @@ public class MainActivity extends ActionBarActivity {
 	private void takePhoto() {
 
 		File picsDirectory = getFilesDir();
-		imageFile = new File(picsDirectory,
-				getString(R.string.PASSPOINTS_PHOTO));
+		imageFile = new File(picsDirectory,	getString(R.string.PASSPOINTS_PHOTO));
 
 		Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 		i.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(imageFile));
@@ -391,7 +390,7 @@ public class MainActivity extends ActionBarActivity {
 				cursor.moveToFirst();
 				int columnIndex = cursor.getColumnIndex(columns[0]);
 				String imagePath = cursor.getString(columnIndex);
-
+                Log.d(MainActivity.DEBUGTAG, "Image Path = " + imagePath);
 				cursor.close();
 
 				Uri image = Uri.parse(imagePath);
