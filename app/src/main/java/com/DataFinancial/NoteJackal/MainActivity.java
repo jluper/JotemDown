@@ -45,10 +45,9 @@ public class MainActivity extends ActionBarActivity {
 	// public static final String PASSPOINTS_SET = "RESET_PASSPOINTS";
 
 	protected List<Note> notes = new ArrayList<Note>();
-	private static final int PHOTO_TAKEN = 1;
-	private static final int PHOTO_TAKEN_REQUEST = 2;
-	private static final int EDIT_NOTE = 4;
-	private static final int BROWSE_GALLERY_REQUEST = 3;
+	public static final int PHOTO_TAKEN_REQUEST = 2;
+    public static final int EDIT_NOTE = 4;
+    public static final int BROWSE_GALLERY_REQUEST = 3;
     private static int selectedRow = 0;
 	private File imageFile;
 	private ImageButton searchButton;
@@ -279,7 +278,7 @@ public class MainActivity extends ActionBarActivity {
 		switch (id) {
 		case R.id.menu_lock:
 			Log.d(MainActivity.DEBUGTAG, "lock menu item");
-			i = new Intent(MainActivity.this, ImageActivity.class);
+			i = new Intent(MainActivity.this, LockImageActivity.class);
 			startActivity(i);
 			break;
 		case R.id.menu_new:
@@ -288,7 +287,7 @@ public class MainActivity extends ActionBarActivity {
 			break;
 		case R.id.menu_passpoints_reset:
 			setPassPointsSaved(false);
-			i = new Intent(MainActivity.this, ImageActivity.class);
+			i = new Intent(MainActivity.this, LockImageActivity.class);
 			startActivity(i);
 			break;
 		case R.id.menu_replace_lock_image:
@@ -410,7 +409,7 @@ public class MainActivity extends ActionBarActivity {
 				}
 
 				setPassPointsSaved(false);
-				Intent i = new Intent(MainActivity.this, ImageActivity.class);
+				Intent i = new Intent(MainActivity.this, LockImageActivity.class);
 				startActivity(i);
 			} else {
 				Toast.makeText(this, "Gallery result: no data",
@@ -427,7 +426,7 @@ public class MainActivity extends ActionBarActivity {
 				if (photo != null) {
 					setPassPointsSaved(false);
 					Intent i = new Intent(MainActivity.this,
-							ImageActivity.class);
+							LockImageActivity.class);
 					startActivity(i);
 				} else {
 					Toast.makeText(this, R.string.PHOTO_NOT_SAVED,
@@ -469,9 +468,9 @@ public class MainActivity extends ActionBarActivity {
 	protected void setPassPointsSaved(boolean state) {
 
 		SharedPreferences prefs = getSharedPreferences(
-				ImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
+				LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
 		SharedPreferences.Editor editor = prefs.edit();
-		editor.putBoolean(ImageActivity.PASSPOINTS_SET, state);
+		editor.putBoolean(LockImageActivity.PASSPOINTS_SET, state);
 		editor.commit();
 	}
 

@@ -44,15 +44,27 @@
         android:orderInCategory="97"
         android:title="@string/menu_call_phone"
         app:showAsAction="never"/>
-        <item
+    <item
         android:id="@+id/menu_send_email"
         android:orderInCategory="98"
         android:title="@string/menu_send_email"
         app:showAsAction="never"/>
-                <item
+     <item
         android:id="@+id/menu_goto_webpage"
         android:orderInCategory="99"
         android:title="@string/menu_goto_webpage"
         app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/menu_add_image"
+        android:orderInCategory="100"
+        android:title="@string/menu_add_image"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/menu_view_image"
+        android:orderInCategory="101"
+        android:title="@string/menu_view_image"
+        app:showAsAction="never"/>
+
 
 </menu>

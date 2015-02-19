@@ -2,15 +2,12 @@ package com.DataFinancial.NoteJackal;
 
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import android.app.Activity;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,9 +15,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
-import android.telephony.SmsManager;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,7 +22,6 @@ import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RadioGroup;
 import android.widget.Toast;
 
 public class ExportNotes extends ActionBarActivity {
@@ -62,7 +55,7 @@ public class ExportNotes extends ActionBarActivity {
 		exportFile = (EditText) findViewById(R.id.txtExportFile);	
 		address = (EditText) findViewById(R.id.txtExportAddress);	
 		
-		SharedPreferences prefs = getSharedPreferences(ImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
+		SharedPreferences prefs = getSharedPreferences(LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
 		String file = prefs.getString(LAST_EXPORT_FILE,  "JotemDownExport");
 		String addr = prefs.getString(SendNote.LAST_SEND_ADDRESS,  null);
 		//Log.d(MainActivity.DEBUGTAG,"onCrate 2");
@@ -103,7 +96,7 @@ public class ExportNotes extends ActionBarActivity {
 				makeTextExport();
 				sendTextExport();
 
-			    SharedPreferences prefs = getSharedPreferences(ImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
+			    SharedPreferences prefs = getSharedPreferences(LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
 				SharedPreferences.Editor editor = prefs.edit();
 				editor.putString(SendNote.LAST_SEND_ADDRESS,  address.getText().toString());
 				editor.putString(LAST_EXPORT_FILE, exportFile.getText().toString());

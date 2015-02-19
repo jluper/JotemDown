@@ -34,9 +34,12 @@
     <string name="menu_restore">Restore</string>
     <string name="menu_delete">Delete</string>
     <string name="menu_drive">Drive</string>
+    <string name="menu_add_image">Add Image</string>
+    <string name="menu_view_image">View Image</string>
     <string name="chk_google_drive">Google Drive</string>
     <string name="title_activity_main">Jot\'emDown</string>
     <string name="title_activity_image">Jot\'emDown</string>
+    <string name="title_noteimage_activity">Note Image</string>
     <string name="toast_cant_save">Unable to save note. Check for sufficient space.</string>
     <string name="passpoints_image">Passpoints Image</string>
     <string name="title_activity_image_activity2">ImageActivity2</string>

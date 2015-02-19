@@ -1,13 +1,5 @@
 package com.DataFinancial.NoteJackal;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.List;
-
-import android.app.ActionBar;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
@@ -19,21 +11,20 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Point;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.View.OnTouchListener;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-public class ImageActivity extends ActionBarActivity implements PointCollectorListener {
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.List;
+
+public class LockImageActivity extends ActionBarActivity implements PointCollectorListener {
 
 	private PointCollector pointCollector = new PointCollector();
 	private DatabasePasspoints db = new DatabasePasspoints(this);
@@ -55,7 +46,6 @@ public class ImageActivity extends ActionBarActivity implements PointCollectorLi
 		android.support.v7.app.ActionBar actionBar = getSupportActionBar();
 	    actionBar.setDisplayShowHomeEnabled(true);
 		actionBar.setIcon(R.drawable.note_yellow);
-	
 		
 		//setPassPointsSaved(false);
 		
@@ -74,8 +64,7 @@ public class ImageActivity extends ActionBarActivity implements PointCollectorLi
 		Boolean passPointsSet;
 		if (!imageFile.exists()) {
 			
-			ImageActivity.activityImageView.setImageResource(R.drawable.default_passpoints_image);
-			
+			LockImageActivity.activityImageView.setImageResource(R.drawable.default_passpoints_image);
 			
 			
 			passPointsSet = false;
@@ -132,10 +121,10 @@ public class ImageActivity extends ActionBarActivity implements PointCollectorLi
 			
 			if (reusedBitmap != null) {
 				reusedBitmap = fixOrientation(reusedBitmap);
-				ImageActivity.activityImageView.setImageBitmap(reusedBitmap);
+				LockImageActivity.activityImageView.setImageBitmap(reusedBitmap);
 			} else {
 				Resources res = getResources(); 
-				ImageActivity.activityImageView.setImageDrawable(res.getDrawable(R.drawable.default_passpoints_image));
+				LockImageActivity.activityImageView.setImageDrawable(res.getDrawable(R.drawable.default_passpoints_image));
 			}
 					
 			SharedPreferences prefs = getSharedPreferences(SHARED_PREF_FILE, MODE_PRIVATE);
@@ -254,7 +243,7 @@ public class ImageActivity extends ActionBarActivity implements PointCollectorLi
 				
 				passpointsSet = prefs.getBoolean(PASSPOINTS_SET,  false);
 				
-				Toast.makeText(ImageActivity.this, "Passpoints saved...", Toast.LENGTH_LONG).show(); 
+				Toast.makeText(LockImageActivity.this, "Passpoints saved...", Toast.LENGTH_LONG).show();
 				
 				////Log.d(MainActivity.DEBUGTAG, "saved passpointsSet=" + passpointsSet);
 				pointCollector.clear();
@@ -344,7 +333,7 @@ public class ImageActivity extends ActionBarActivity implements PointCollectorLi
 					touchedPoints.clear();
 					
 					////Log.d(MainActivity.DEBUGTAG, "pw authentication true, start pw activity");
-					Intent i = new Intent(ImageActivity.this, Password.class);
+					Intent i = new Intent(LockImageActivity.this, Password.class);
 					reusedBitmap = null;   // set the bitmap top null so gc will get soon as possible 
 					startActivity(i);
 					
@@ -355,7 +344,7 @@ public class ImageActivity extends ActionBarActivity implements PointCollectorLi
 				pointCollector.clear();
 				
 				if (pass == true) {					
-					Intent i = new Intent(ImageActivity.this, MainActivity.class);
+					Intent i = new Intent(LockImageActivity.this, MainActivity.class);
 					reusedBitmap = null;   // set the bitmap top null so gc will get soon as possible 
 					startActivity(i);
 				} else {
@@ -365,7 +354,7 @@ public class ImageActivity extends ActionBarActivity implements PointCollectorLi
 					if (!passPointsSet) {  //jl
 						showSetPasspointsPrompt();  //jl
 					} else {    //jl
-						Toast.makeText(ImageActivity.this, "Access denied", Toast.LENGTH_LONG).show();
+						Toast.makeText(LockImageActivity.this, "Access denied", Toast.LENGTH_LONG).show();
 						pointCollector.clear();//jl
 					}
 					
@@ -431,9 +420,9 @@ public class ImageActivity extends ActionBarActivity implements PointCollectorLi
 	protected void setPassPointsSaved(boolean state) {
 
 		SharedPreferences prefs = getSharedPreferences(
-				ImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
+				LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
 		SharedPreferences.Editor editor = prefs.edit();
-		editor.putBoolean(ImageActivity.PASSPOINTS_SET, state);
+		editor.putBoolean(LockImageActivity.PASSPOINTS_SET, state);
 		editor.commit();
 	}
 }

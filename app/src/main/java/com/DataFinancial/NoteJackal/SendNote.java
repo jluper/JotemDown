@@ -1,21 +1,16 @@
 package com.DataFinancial.NoteJackal;
 
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.telephony.SmsManager;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -57,7 +52,7 @@ public class SendNote extends ActionBarActivity {
 		}
 		
 		address = (EditText) findViewById(R.id.txtAddress);	
-		SharedPreferences prefs = getSharedPreferences(ImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
+		SharedPreferences prefs = getSharedPreferences(LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
 		String addr = prefs.getString(LAST_SEND_ADDRESS,  null);
 		if (addr != null) {
 			address.setText(addr);			
@@ -195,7 +190,7 @@ public class SendNote extends ActionBarActivity {
 			     }
 			
 				 
-			    SharedPreferences prefs = getSharedPreferences(ImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
+			    SharedPreferences prefs = getSharedPreferences(LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
 				SharedPreferences.Editor editor = prefs.edit();
 				editor.putString(LAST_SEND_ADDRESS,  TO[0]);
 				editor.commit();

@@ -2,12 +2,10 @@ package com.DataFinancial.NoteJackal;
 
 
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -46,7 +44,7 @@ public class ChangePassword extends ActionBarActivity {
 		btnSubmit = (Button) findViewById(R.id.btnSubmit);
 	 
 		
-		SharedPreferences prefs = getSharedPreferences(ImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
+		SharedPreferences prefs = getSharedPreferences(LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
 		String savedPassword = prefs.getString(Password.PASSWORD, getString(R.string.default_password));
 		
 		password.setText(savedPassword);
@@ -58,7 +56,7 @@ public class ChangePassword extends ActionBarActivity {
 	 
 			 
 			  
-				SharedPreferences prefs = getSharedPreferences(ImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
+				SharedPreferences prefs = getSharedPreferences(LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
 				String savedPassword = prefs.getString(Password.PASSWORD, getString(R.string.default_password));
 				//Log.d(MainActivity.DEBUGTAG, "savedPassword=" + savedPassword + "y");
 				//Log.d(MainActivity.DEBUGTAG, "typed password=" + password.getText().toString() + "y");

@@ -5,10 +5,14 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
@@ -17,11 +21,14 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -41,6 +48,9 @@ public class NewNote extends ActionBarActivity {
 	private String urlContact;
 	private boolean help = false;
 	private EditText noteText;
+    private File imageFile;
+
+    private String noteImagePath;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -51,8 +61,7 @@ public class NewNote extends ActionBarActivity {
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setDisplayShowHomeEnabled(true);
 		actionBar.setIcon(R.drawable.note_yellow);
-		actionBar.setTitle(getResources().getString(
-				R.string.edit_note_activity_title));
+		actionBar.setTitle(getResources().getString(R.string.edit_note_activity_title));
 		actionBar.setDisplayShowTitleEnabled(true);
 
 		noteText = (EditText) findViewById(R.id.note_text);
@@ -405,6 +414,21 @@ public class NewNote extends ActionBarActivity {
 			startActivity(i);
 		}
 
+        if (id == R.id.menu_add_image) {
+
+            getNoteImage();
+//            Intent i = new Intent(NewNote.this, WebviewActivity.class);
+//            i.putExtra("url", urlContact);
+//
+//            startActivity(i);
+        }
+
+        if (id == R.id.menu_view_image) {
+
+            Intent i = new Intent(NewNote.this, NoteImageActivity.class);
+            i.putExtra("image_path", noteImagePath);
+            startActivity(i);
+        }
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -432,8 +456,7 @@ public class NewNote extends ActionBarActivity {
                 Log.d(MainActivity.DEBUGTAG, "note in SaveNote = " + note.toString());
 				noteId = db.addNote(note);
                // Log.d(MainActivity.DEBUGTAG, " note afte add = " + db.getNote((int)noteId).toString());
-				Toast.makeText(NewNote.this, "Note added...",
-						Toast.LENGTH_SHORT).show();
+				Toast.makeText(NewNote.this, "Note added...", Toast.LENGTH_SHORT).show();
 			}
 		} catch (Exception e) {
 			Toast.makeText(NewNote.this, "Unable to add/update note...",
@@ -532,5 +555,96 @@ public class NewNote extends ActionBarActivity {
 
 		confirmDelete = dlgBuilder.create();
 	}
+
+    private void getNoteImage() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View v = getLayoutInflater().inflate(R.layout.replace_lock_image, null);
+        builder.setTitle(R.string.replace_lock_image);
+        builder.setView(v);
+        builder.setMessage(R.string.replace_image_dialog);
+
+        final AlertDialog dlg = builder.create();
+        dlg.show();
+
+        Button takePhoto = (Button) dlg.findViewById(R.id.take_photo);
+        Button browseGallery = (Button) dlg.findViewById(R.id.browse_gallery);
+
+        takePhoto.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                takePhoto();
+            }
+        });
+
+        browseGallery.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                browseGallery();
+
+            }
+        });
+
+    }
+
+    private void browseGallery() {
+        Intent i = new Intent(Intent.ACTION_PICK,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(i, MainActivity.BROWSE_GALLERY_REQUEST);
+    }
+
+    private void takePhoto() {
+
+        File picsDirectory = getFilesDir();
+        imageFile = new File(picsDirectory,
+                getString(R.string.PASSPOINTS_PHOTO));
+
+        Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        i.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(imageFile));
+        startActivityForResult(i, MainActivity.PHOTO_TAKEN_REQUEST);
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+
+        if (requestCode == MainActivity.BROWSE_GALLERY_REQUEST) {
+            if (intent != null) {
+                String[] columns = { MediaStore.Images.Media.DATA };
+                Uri imageUri = intent.getData();
+                Cursor cursor = getContentResolver().query(imageUri, columns, null, null, null);
+
+                cursor.moveToFirst();
+                int columnIndex = cursor.getColumnIndex(columns[0]);
+                noteImagePath = cursor.getString(columnIndex);
+                cursor.close();
+
+                Uri image = Uri.parse(noteImagePath);
+
+                Toast.makeText(this, "Gallery result" + image, Toast.LENGTH_LONG).show();
+
+//                try {
+//                    copyImageFile(imagePath);
+//                } catch (IOException e) {
+//                    Toast.makeText(this,"Unable to copy image file from gallery...", Toast.LENGTH_LONG).show();
+//                }
+
+                //Intent i = new Intent(MainActivity.this, ImageActivity.class);
+                //startActivity(i);
+            } else {
+                Toast.makeText(this, "Gallery result: no data", Toast.LENGTH_LONG).show();
+            }
+        }
+
+        if (requestCode == MainActivity.PHOTO_TAKEN_REQUEST) {
+
+            if (intent != null) {
+                Bitmap photo = BitmapFactory.decodeFile(imageFile
+                        .getAbsolutePath());
+
+                if (photo != null) {
+                   Toast.makeText(this, R.string.PHOTO_NOT_SAVED, Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+    }
+
 
 }

@@ -109,7 +109,7 @@ public class ReminderActivity extends ActionBarActivity   implements OnClickList
 			else {
 				btnCancel.setEnabled(false);
 				
-				SharedPreferences prefs = getSharedPreferences(ImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
+				SharedPreferences prefs = getSharedPreferences(LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
 				String lastPhone = prefs.getString(LAST_REMINDER_PHONE,  null);
 
 				txtPhone.setText(lastPhone);
@@ -240,7 +240,7 @@ public class ReminderActivity extends ActionBarActivity   implements OnClickList
 					Toast.makeText(ReminderActivity.this,"Unable to add reminder." + e.getMessage(), Toast.LENGTH_LONG).show();					
 				}
 			
-			    SharedPreferences prefs = getSharedPreferences(ImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
+			    SharedPreferences prefs = getSharedPreferences(LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
 				SharedPreferences.Editor editor = prefs.edit();
 				editor.putString(LAST_REMINDER_PHONE, reminder.getPhone());
 				editor.commit();

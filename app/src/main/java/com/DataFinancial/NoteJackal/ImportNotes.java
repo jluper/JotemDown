@@ -5,27 +5,20 @@ import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
-import android.telephony.SmsManager;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -66,7 +59,7 @@ public class ImportNotes extends ActionBarActivity {
 		//Log.d(MainActivity.DEBUGTAG,"onCreate 1");
 		importFile = (EditText) findViewById(R.id.txtImportFile);	
 				
-		SharedPreferences prefs = getSharedPreferences(ImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
+		SharedPreferences prefs = getSharedPreferences(LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
 		String file = prefs.getString(LAST_BACKUP_FILE,  "NoteJackalBackup");
 		String addr = prefs.getString(SendNote.LAST_SEND_ADDRESS,  null);
 		//Log.d(MainActivity.DEBUGTAG,"onCreate 2");
@@ -214,7 +207,7 @@ public class ImportNotes extends ActionBarActivity {
 		        }		        
 			}	
 			
-		    SharedPreferences prefs = getSharedPreferences(ImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
+		    SharedPreferences prefs = getSharedPreferences(LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
 			SharedPreferences.Editor editor = prefs.edit();
 			editor.putString(LAST_BACKUP_FILE, importFile.getText().toString());
 			editor.commit();
