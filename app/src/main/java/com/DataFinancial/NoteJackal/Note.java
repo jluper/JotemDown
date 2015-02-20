@@ -46,7 +46,8 @@ public class Note  {
 		this.latitude = latitude;
 	}
 
-	public String getLongitude() {
+	public String getLongitude()
+    {
 		return longitude;
 	}
 
@@ -58,10 +59,12 @@ public class Note  {
 	}
 
 	public int getPriority() {
-		return priority;
+
+        return priority;
 	}
 
-	public void setPriority(int priority) {
+	public void setPriority(int priority)
+    {
 		this.priority = priority;
 	}
 
@@ -71,36 +74,32 @@ public class Note  {
 	}
 
 	public void setEditDate(String editDate) {
-		this.editDate = editDate;
+
+        this.editDate = editDate;
 	}
-	
-	
-//	public String getTitle() {
-//		return title;
-//	}
 	
 	public int getId() {
 		return id;
-		
 	}
-	public void setId(int id) {
+
+	public void setId(int id)
+    {
 		this.id = id;
 	}
-	
-//	public void setTitle(String title) {
-//		this.title = title;
-//	}
-	
+
 	public String getBody() {
-		return body;
+
+        return body;
 	}
 	
 	public void setBody(String body) {
-		this.body = body;
+
+        this.body = body;
 	}
 	
 	public String getCreateDate() {
-		return createDate;
+
+        return createDate;
 	}
 	
 		

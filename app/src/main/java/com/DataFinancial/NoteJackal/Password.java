@@ -36,14 +36,14 @@ public class Password extends ActionBarActivity {
 	 
 	  
 	  public String getPassword() {
-		  //Log.d(MainActivity.DEBUGTAG, "password in getPassword=" + pw);
+
 		  return pw;
 	  }
 	  
 	  public void setPassword(String pwd) {
 		
 		  pw = pwd;
-		  //Log.d(MainActivity.DEBUGTAG, "password in setPassword=" + pw);
+
 	  }
 		  
 	  public void addListenerOnButton() {
@@ -58,9 +58,7 @@ public class Password extends ActionBarActivity {
 	 
 				SharedPreferences prefs = getSharedPreferences(LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
 				String savedPassword = prefs.getString(PASSWORD, getString(R.string.default_password));
-				//Log.d(MainActivity.DEBUGTAG, "savedPassword=" + savedPassword + "x");
-				//Log.d(MainActivity.DEBUGTAG, "typed password=" + password.getText().toString() + "x");
-				
+
 				pw = password.getText().toString();
 				if (pw.equals("DeleteNotes")) {					
 					db.recreateNotesTable();				    

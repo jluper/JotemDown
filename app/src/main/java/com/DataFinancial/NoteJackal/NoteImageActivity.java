@@ -8,7 +8,6 @@ import android.graphics.Matrix;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.WindowManager;
@@ -54,14 +53,13 @@ public class NoteImageActivity extends ActionBarActivity {
         } else {
             Toast.makeText(NoteImageActivity.this, "Image not found.", Toast.LENGTH_SHORT).show();
         }
-        Log.d(MainActivity.DEBUGTAG, "imagePath=" + noteImagePath);
+
 		noteImageView = (ImageView)findViewById(R.id.note_image);
 
         imageFile = new File(noteImagePath);
-		Log.d(MainActivity.DEBUGTAG, "imageFile1=" + imageFile);
 
 		if (!imageFile.exists()) {
-            Log.d(MainActivity.DEBUGTAG, "image file does not exists");
+            NoteImageActivity.noteImageView.setScaleType(ImageView.ScaleType.CENTER);
 			NoteImageActivity.noteImageView.setImageResource(R.drawable.image_not_found);
 		}
 		else {
@@ -75,17 +73,13 @@ public class NoteImageActivity extends ActionBarActivity {
 			int imageWidth = options.outWidth;
 			String imageType = options.outMimeType;
 
-			Log.d(MainActivity.DEBUGTAG, "imageHeight=" + imageHeight);
-			Log.d(MainActivity.DEBUGTAG, "imageWidth=" + imageWidth);
-
-            Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+		    Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
             Point size = new Point();
             display.getSize(size);
             int width = size.x;
             int height = size.y;
 
             int inSampleSize = calculateInSampleSize(options, width, height);
-			Log.d(MainActivity.DEBUGTAG, "inSampleSize=" + inSampleSize);
 
 			// we will create empty bitmap by using the option
 			reusedBitmap = Bitmap.createBitmap(options.outWidth, options.outHeight, Bitmap.Config.RGB_565);
@@ -102,7 +96,6 @@ public class NoteImageActivity extends ActionBarActivity {
 				reusedBitmap = fixOrientation(reusedBitmap);
 				NoteImageActivity.noteImageView.setImageBitmap(reusedBitmap);
 			} else {
-                Log.d(MainActivity.DEBUGTAG, "resuedBitmap is null");
                 Bitmap myBitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
                 myBitmap = fixOrientation(myBitmap);
                 NoteImageActivity.noteImageView.setImageBitmap(myBitmap);

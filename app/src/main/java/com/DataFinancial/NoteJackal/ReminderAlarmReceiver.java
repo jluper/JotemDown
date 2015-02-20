@@ -5,7 +5,6 @@ import android.app.ActivityManager.RunningServiceInfo;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 public class ReminderAlarmReceiver extends BroadcastReceiver {
 	
@@ -16,11 +15,11 @@ public class ReminderAlarmReceiver extends BroadcastReceiver {
 
 		   ctx = context;
 	        // For our recurring task, we'll just display a message
-		   Log.d(MainActivity.DEBUGTAG, "****************************  in alarm receiver");
 	        
 			boolean srvcRunning = isReminderServiceRunning(ReminderService.class);
 
 			Intent srvcIntent = new Intent(context, ReminderService.class);
+
 			if (srvcRunning == true) {
 				context.stopService(srvcIntent);
 			}						

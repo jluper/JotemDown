@@ -54,6 +54,16 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@color/light_green" />
 
+        <TextView
+            android:id="@+id/lbl_note_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|left"
+            android:layout_marginLeft="10dp"
+            android:text=""
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/white" />
+
  
     </LinearLayout>
 

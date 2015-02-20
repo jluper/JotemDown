@@ -17,7 +17,6 @@ import android.os.SystemClock;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.provider.ContactsContract.Contacts;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -219,7 +218,7 @@ public class ReminderActivity extends ActionBarActivity   implements OnClickList
 						db.addReminder(reminder);
                         Note note = notesDb.getNote(reminder.getNoteId());
                         note.setHasReminder("true");
-                        Log.d(MainActivity.DEBUGTAG, "1) note with reminder  in ReminderActivity= " + note.toString());
+
                         notesDb.updateNote(note);
 
 						setReminderAlarm(ReminderActivity.this, dateTime);
@@ -284,8 +283,7 @@ public class ReminderActivity extends ActionBarActivity   implements OnClickList
             mDay = c.get(Calendar.DAY_OF_MONTH);
  
             // Launch Date Picker Dialog
-            DatePickerDialog dpd = new DatePickerDialog(this,
-                    new DatePickerDialog.OnDateSetListener() {
+            DatePickerDialog dpd = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
  
                         @Override
                         public void onDateSet(DatePicker view, int year,
@@ -307,8 +305,7 @@ public class ReminderActivity extends ActionBarActivity   implements OnClickList
             mMinute = c.get(Calendar.MINUTE);
  
             // Launch Time Picker Dialog
-            TimePickerDialog tpd = new TimePickerDialog(this,
-                    new TimePickerDialog.OnTimeSetListener() {
+            TimePickerDialog tpd = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
  
                         @Override
                         public void onTimeSet(TimePicker view, int hourOfDay,
@@ -334,6 +331,7 @@ public class ReminderActivity extends ActionBarActivity   implements OnClickList
     }
     
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
             case CONTACT_PICKER_RESULT:
@@ -357,7 +355,7 @@ public class ReminderActivity extends ActionBarActivity   implements OnClickList
             	    int typeIdx = cursor.getColumnIndex(Phone.TYPE);
             	    phone = cursor.getString(dataIdx);
             	    type = cursor.getString(typeIdx);
-            	    //Log.d(MainActivity.DEBUGTAG, "phone: " + phone + " type: " + type);
+
             	    if (type == "1") { homePhone = phone; }
             	    if (Integer.parseInt(type) == Phone.TYPE_MOBILE) { 
             	    	mobilePhone = phone; 
@@ -368,16 +366,14 @@ public class ReminderActivity extends ActionBarActivity   implements OnClickList
             	}
             	
             	phone = mobilePhone.isEmpty() ? homePhone: mobilePhone;
-            	//Log.d(MainActivity.DEBUGTAG, "home phone: " + homePhone + " mobile phone: " + mobilePhone);
-            	//Log.d(MainActivity.DEBUGTAG, "phone: " + phone);
-            	
+
             	EditText txtPhone = (EditText) findViewById(R.id.txt_reminder_phone);
                	txtPhone.setText(phone);
                 break;
             }
 
         } else {
-        	Log.d(MainActivity.DEBUGTAG,"Contact not picked.");
+            Toast.makeText(ReminderActivity.this,"Contact not selected.", Toast.LENGTH_LONG).show();
         }
     }
 

@@ -2,7 +2,6 @@ package com.DataFinancial.NoteJackal;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.webkit.WebView;
@@ -30,11 +29,7 @@ public class WebviewActivity extends ActionBarActivity {
         if (extras != null) {
             url = extras.getString("url");
         }
-
-        Log.d(MainActivity.DEBUGTAG, "In webview 1...url = " + url);
         browser = (WebView) findViewById(R.id.webView1);
-        Log.d(MainActivity.DEBUGTAG, "In webview 2...url = " + url);
-
         browser.setWebViewClient(new PageBrowser());
         open(browser);
     }
@@ -47,12 +42,9 @@ public class WebviewActivity extends ActionBarActivity {
 
     public void open(View view) {
 
-        Log.d(MainActivity.DEBUGTAG, "In webview 3...url = " + url);
         browser.getSettings().setLoadsImagesAutomatically(true);
         browser.getSettings().setJavaScriptEnabled(true);
-        Log.d(MainActivity.DEBUGTAG, "In webview 4...url = " + url);
         browser.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
-        Log.d(MainActivity.DEBUGTAG, "In webview 5...url = " + url);
         browser.loadUrl(url);
     }
 
@@ -67,8 +59,8 @@ public class WebviewActivity extends ActionBarActivity {
 
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            Log.d(MainActivity.DEBUGTAG, "In webview 6...url = " + url);
             view.loadUrl(url);
+
             return true;
         }
     }

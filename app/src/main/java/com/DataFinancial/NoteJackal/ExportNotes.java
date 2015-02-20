@@ -1,13 +1,6 @@
 package com.DataFinancial.NoteJackal;
 
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -23,6 +16,13 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class ExportNotes extends ActionBarActivity {
 
@@ -49,20 +49,18 @@ public class ExportNotes extends ActionBarActivity {
 		actionBar.setIcon(R.drawable.note_yellow);
 		actionBar.setTitle(R.string.lbl_export_title);
 		actionBar.setDisplayShowTitleEnabled(true);
-				
 			
-		//Log.d(MainActivity.DEBUGTAG,"onCreate 1");
-		exportFile = (EditText) findViewById(R.id.txtExportFile);	
+		exportFile = (EditText) findViewById(R.id.txtExportFile);
 		address = (EditText) findViewById(R.id.txtExportAddress);	
 		
 		SharedPreferences prefs = getSharedPreferences(LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
 		String file = prefs.getString(LAST_EXPORT_FILE,  "JotemDownExport");
 		String addr = prefs.getString(SendNote.LAST_SEND_ADDRESS,  null);
-		//Log.d(MainActivity.DEBUGTAG,"onCrate 2");
+
 		if (file != null) {
 			exportFile.setText(file);			
 		}
-		//Log.d(MainActivity.DEBUGTAG,"address = " + address.toString());
+
 		if (addr != null) {
 			address.setText(addr);			
 		}
@@ -74,15 +72,14 @@ public class ExportNotes extends ActionBarActivity {
 		
 	  }
 	 
-		@Override
-		public void onResume() {
-		    super.onResume();  // Always call the superclass method first
+	@Override
+	public void onResume() {
+        super.onResume();  // Always call the superclass method first
 
-			////Log.d(MainActivity.DEBUGTAG, "in create newnote");
-			InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-			imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
 		    
-		}	  
+	}
 	  
 	  public void addListenerExportButton() {
 	 
@@ -152,9 +149,6 @@ public class ExportNotes extends ActionBarActivity {
 					else {
 						exportDir = getFilesDir ();
 					}
-					
-		    		 //File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-					 //dir.mkdirs();
 		    		 File file = new File(exportDir, exportFile.getText().toString() + ".txt");
 		    		 
 				     if (!file.exists() || !file.canRead()) {
@@ -171,8 +165,7 @@ public class ExportNotes extends ActionBarActivity {
 				     startActivity(Intent.createChooser(emailIntent, "Send mail..."));			        		 			
 	
 		    	} else {
-		    		Toast.makeText(ExportNotes.this, 
-		    		        "Invalid email...", Toast.LENGTH_LONG).show();
+		    		Toast.makeText(ExportNotes.this, "Invalid email...", Toast.LENGTH_LONG).show();
 		    	}		    		
 		    }
 	      		  
@@ -229,9 +222,7 @@ public class ExportNotes extends ActionBarActivity {
 		        // Can't read or write
 		        mExternalStorageAvailable = mExternalStorageWriteable = false;
 		    }   
-		    //Log.d(MainActivity.DEBUGTAG,"\n\nExternal Media: readable="
-		     //       +mExternalStorageAvailable+" writable="+mExternalStorageWriteable);
-		    
+
 		    return mExternalStorageAvailable & mExternalStorageWriteable;
 		}
 		

@@ -1,13 +1,5 @@
 package com.DataFinancial.NoteJackal;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.channels.FileChannel;
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,7 +7,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,6 +16,14 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BackupNotes extends ActionBarActivity {
 
@@ -54,38 +53,21 @@ public class BackupNotes extends ActionBarActivity {
 
 		actionBar.setDisplayShowTitleEnabled(true);
 
-		Log.d(MainActivity.DEBUGTAG, "onCreate 1");
 		backupFile = (EditText) findViewById(R.id.txtBackupFile);
-		// Log.d(MainActivity.DEBUGTAG,"onCrate 2");
 		address = (EditText) findViewById(R.id.txtBackupAddress);
 		
-
-		// Log.d(MainActivity.DEBUGTAG,"onCrate 3");
-		SharedPreferences prefs = getSharedPreferences(
-				LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
+		SharedPreferences prefs = getSharedPreferences(LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
 		String file = prefs.getString(LAST_BACKUP_FILE, "NoteJackalBackup");
 		String addr = prefs.getString(SendNote.LAST_SEND_ADDRESS, null);
-		
 
-		// Log.d(MainActivity.DEBUGTAG,"onCrate 4");
 		if (file != null) {
 			backupFile.setText(file);
 		}
-		// Log.d(MainActivity.DEBUGTAG,"address = " + address.toString());
+
 		if (addr != null) {
 			address.setText(addr);
 		}
 		
-		// Log.d(MainActivity.DEBUGTAG,"onCreate 5");
-
-		// address = (EditText) findViewById(R.id.txtAddress);
-		// SharedPreferences prefs =
-		// getSharedPreferences(ImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
-		// String addr = prefs.getString(LAST_SEND_ADDRESS, null);
-		// if (addr != null) {
-		// address.setText(addr);
-		// }
-
 		int textLength = backupFile.getText().length();
 		backupFile.setSelection(textLength, textLength);
 
@@ -98,10 +80,8 @@ public class BackupNotes extends ActionBarActivity {
 	public void onResume() {
 		super.onResume(); // Always call the superclass method first
 
-		// //Log.d(MainActivity.DEBUGTAG, "in create newnote");
 		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 		imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-
 	}
 
 	public void addListenerBackupButton() {
@@ -123,12 +103,10 @@ public class BackupNotes extends ActionBarActivity {
 
 					String filePath = getBackupFileDir().getAbsolutePath() + "/" + backupFile.getText().toString() + ".db";
 					Intent i = new Intent(BackupNotes.this, DriveActivity.class);
-					Log.d(MainActivity.DEBUGTAG, "filepath in backup = " + filePath);
-					i.putExtra("filepath", filePath);					
+					i.putExtra("filepath", filePath);
 					startActivity(i);
 					
 					//store on Google Drive
-					
 				}
 					
 					SharedPreferences prefs = getSharedPreferences(
@@ -140,9 +118,6 @@ public class BackupNotes extends ActionBarActivity {
 							.toString());
 
 					editor.commit();
-				// Toast.makeText(BackupNotes.this,
-				// "Backup completed...", Toast.LENGTH_LONG).show();
-				// finish();
 			}
 
 		});
@@ -176,17 +151,12 @@ public class BackupNotes extends ActionBarActivity {
 			public void onClick(View v) {
 
 				if (((CheckBox) v).isChecked()) {
-					Log.d(MainActivity.DEBUGTAG, "in check box");
-					
+
 					address.setText("");
 					address.setEnabled(false);
-					
-					
 				}
-
 			}
 		});
-
 	}
 
 	private void sendDatabaseBackup() {
@@ -204,7 +174,6 @@ public class BackupNotes extends ActionBarActivity {
 		String emailText;
 
 		if (Utils.isValidEmail(TO[0])) {
-
 
 			String fileName = backupFile.getText().toString() + ".db";
 			File file = new File(getBackupFileDir(), fileName);
@@ -234,9 +203,7 @@ public class BackupNotes extends ActionBarActivity {
 		
 		File backupDir;
 		if (checkExternalMedia()) {
-			backupDir = Environment
-					.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-			// dir.mkdirs();
+			backupDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
 		} else {
 			backupDir = getFilesDir();
 		}
@@ -248,9 +215,7 @@ public class BackupNotes extends ActionBarActivity {
 
 		File backupDir;
 		if (checkExternalMedia()) {
-			backupDir = Environment
-					.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-
+			backupDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
 			// Environment.getExternalStorageDirectory();
 		} else {
 			backupDir = getFilesDir();
@@ -266,8 +231,6 @@ public class BackupNotes extends ActionBarActivity {
 
 		File backupDB = new File(backupDir, fileName);
 
-		Log.d(MainActivity.DEBUGTAG, "db file = " + currentDB.toString());
-		Log.d(MainActivity.DEBUGTAG, "backup file = " + backupDB.toString());
 		try {
 			source = new FileInputStream(currentDB).getChannel();
 			destination = new FileOutputStream(backupDB).getChannel();
@@ -275,9 +238,7 @@ public class BackupNotes extends ActionBarActivity {
 			source.close();
 			destination.close();
 		} catch (IOException e) {
-			Toast.makeText(this,
-					"Unable to backup database. " + e.getMessage(),
-					Toast.LENGTH_LONG).show();
+			Toast.makeText(this, "Unable to backup database. " + e.getMessage(),	Toast.LENGTH_LONG).show();
 		}
 	}
 
@@ -297,8 +258,6 @@ public class BackupNotes extends ActionBarActivity {
 			// Can't read or write
 			mExternalStorageAvailable = mExternalStorageWriteable = false;
 		}
-		// Log.d(MainActivity.DEBUGTAG,"\n\nExternal Media: readable="
-		// +mExternalStorageAvailable+" writable="+mExternalStorageWriteable);
 
 		return mExternalStorageAvailable & mExternalStorageWriteable;
 	}

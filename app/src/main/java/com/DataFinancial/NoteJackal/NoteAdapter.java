@@ -29,8 +29,6 @@ public class NoteAdapter extends BaseAdapter implements ListAdapter {
 		this.notes = notes;
 		this.context = context;
         dbRem = new DatabaseReminders(context);
-		// //Log.d(MainActivity.DEBUGTAG, "Notes in adapter: " +
-		// notes.toString());
 	}
 
 	@Override
@@ -51,12 +49,7 @@ public class NoteAdapter extends BaseAdapter implements ListAdapter {
 		return notes.get(position).getId();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.widget.Adapter#getView(int, android.view.View,
-	 * android.view.ViewGroup)
-	 */
+
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 
@@ -112,7 +105,7 @@ public class NoteAdapter extends BaseAdapter implements ListAdapter {
 
 		//reminder = null;
 		hasReminder = note.getHasReminder();
-        //Log.d(MainActivity.DEBUGTAG, "has reminder  in adapter= " + hasReminder);
+      
         Drawable noteIcon;
 		int image_code = note.getPriority() + (note.getLatitude().isEmpty() ? 0 : 1)*2 + (hasReminder.equals("false") ? 0 : 1)*4 + (help ? 8 : 0);
 		switch(image_code) {

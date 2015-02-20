@@ -36,6 +36,7 @@
     <string name="menu_drive">Drive</string>
     <string name="menu_add_image">Add Image</string>
     <string name="menu_view_image">View Image</string>
+    <string name="menu_remove_image">Delete Image</string>
     <string name="chk_google_drive">Google Drive</string>
     <string name="title_activity_main">Jot\'emDown</string>
     <string name="title_activity_image">Jot\'emDown</string>

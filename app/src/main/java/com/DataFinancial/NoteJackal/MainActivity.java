@@ -11,7 +11,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -102,7 +101,7 @@ public class MainActivity extends ActionBarActivity {
 			fromHelp = extras.getString("help");
 			searchText = (String) getResources().getText(
 					R.string.txt_help_search);
-			//Log.d(MainActivity.DEBUGTAG, "searchtext in extras= " + searchText);
+
 			loadNotes(searchText, DatabaseNotes.COL_ID, "ASC");
 		} else {
 			loadNotes(null, DatabaseNotes.COL_CREATE_DATE, "DESC");
@@ -132,20 +131,13 @@ public class MainActivity extends ActionBarActivity {
 
                 selectedRow = 0;
 
-				String searchText = ((EditText) findViewById(R.id.searchText))
-						.getText().toString();
-
-				// Utils util = new Utils();
-
-				// String incrDate = util.incrementDay(searchText);
-				// Log.d(MainActivity.DEBUGTAG, "incrDate=" + incrDate);
+				String searchText = ((EditText) findViewById(R.id.searchText)).getText().toString();
 
 				loadNotes(searchText, DatabaseNotes.COL_CREATE_DATE, "DESC");
 
 				InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 				imm.toggleSoftInput(InputMethodManager.HIDE_NOT_ALWAYS, 0);
 			}
-
 		});
 
 	}
@@ -211,8 +203,6 @@ public class MainActivity extends ActionBarActivity {
 
 		NoteAdapter adapter = new NoteAdapter(this, notes);
 
-		        //Log.d(DEBUGTAG, "Selected row loadNotes = " + selectedRow);
-
 		noteList.setAdapter(adapter);
 
         noteList.setSelectionFromTop(selectedRow,0);
@@ -224,7 +214,7 @@ public class MainActivity extends ActionBarActivity {
 					long arg3) {
 
                 selectedRow = pos;
-                //Log.d(DEBUGTAG, "Selected row  on touch = " + selectedRow);
+
 				Note note = (Note) adapter.getItemAtPosition(pos);
 
 				Intent i = new Intent(MainActivity.this, NewNote.class);
@@ -236,6 +226,7 @@ public class MainActivity extends ActionBarActivity {
 				i.putExtra("latitude", note.getLatitude());
 				i.putExtra("longitude", note.getLongitude());
                 i.putExtra("hasReminder", note.getHasReminder());
+                i.putExtra("image", note.getImage());
 				startActivityForResult(i, EDIT_NOTE);
 
 			}
@@ -246,7 +237,6 @@ public class MainActivity extends ActionBarActivity {
 	private void loadSavedFile() {
 
 		try {
-			// //Log.d(DEBUGTAG, "Reading file");
 			FileInputStream fis = openFileInput(TEXTFILE);
 			BufferedReader reader = new BufferedReader(new InputStreamReader(
 					new DataInputStream(fis)));
@@ -272,12 +262,11 @@ public class MainActivity extends ActionBarActivity {
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
-		// //Log.d(MainActivity.DEBUGTAG, "menu id=" + id);
+
 		Intent i;
 
 		switch (id) {
 		case R.id.menu_lock:
-			Log.d(MainActivity.DEBUGTAG, "lock menu item");
 			i = new Intent(MainActivity.this, LockImageActivity.class);
 			startActivity(i);
 			break;
@@ -390,14 +379,13 @@ public class MainActivity extends ActionBarActivity {
 				cursor.moveToFirst();
 				int columnIndex = cursor.getColumnIndex(columns[0]);
 				String imagePath = cursor.getString(columnIndex);
-                Log.d(MainActivity.DEBUGTAG, "Image Path = " + imagePath);
+
 				cursor.close();
 
 				Uri image = Uri.parse(imagePath);
 
 				Toast.makeText(this, "Gallery result" + image,
 						Toast.LENGTH_LONG).show();
-				// //Log.d(MainActivity.DEBUGTAG, "Gallery Uri = " + image);
 
 				try {
 					copyImageFile(imagePath);
@@ -443,10 +431,6 @@ public class MainActivity extends ActionBarActivity {
 				getString(R.string.PASSPOINTS_PHOTO));
 
 		File sourceFile = new File(sourcePath);
-
-		// //Log.d(MainActivity.DEBUGTAG, "Source path = " + sourcePath);
-		// //Log.d(MainActivity.DEBUGTAG,
-		// "Dest path = " + destinationFile.getAbsolutePath());
 
 		InputStream in = new FileInputStream(sourceFile);
 		OutputStream out = new FileOutputStream(destinationFile);

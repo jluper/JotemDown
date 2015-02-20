@@ -1,10 +1,5 @@
 package com.DataFinancial.NoteJackal;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,7 +8,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
@@ -22,6 +16,11 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RestoreNotes extends ActionBarActivity {
 
@@ -55,7 +54,6 @@ public class RestoreNotes extends ActionBarActivity {
 		SharedPreferences prefs = getSharedPreferences(
 		LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
 		lastFile = prefs.getString(LAST_BACKUP_FILE, "NoteJackalBackup");
-		
 
 		if (lastFile != null) {
 			restoreFile.setText(lastFile);
@@ -103,7 +101,6 @@ public class RestoreNotes extends ActionBarActivity {
 	public void onResume() {
 		super.onResume(); // Always call the superclass method first
 
-		// //Log.d(MainActivity.DEBUGTAG, "in create newnote");
 		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 		imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
 
@@ -116,8 +113,7 @@ public class RestoreNotes extends ActionBarActivity {
 		dlgBuilder.setIcon(R.drawable.btn_check_buttonless_on);
 		dlgBuilder.setMessage(R.string.dialog_restore_notes);
 		dlgBuilder.setCancelable(true);
-		
-		
+
 		dlgBuilder.setPositiveButton(R.string.dialog_positive,
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
@@ -142,15 +138,12 @@ public class RestoreNotes extends ActionBarActivity {
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
 
-						// Log.d(MainActivity.DEBUGTAG,
-						// "in confirm dialogue negative");
 						dialog.cancel();
 
 					}
 				});
 
 		confirmRestore = dlgBuilder.create();
-
 	}
 
 	public void addListenerRestoreButton() {
@@ -163,13 +156,9 @@ public class RestoreNotes extends ActionBarActivity {
 			public void onClick(View v) {
 
 				confirmRestore.show();
-
-				// restoreFromBackup();
-
 			}
 
 		});
-
 	}
 
 	private boolean restoreFromLocalBackup(String fileName, String dbName) {		
@@ -178,21 +167,13 @@ public class RestoreNotes extends ActionBarActivity {
 
 			String sourcePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + fileName + ".db";
             File sourceFile = new File(sourcePath);
-            
-			// Log.d(MainActivity.DEBUGTAG, "file = " + file.toString());
-            Log.d(MainActivity.DEBUGTAG, "source file = " + sourceFile);
-            
          
             File destinationFile;
             if (dbName != null ) {
-            	 Log.d(MainActivity.DEBUGTAG, "db path = " + dbName);
             	 destinationFile = new File(dbName);
-            	 Log.d(MainActivity.DEBUGTAG, "dest file from path = " + destinationFile.toString());
             } else {
             	 destinationFile = getDatabasePath(BackupNotes.DATABASE_NAME);
-            	 Log.d(MainActivity.DEBUGTAG, "dest file from constant = " + destinationFile.toString());
             }
-          
               
 			if (!sourceFile.exists() || !sourceFile.canRead()) {
 				Toast.makeText(this, "File not found...", Toast.LENGTH_LONG).show();
@@ -200,7 +181,6 @@ public class RestoreNotes extends ActionBarActivity {
 				return false;
 			}
 
-         
             Utils util = new Utils();
 			sourceFile.setWritable(true); 
 			try {
@@ -235,8 +215,6 @@ public class RestoreNotes extends ActionBarActivity {
 			// Can't read or write
 			mExternalStorageAvailable = mExternalStorageWriteable = false;
 		}
-		// Log.d(MainActivity.DEBUGTAG,"\n\nExternal Media: readable="
-		// +mExternalStorageAvailable+" writable="+mExternalStorageWriteable);
 
 		return mExternalStorageAvailable & mExternalStorageWriteable;
 	}

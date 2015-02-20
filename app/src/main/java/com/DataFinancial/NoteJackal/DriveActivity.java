@@ -1,34 +1,22 @@
 package com.DataFinancial.NoteJackal;
 
+import android.accounts.AccountManager;
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.ContentResolver;
+import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
-import android.app.Activity;
-import android.app.ProgressDialog;
 import android.util.Log;
-import android.util.Property;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
-
-//import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
-import android.accounts.AccountManager;
-import android.content.ContentResolver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.net.Uri;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -37,8 +25,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.drive.MetadataChangeSet;
-import com.google.android.gms.drive.metadata.CustomPropertyKey;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
@@ -50,6 +36,16 @@ import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.ParentList;
 import com.google.api.services.drive.model.ParentReference;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+//import java.io.File;
 
 public class DriveActivity extends ActionBarActivity {
 	static final int REQUEST_ACCOUNT_PICKER = 1;
@@ -82,10 +78,7 @@ public class DriveActivity extends ActionBarActivity {
 		actionBar.setDisplayShowTitleEnabled(true);
 
 		// Connect to Google Drive
-		mCredential = GoogleAccountCredential.usingOAuth2(this,
-				Arrays.asList(DriveScopes.DRIVE));
-		// mCredential = GoogleAccountCredential.usingOAuth2(this,
-		// Arrays.asList(DriveScopes.DRIVE_APPDATA));
+		mCredential = GoogleAccountCredential.usingOAuth2(this,	Arrays.asList(DriveScopes.DRIVE));
 
 		btnRestore = (Button) findViewById(R.id.btnRestoreDrive);
 		addListenerRestoreButton();
@@ -98,14 +91,13 @@ public class DriveActivity extends ActionBarActivity {
 			btnRestore.setVisibility(View.INVISIBLE);
 			lblSelectFile = (TextView) findViewById(R.id.lblSelectFile);
 			lblSelectFile.setVisibility(View.INVISIBLE);
-			startActivityForResult(mCredential.newChooseAccountIntent(),
-					REQUEST_ACCOUNT_PICKER);
+			startActivityForResult(mCredential.newChooseAccountIntent(), REQUEST_ACCOUNT_PICKER);
 		} else {
-
 			mContext = getApplicationContext();
 			mListView = (ListView) findViewById(R.id.lstFiles);
-			Log.d(MainActivity.DEBUGTAG, "mlistView = " + mListView.toString());
+
 			OnItemClickListener mMessageClickedHandler = new OnItemClickListener() {
+
 				public void onItemClick(AdapterView parent, View v,
 						int position, long id) {
 
@@ -116,14 +108,11 @@ public class DriveActivity extends ActionBarActivity {
 			};
 
 			mListView.setOnItemClickListener(mMessageClickedHandler);
-			// mListView.setSelector(R.drawable.list_item_selector);
 
 			InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 			imm.toggleSoftInput(InputMethodManager.HIDE_NOT_ALWAYS, 0);
 
-			startActivityForResult(mCredential.newChooseAccountIntent(),
-					REQUEST_ACCOUNT_PICKER);
-
+			startActivityForResult(mCredential.newChooseAccountIntent(), REQUEST_ACCOUNT_PICKER);
 		}
 	}
 
@@ -133,7 +122,6 @@ public class DriveActivity extends ActionBarActivity {
 
 		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 		imm.toggleSoftInput(InputMethodManager.HIDE_NOT_ALWAYS, 0);
-		// Log.d(MainActivity.DEBUGTAG, "in onresume DriveActivity");
 	}
 
 	public void addListenerRestoreButton() {
@@ -149,29 +137,23 @@ public class DriveActivity extends ActionBarActivity {
 
 				downloadItemFromList(selectedFilePosition);
 
-				Log.d(MainActivity.DEBUGTAG, "filename with ext = " + mDLVal);
 				String fileName = mDLVal.substring(0, mDLVal.length() - 3);
-				Log.d(MainActivity.DEBUGTAG, "filename wo ext = " + fileName);
 
 				restoreFromLocalBackup(fileName, null);
 
 				Intent i = new Intent(DriveActivity.this, MainActivity.class);
 				startActivity(i);
-
 			}
 
 		});
-
 	}
 
 	private void getDriveContents() {
 
-		final ProgressDialog ringProgressDialog = ProgressDialog.show(
-				DriveActivity.this, "Please wait ...",
+		final ProgressDialog ringProgressDialog = ProgressDialog.show(DriveActivity.this, "Please wait ...",
 				"Getting list of files from Google Drive...", true);
 		ringProgressDialog.setCancelable(true);
 
-		Log.d(MainActivity.DEBUGTAG, "getDriveContents");
 		Thread t = new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -192,11 +174,10 @@ public class DriveActivity extends ActionBarActivity {
 
 						mResultList.addAll(fileList.getItems());
 
-						for (File tmp : mResultList) {
-
-							Log.d(MainActivity.DEBUGTAG, "results filename"
-									+ tmp.getTitle());
-						}
+//						for (File tmp : mResultList) {
+//							Log.d(MainActivity.DEBUGTAG, "results filename"
+//									+ tmp.getTitle());
+//						}
 
 						request.setPageToken(fileList.getNextPageToken());
 					} catch (UserRecoverableAuthIOException e) {
@@ -221,10 +202,8 @@ public class DriveActivity extends ActionBarActivity {
 
 	private void downloadItemFromList(int position) {
 		mDLVal = (String) mListView.getItemAtPosition(position);
-		// showToast("You just pressed: " + mDLVal);
 
-		final ProgressDialog ringProgressDialog = ProgressDialog.show(
-				DriveActivity.this, "Please wait ...",
+		final ProgressDialog ringProgressDialog = ProgressDialog.show(DriveActivity.this, "Please wait ...",
 				"Downloading file from Google Drive...", true);
 		ringProgressDialog.setCancelable(true);
 
@@ -250,17 +229,12 @@ public class DriveActivity extends ActionBarActivity {
 													.getExternalStoragePublicDirectory(
 															Environment.DIRECTORY_DOWNLOADS)
 													.getPath(), tmp.getTitle());
-									// showToast("Downloading: " +
-									// tmp.getTitle() + " to " + Environment
-									// .getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath());
 
 									storeFile(file, iStream);
 
 								} finally {
 									iStream.close();
-
 								}
-
 							} catch (IOException e) {
 								e.printStackTrace();
 							}
@@ -270,6 +244,7 @@ public class DriveActivity extends ActionBarActivity {
 				ringProgressDialog.dismiss();
 			}
 		});
+
 		t.start();
 	}
 
@@ -281,36 +256,17 @@ public class DriveActivity extends ActionBarActivity {
 
 				List<ParentReference> parents = new ArrayList<ParentReference>();
 				mFileArray = new String[mResultList.size()];
-				Log.d(MainActivity.DEBUGTAG, "mResultList size = "
-						+ mResultList.size());
+
 				int i = 0;
-				for (File tmp : mResultList) {
-					mFileArray[i] = tmp.getTitle();
+				for (File tmp : mResultList) {mFileArray[i] = tmp.getTitle();
 					parents = tmp.getParents();
 					i++;
 				}
-				// Log.d(MainActivity.DEBUGTAG, "mFileArry size = " +
-				// mFileArray.length);
-				// Log.d(MainActivity.DEBUGTAG, "mFileArry: " +
-				// mFileArray[0].toString());
-				// Log.d(MainActivity.DEBUGTAG, "mFileArry: " +
-				// mFileArray[1].toString());
-				// Log.d(MainActivity.DEBUGTAG, "mFileArry: " +
-				// mFileArray[2].toString());
-				// Log.d(MainActivity.DEBUGTAG, "mFileArry: " +
-				// mFileArray[3].toString());
-				// Log.d(MainActivity.DEBUGTAG, "mFileArry: " +
-				// mFileArray[4].toString());
-				// Log.d(MainActivity.DEBUGTAG, "mFileArry: " +
-				// mFileArray[5].toString());
 
-				mAdapter = new ArrayAdapter<String>(mContext,
-						android.R.layout.simple_list_item_activated_1,
+				mAdapter = new ArrayAdapter<String>(mContext, android.R.layout.simple_list_item_activated_1,
 						mFileArray);
-				Log.d(MainActivity.DEBUGTAG,
-						"adapter length = " + mAdapter.getCount());
+
 				mListView.setAdapter(mAdapter);
-				Log.d(MainActivity.DEBUGTAG, "populateListView 4");
 			}
 		});
 	}
@@ -356,8 +312,6 @@ public class DriveActivity extends ActionBarActivity {
 					mCredential.setSelectedAccountName(accountName);
 					mService = getDriveService(mCredential);
 
-					Log.d(MainActivity.DEBUGTAG, "uploadFilePath = "
-							+ uploadFilePath);
 					if (uploadFilePath != null) {
 						saveFileToDrive();
 					} else {
@@ -400,53 +354,39 @@ public class DriveActivity extends ActionBarActivity {
 			@Override
 			public void run() {
 				try {
-					Log.d(MainActivity.DEBUGTAG, "path = " + uploadFilePath);
 					mFileUri = Uri.fromFile(new java.io.File(uploadFilePath));
 
-					ContentResolver cR = DriveActivity.this
-							.getContentResolver();
+					ContentResolver cR = DriveActivity.this.getContentResolver();
 
 					// File's binary content
-					java.io.File fileContent = new java.io.File(mFileUri
-							.getPath());
-					FileContent mediaContent = new FileContent(cR
-							.getType(mFileUri), fileContent);
-
-					// showToast("Selected " + mFileUri.getPath() +
-					// " to upload");
+					java.io.File fileContent = new java.io.File(mFileUri.getPath());
+					FileContent mediaContent = new FileContent(cR.getType(mFileUri), fileContent);
 
 					// File's meta data.
 					File body = new File();
 					body.setTitle(fileContent.getName());
 					body.setMimeType(cR.getType(mFileUri));
 
-					// body.setParents(Arrays.asList(new
-					// ParentReference().setId("appdata")));
-
-					com.google.api.services.drive.Drive.Files f1 = mService
-							.files();
-					com.google.api.services.drive.Drive.Files.Insert i1 = f1
-							.insert(body, mediaContent);
+					com.google.api.services.drive.Drive.Files f1 = mService.files();
+					com.google.api.services.drive.Drive.Files.Insert i1 = f1.insert(body, mediaContent);
 					File file = i1.execute();
 
 					if (file != null) {
 						ringProgressDialog.dismiss();
-						showToast("File uploaded to Google Drive: "
-								+ file.getTitle());
-						Intent i = new Intent(DriveActivity.this,
-								MainActivity.class);
+						showToast("File uploaded to Google Drive: "	+ file.getTitle());
+						Intent i = new Intent(DriveActivity.this, MainActivity.class);
 						startActivity(i);
 					}
 				} catch (UserRecoverableAuthIOException e) {
 					startActivityForResult(e.getIntent(), REQUEST_AUTHORIZATION);
 				} catch (IOException e) {
-					e.printStackTrace();
 					showToast("Transfer ERROR: " + e.toString());
 				}
 
 				ringProgressDialog.dismiss();
 			}
 		});
+
 		t.start();
 	}
 
@@ -458,8 +398,7 @@ public class DriveActivity extends ActionBarActivity {
 				Log.d(MainActivity.DEBUGTAG, "File Id: " + parent.getId());
 			}
 		} catch (IOException e) {
-			Log.d(MainActivity.DEBUGTAG,
-					"An error occurred getting file parents: " + e);
+
 		}
 	}
 
@@ -467,20 +406,19 @@ public class DriveActivity extends ActionBarActivity {
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				Toast.makeText(getApplicationContext(), toast,
-						Toast.LENGTH_SHORT).show();
-				Log.d(MainActivity.DEBUGTAG, toast);
+				Toast.makeText(getApplicationContext(), toast, Toast.LENGTH_SHORT).show();
 			}
 		});
 	}
 
 	public String getPathFromUri(Uri uri) {
+
 		String[] projection = { MediaStore.Images.Media.DATA };
 		Cursor cursor = getContentResolver().query(uri, projection, null, null,
 				null);
-		int column_index = cursor
-				.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+		int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
 		cursor.moveToFirst();
+
 		return cursor.getString(column_index);
 	}
 
@@ -489,25 +427,19 @@ public class DriveActivity extends ActionBarActivity {
 		String sourcePath = Environment.getExternalStoragePublicDirectory(
 				Environment.DIRECTORY_DOWNLOADS).getAbsolutePath()
 				+ "/" + fileName + ".db";
-		java.io.File sourceFile = new java.io.File(sourcePath);
 
-		// Log.d(MainActivity.DEBUGTAG, "file = " + file.toString());
-		Log.d(MainActivity.DEBUGTAG, "source file = " + sourceFile);
+		java.io.File sourceFile = new java.io.File(sourcePath);
 
 		java.io.File destinationFile;
 		if (dbName != null) {
-			Log.d(MainActivity.DEBUGTAG, "db path = " + dbName);
 			destinationFile = new java.io.File(dbName);
-			Log.d(MainActivity.DEBUGTAG, "dest file from path = "
-					+ destinationFile.toString());
+
 		} else {
 			destinationFile = getDatabasePath(BackupNotes.DATABASE_NAME);
-			Log.d(MainActivity.DEBUGTAG, "dest file from constant = "
-					+ destinationFile.toString());
 		}
 
 		if (!sourceFile.exists() || !sourceFile.canRead()) {
-			Toast.makeText(this, "File not found...", Toast.LENGTH_LONG).show();
+			Toast.makeText(this, "File not found.", Toast.LENGTH_LONG).show();
 
 			return false;
 		}
@@ -517,11 +449,10 @@ public class DriveActivity extends ActionBarActivity {
 		try {
 			util.copyFile(sourceFile, destinationFile);
 		} catch (IOException e) {
-			Toast.makeText(DriveActivity.this, "Unable to restore notes...",
+			Toast.makeText(DriveActivity.this, "Unable to restore notes.",
 					Toast.LENGTH_LONG).show();
 		}
 
 		return true;
 	}
-
 }

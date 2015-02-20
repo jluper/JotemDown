@@ -1,6 +1,21 @@
 package com.DataFinancial.NoteJackal;
 
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.os.Environment;
+import android.support.v7.app.ActionBarActivity;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
@@ -10,22 +25,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.os.Environment;
-import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
 
 public class ImportNotes extends ActionBarActivity {
 
@@ -38,7 +37,6 @@ public class ImportNotes extends ActionBarActivity {
 	 
 	  private static final String LAST_BACKUP_FILE = "LAST_BACKUP_FILE";
 	  protected List<Note> notes = new ArrayList<Note>();
-	 
 
 	  
 	  @Override
@@ -53,39 +51,31 @@ public class ImportNotes extends ActionBarActivity {
 		actionBar.setIcon(R.drawable.note_yellow);
 		actionBar.setTitle("Import Notes");
 		actionBar.setDisplayShowTitleEnabled(true);
-		
-		
-			
-		//Log.d(MainActivity.DEBUGTAG,"onCreate 1");
+
 		importFile = (EditText) findViewById(R.id.txtImportFile);	
 				
 		SharedPreferences prefs = getSharedPreferences(LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
 		String file = prefs.getString(LAST_BACKUP_FILE,  "NoteJackalBackup");
 		String addr = prefs.getString(SendNote.LAST_SEND_ADDRESS,  null);
-		//Log.d(MainActivity.DEBUGTAG,"onCreate 2");
+
 		if (file != null) {
 			importFile.setText(file);			
 		}
 
 		buildConfirmDialog();
 		
-		
-		
 		int textLength = importFile.getText().length();
 		importFile.setSelection(textLength, textLength);
 		
-		addListenerImportButton();	
-		
+		addListenerImportButton();
 	  }
 	 
 		@Override
 		public void onResume() {
 		    super.onResume();  // Always call the superclass method first
 
-			////Log.d(MainActivity.DEBUGTAG, "in create newnote");
 			InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 			imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
-		    
 		}
 		
 	  public void buildConfirmDialog() {
@@ -97,7 +87,7 @@ public class ImportNotes extends ActionBarActivity {
 	       dlgBuilder.setCancelable(true);
 	      
 	       dlgBuilder.setPositiveButton(R.string.dialog_positive,
-                    new DialogInterface.OnClickListener() {
+                new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                     dialog.cancel();
        				
@@ -109,21 +99,14 @@ public class ImportNotes extends ActionBarActivity {
                 }
             });
 	       
-	        dlgBuilder.setNegativeButton(R.string.dialog_negative,
-                    new DialogInterface.OnClickListener() {
+	        dlgBuilder.setNegativeButton(R.string.dialog_negative, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
-                	
-                	//Log.d(MainActivity.DEBUGTAG, "in confirm dialogue negative");
+
                     dialog.cancel();
-                    
- 
-                    
                 }
             });
 
             confirmImport = dlgBuilder.create();
-            
-	  
 	  }
 	  
 	  public void addListenerImportButton() {
@@ -134,11 +117,8 @@ public class ImportNotes extends ActionBarActivity {
 						
 			@Override
 			public void onClick(View v) {
-					
 				
 				confirmImport.show();
-				
-				//importFromFile();						
 			}	 
 		});	 
 	  }
@@ -151,9 +131,8 @@ public class ImportNotes extends ActionBarActivity {
 				importFile = (EditText) findViewById(R.id.txtImportFile);	
 				File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
 			    File file = new File(dir, importFile.getText().toString() + ".txt");
-			    Log.d(MainActivity.DEBUGTAG, "import file = " + file);
+
 		        if (!file.exists() || !file.canRead()) {
-		        	Log.d(MainActivity.DEBUGTAG, "file exists = " + file.exists());
 		        	Toast.makeText(this, "File not found...",Toast.LENGTH_LONG).show();			  
 		        	return false;
 		        }	        
@@ -169,24 +148,18 @@ public class ImportNotes extends ActionBarActivity {
 	        		Date curr_date = new Date();
 	        		
 	        		String today = dateFormat.format(curr_date);
-	        		//Log.d(MainActivity.DEBUGTAG, "todays date in import: " + today);
+
 		            FileInputStream fstream = new FileInputStream(file.getPath());
 		            // Get the object of DataInputStream
 		            DataInputStream in = new DataInputStream(fstream);
 		            BufferedReader br = new BufferedReader(new InputStreamReader(in));
 		            while ((line = br.readLine()) != null && !line.isEmpty()) {
 		            	
-		            	//Log.d(MainActivity.DEBUGTAG, "line: " + line + "  ");
-		            	//splitNote = line.split(",");
-		            	Note note = new Note();
+		               	Note note = new Note();
 		            	note.setId(1);
 		            	note.setPriority(0);	        		
 		            	note.setCreateDate(today);
 		            	note.setEditDate(today);
-		            	//note.setBody(splitNote[1].replace("|", "\n"));
-		            	//note.setBody(splitNote[1].replace("~", "|"));
-		            	
-		            	//note.setBody(line.replace("|", "\n"));
 		            	note.setBody(line.replace("|", "\n").replace("~", "|"));
 		            	notes.add(note);		            	
 		            }		            		  
@@ -197,8 +170,7 @@ public class ImportNotes extends ActionBarActivity {
 
 		            in.close();
 		            
-					Toast.makeText(ImportNotes.this, 
-		    		        "Import completed...", Toast.LENGTH_LONG).show();
+					Toast.makeText(ImportNotes.this, "Import completed...", Toast.LENGTH_LONG).show();
 					
 		        } catch (Exception e) {
 		    	  Toast.makeText(getBaseContext(), "Error importing notes..." + e.getMessage(), Toast.LENGTH_LONG).show();
@@ -217,6 +189,7 @@ public class ImportNotes extends ActionBarActivity {
 	  
 	  
 		private boolean checkExternalMedia() {
+
 		    boolean mExternalStorageAvailable = false;
 		    boolean mExternalStorageWriteable = false;
 		    String state = Environment.getExternalStorageState();
@@ -231,13 +204,9 @@ public class ImportNotes extends ActionBarActivity {
 		    } else {
 		        // Can't read or write
 		        mExternalStorageAvailable = mExternalStorageWriteable = false;
-		    }   
-		    //Log.d(MainActivity.DEBUGTAG,"\n\nExternal Media: readable="
-		    //        +mExternalStorageAvailable+" writable="+mExternalStorageWriteable);
+		    }
 		    
 		    return mExternalStorageAvailable & mExternalStorageWriteable;
 		}
-		
-
 }
 

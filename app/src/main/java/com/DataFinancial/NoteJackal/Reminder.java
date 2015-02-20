@@ -9,26 +9,39 @@ public class Reminder {
 	private String recur;
 	private String phone;
 	
-	public String getPhone() {
+	public String getPhone()
+    {
 		return phone;
 	}
-	public void setPhone(String phone) {
+
+	public void setPhone(String phone)
+    {
 		this.phone = phone;
 	}
+
 	public int getId() {
-		return id;
+
+        return id;
 	}
+
 	public void setId(int Id) {
-		id = Id;
+
+        id = Id;
 	}
+
 	public int getNoteId() {
-		return noteId;
+
+        return noteId;
 	}
+
 	public void setNoteId(int id) {
-		noteId = id;
+
+        noteId = id;
 	}
+    
 	public String getDate() {
-		return date;
+
+        return date;
 	}
 
 
@@ -43,8 +56,10 @@ public class Reminder {
 		this.date = date;
 	}
 	public String getTime() {
+
 		return time;
 	}
+
 	public void setTime(String time) {
 		
 		int index = time.indexOf(':');
@@ -58,9 +73,12 @@ public class Reminder {
 		this.time = time;
 	}
 	public String getRecur() {
-		return recur;
+
+        return recur;
 	}
-	public void setRecur(String recur) {
+
+	public void setRecur(String recur)
+    {
 		this.recur = recur;
 	}
 	

@@ -17,9 +17,7 @@ public class ChangePassword extends ActionBarActivity {
 	  private EditText password;
 	  private EditText passwordRepeat;
 	  private Button btnSubmit;
-	  //public static final String PASSWORD = "password";
-	  
-	  
+
 	  @Override
 	  public void onCreate(Bundle savedInstanceState) {
 		  	
@@ -31,7 +29,6 @@ public class ChangePassword extends ActionBarActivity {
 		actionBar.setIcon(R.drawable.note_yellow);
 		actionBar.setTitle("Change Password");
 		actionBar.setDisplayShowTitleEnabled(true);
-		
 		
 		addListenerOnButton();	 
 	  }
@@ -53,14 +50,10 @@ public class ChangePassword extends ActionBarActivity {
 	 
 			@Override
 			public void onClick(View v) {
-	 
-			 
 			  
 				SharedPreferences prefs = getSharedPreferences(LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
 				String savedPassword = prefs.getString(Password.PASSWORD, getString(R.string.default_password));
-				//Log.d(MainActivity.DEBUGTAG, "savedPassword=" + savedPassword + "y");
-				//Log.d(MainActivity.DEBUGTAG, "typed password=" + password.getText().toString() + "y");
-				
+
 				if (password.getText().toString().equals(passwordRepeat.getText().toString())) {
 					SharedPreferences.Editor editor = prefs.edit();
 					editor.putString(Password.PASSWORD, password.getText().toString());
@@ -71,13 +64,8 @@ public class ChangePassword extends ActionBarActivity {
 				} else {
 					Toast.makeText(ChangePassword.this, "Password don't match, try again...",	Toast.LENGTH_LONG).show();									
 				}
-				
-				 
-	 
 			}
-	 
 		});
-	 
 	  }
 }
 

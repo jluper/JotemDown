@@ -1,16 +1,14 @@
 package com.DataFinancial.NoteJackal;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Point;
-import android.util.Log;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabasePasspoints extends SQLiteOpenHelper {
 
@@ -36,8 +34,7 @@ public class DatabasePasspoints extends SQLiteOpenHelper {
 			String sqlPasspointsTable = String
 					.format("create table if not exists %s (%s INTEGER PRIMARY KEY, %s INTEGER NOT NULL, %s INTEGER NOT NULL)",
 							POINTS_TABLE, COL_ID, COL_X, COL_Y);
-			db.execSQL(sqlPasspointsTable);		
-		
+			db.execSQL(sqlPasspointsTable);
 	}	
 	
 	@Override
@@ -46,8 +43,7 @@ public class DatabasePasspoints extends SQLiteOpenHelper {
 	      "Upgrading database from version " + oldVersion + " to "
 	          + newVersion + ", which will destroy all old data");
 	  db.execSQL("DROP TABLE IF EXISTS " + TABLE_COMMENTS);
-	  onCreate(db);*/
-	}
+	  onCreate(db);*/	}
 	
 	public void storePoints(List<Point> points) {
 		

@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,15 +20,19 @@ public class DatabaseReminders extends SQLiteOpenHelper {
 	private static final String COL_TIME = "REMTIME";
 	private static final String COL_RECUR = "RECUR";
 	private static final String COL_PHONE = "PHONE";
+    private Context context;
 	
 
 	public DatabaseReminders(Context context) {
-		super(context, "reminders.db", null, 1);
-	}
+
+        super(context, "reminders.db", null, 1);
+
+        this.context = context;
+    }
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		
+
 	}
 	
 	
@@ -40,10 +43,8 @@ public class DatabaseReminders extends SQLiteOpenHelper {
 			String sqlRemindersTable = String
 					.format("create table if not exists %s (%s INTEGER PRIMARY KEY, %s INTEGER NOT NULL, %s STRING NOT NULL, %s STRING NOT NULL, %s STRING NOT NULL, %s STRING)",
 							TABLE_REMINDERS, COL_ID, COL_NOTEID, COL_DATE, COL_TIME, COL_RECUR, COL_PHONE);
-			//Log.d(MainActivity.DEBUGTAG, "select " + sqlRemindersTable);
-			
-			db.execSQL(sqlRemindersTable);		
-		
+
+			db.execSQL(sqlRemindersTable);
 	}	
 	
 	@Override
@@ -66,11 +67,9 @@ public class DatabaseReminders extends SQLiteOpenHelper {
 		values.put(COL_TIME, reminder.getTime());
 		values.put(COL_RECUR, reminder.getRecur());
 		values.put(COL_PHONE, reminder.getPhone());
-					
-		Log.d(MainActivity.DEBUGTAG, "addReminder " + reminder.toString());			
-		
+
 		long row = db.insert(TABLE_REMINDERS,  null,  values);						
-		//Log.d(MainActivity.DEBUGTAG, "row number on add = " + row);
+
 		db.close();
 		
 		return row;
@@ -95,7 +94,6 @@ public class DatabaseReminders extends SQLiteOpenHelper {
 			reminder.setPhone(cursor.getString(5));
 			
 			reminders.add(reminder);
-		
 		}
 		
 		db.close();
@@ -155,7 +153,6 @@ public class DatabaseReminders extends SQLiteOpenHelper {
 			reminder.setPhone(cursor.getString(5));
 	    }
 	    else {
-
 	    	return null;
 	    }
 			
@@ -185,11 +182,8 @@ public class DatabaseReminders extends SQLiteOpenHelper {
 
 	    long rowId = -1;
 	    try {
-	    	
 	    	rowId = db.update(TABLE_REMINDERS, values, COL_ID + "=" + reminder.getId(), null);
-	    	
 		} catch (Exception e) {
-			
 			return rowId;   // should be -1
 		}
 	    
@@ -205,11 +199,8 @@ public class DatabaseReminders extends SQLiteOpenHelper {
 		  
 		    long rowId = -1;
 		    try {
-		    	
 		    	db.delete(TABLE_REMINDERS, COL_ID + "=" + id, null);
-
 			} catch (Exception e) {
-				
 				return rowId;   // should be -1
 			}
 		    
@@ -224,36 +215,15 @@ public class DatabaseReminders extends SQLiteOpenHelper {
 		  
 		    long rowId = -1;
 		    try {
-		    	
 		    	db.delete(TABLE_REMINDERS, COL_NOTEID + "=" + noteId, null);
-
 			} catch (Exception e) {
-				
 				return rowId;   // should be -1
 			}
 		    
 		    db.close();
-		    
+
 		    return rowId;
 	  }
-	  
-	public void deletePastReminders() {
-		  
-		  SQLiteDatabase db = this.getWritableDatabase();
-		  
-		    long rowId = -1;
-		    try {
-		    		    	
-		    	SimpleDateFormat df = new SimpleDateFormat("yy/MM/dd HH:mm");
-				Date today = new Date();
-				String[] dateTime;
-				dateTime = df.format(today).split(" ");
 
-			} catch (Exception e) {
-				//Log.d(MainActivity.DEBUGTAG,"exception: " +  e.getMessage());		
-			}
-		    
-		    db.close();
-	  }
 }
 

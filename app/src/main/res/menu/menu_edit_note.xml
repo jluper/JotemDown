@@ -65,6 +65,11 @@
         android:orderInCategory="101"
         android:title="@string/menu_view_image"
         app:showAsAction="never"/>
+    <item
+        android:id="@+id/menu_remove_image"
+        android:orderInCategory="101"
+        android:title="@string/menu_remove_image"
+        app:showAsAction="never"/>
 
 
 </menu>

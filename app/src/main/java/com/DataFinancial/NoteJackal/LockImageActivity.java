@@ -38,8 +38,7 @@ public class LockImageActivity extends ActionBarActivity implements PointCollect
 	public static ImageView activityImageView;
 	private BitmapFactory.Options options;
 	private Bitmap reusedBitmap;
-	//private List<Point> pointsTouched;
-	//private File imageFile;
+
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -50,29 +49,20 @@ public class LockImageActivity extends ActionBarActivity implements PointCollect
 	    actionBar.setDisplayShowHomeEnabled(true);
 		actionBar.setIcon(R.drawable.note_yellow);
 		
-		//setPassPointsSaved(false);
-		
 		addTouchListener();
 		pointCollector.setListener(this);
 		
 		activityImageView = (ImageView)findViewById(R.id.touch_image);
-		////Log.d(MainActivity.DEBUGTAG, "imageview.height=" + activityImageView.getMeasuredHeight());
-		////Log.d(MainActivity.DEBUGTAG, "imageview.width=" + activityImageView.getMeasuredWidth());
-		
-		//File picsDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+
 		File picsDirectory = getFilesDir();
 		File imageFile = new File(picsDirectory, getString(R.string.PASSPOINTS_PHOTO));
-		//Log.d(MainActivity.DEBUGTAG, "imageFile1=" + imageFile);
-		
+
 		Boolean passPointsSet;
 		if (!imageFile.exists()) {
 			
 			LockImageActivity.activityImageView.setImageResource(R.drawable.default_passpoints_image);
 			
-			
 			passPointsSet = false;
-			
-			//Log.d(MainActivity.DEBUGTAG, "image file does not exist");
 			
 			Bitmap bm = BitmapFactory.decodeResource( getResources(), R.drawable.default_passpoints_image);
 			
@@ -83,16 +73,10 @@ public class LockImageActivity extends ActionBarActivity implements PointCollect
 			    outStream.flush();
 			    outStream.close();
 			} catch (FileNotFoundException e) {
-				//Log.d(MainActivity.DEBUGTAG, "Problem copying default image..." + e.getMessage());
+
 			} catch (IOException e) {
-				//Log.d(MainActivity.DEBUGTAG, "Problem copying default image..." + e.getMessage());
+
 			}
-		
-			
-//			Intent i = new Intent(ImageActivity.this, Password.class);
-//			startActivity(i);		
-//			//Log.d(MainActivity.DEBUGTAG, "afterStartactivity");
-//			finish();
 		}
 		else {
 			//create and reuse bitmap memory to prevent getting out of memory exception 
@@ -105,17 +89,14 @@ public class LockImageActivity extends ActionBarActivity implements PointCollect
 			int imageWidth = options.outWidth;
 			String imageType = options.outMimeType;
 				
-			//Log.d(MainActivity.DEBUGTAG, "imageHeight=" + imageHeight);
-			//Log.d(MainActivity.DEBUGTAG, "imageWidth=" + imageWidth);
-            Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+	        Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
             Point size = new Point();
             display.getSize(size);
             int width = size.x;
             int height = size.y;
 
 			int inSampleSize = calculateInSampleSize(options, width, height);
-			////Log.d(MainActivity.DEBUGTAG, "inSampleSize=" + inSampleSize);
-			
+
 			// we will create empty bitmap by using the option
 			reusedBitmap = Bitmap.createBitmap(options.outWidth, options.outHeight, Bitmap.Config.RGB_565);  
 			
@@ -137,15 +118,11 @@ public class LockImageActivity extends ActionBarActivity implements PointCollect
 					
 			SharedPreferences prefs = getSharedPreferences(SHARED_PREF_FILE, MODE_PRIVATE);
 			passPointsSet = prefs.getBoolean(PASSPOINTS_SET,  false);
-			
-			
 		}
-			
-		////Log.d(MainActivity.DEBUGTAG, "PassPointsSet 1=" + passPointsSet);
+
 		if (!passPointsSet) {
 			showSetPasspointsPrompt();			
 		}
-		
 	}
 
 	
@@ -200,8 +177,6 @@ public class LockImageActivity extends ActionBarActivity implements PointCollect
 		AlertDialog dlg = builder.create();
 		
 		dlg.show();
-				
-		////Log.d(MainActivity.DEBUGTAG, "Show setpoints prompt");
 	}
 
 	private void addTouchListener() {
@@ -215,12 +190,12 @@ public class LockImageActivity extends ActionBarActivity implements PointCollect
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.menu_main, menu);
+
 		return false;		
 	}
 	
 	private void savePassPoints( final List<Point> points) {
-		////Log.d(MainActivity.DEBUGTAG, "Collected points: " + points.size());
-		
+
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage(R.string.storing_data);
 		
@@ -235,8 +210,7 @@ public class LockImageActivity extends ActionBarActivity implements PointCollect
 				
 				db.createPointsTable();
 				db.storePoints(points);
-				////Log.d(MainActivity.DEBUGTAG, "Points saved..." + points.size());
-				
+
 				return null;
 			}
 
@@ -252,26 +226,19 @@ public class LockImageActivity extends ActionBarActivity implements PointCollect
 				passpointsSet = prefs.getBoolean(PASSPOINTS_SET,  false);
 				
 				Toast.makeText(LockImageActivity.this, "Passpoints saved...", Toast.LENGTH_LONG).show();
-				
-				////Log.d(MainActivity.DEBUGTAG, "saved passpointsSet=" + passpointsSet);
+
 				pointCollector.clear();
 				dlg.dismiss();
-				
-				
-				//super.onPostExecute(result);
 			}			
 		};
 		
-			task.execute();	
-		
+			task.execute();
 	}
 	
 	private void verifyPasspoints( final List<Point> touchedPoints) {
 		
 		activityImageView = (ImageView)findViewById(R.id.touch_image);
-		////Log.d(MainActivity.DEBUGTAG, "imageview.height=" + activityImageView.getMeasuredHeight());
-		////Log.d(MainActivity.DEBUGTAG, "imageview.width=" + activityImageView.getMeasuredWidth());
-		
+
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage("Checking passpoints...");
 		
@@ -284,18 +251,12 @@ public class LockImageActivity extends ActionBarActivity implements PointCollect
 			protected Boolean doInBackground(Void... params) {
 				
 				List<Point> savedPoints = db.getPoints();
-				////Log.d(MainActivity.DEBUGTAG, "Saved points: " + savedPoints.size());
 				
 				if (savedPoints.size() != PointCollector.NUM_POINTS || touchedPoints.size() != PointCollector.NUM_POINTS) {
-					////Log.d(MainActivity.DEBUGTAG, "Saved points: " + savedPoints.size());
-					////Log.d(MainActivity.DEBUGTAG, "Touched points: " + touchedPoints.size());
-					
+
 					return false;
 				};
-				
 
-				////Log.d(MainActivity.DEBUGTAG, "requesting password authentication");
-				////Log.d(MainActivity.DEBUGTAG, "touchedPoints 1=" + touchedPoints.toString());
 				boolean touchesOK = true;
 				
 				// check if touches close enough to saved points
@@ -308,11 +269,9 @@ public class LockImageActivity extends ActionBarActivity implements PointCollect
 					int yDiff = saved.y - touched.y;
 					
 					int distSquared = xDiff*xDiff + yDiff*yDiff;
-					////Log.d(MainActivity.DEBUGTAG, "Dist squared for point: " + i + ", " + distSquared);
-					
+
 					if (distSquared > POINT_CLOSENESS*POINT_CLOSENESS) {
-						////Log.d(MainActivity.DEBUGTAG, "Touches not close enough");
-						//touchedPoints.clear();
+
 						touchesOK = false;
 					}
 				}
@@ -320,27 +279,21 @@ public class LockImageActivity extends ActionBarActivity implements PointCollect
 				if (!touchesOK) {
 					return false;
 				}
- 				
-				////Log.d(MainActivity.DEBUGTAG, "touches close enough");
+
 				return true;
 			}
 
-		
-	
 			@Override
 			protected void onPostExecute(Boolean pass) {
-				////Log.d(MainActivity.DEBUGTAG, "Verify task returned: " + pass);
 				
 				dlg.dismiss();
 											
 			    //check if touched same point three times. If so then get password
-				////Log.d(MainActivity.DEBUGTAG, "touchedPoints 2=" + touchedPoints.toString());
 				boolean pwAuthentication = checkSamePoints(touchedPoints);
 				if (pwAuthentication) {
 					
 					touchedPoints.clear();
-					
-					////Log.d(MainActivity.DEBUGTAG, "pw authentication true, start pw activity");
+
 					Intent i = new Intent(LockImageActivity.this, Password.class);
 					reusedBitmap = null;   // set the bitmap top null so gc will get soon as possible 
 					startActivity(i);
@@ -365,14 +318,9 @@ public class LockImageActivity extends ActionBarActivity implements PointCollect
 						Toast.makeText(LockImageActivity.this, "Access denied", Toast.LENGTH_LONG).show();
 						pointCollector.clear();//jl
 					}
-					
 				}
-				
 			}
-		
-			
 		};
-		
 		task.execute();
 	}	
 	
@@ -398,8 +346,6 @@ public class LockImageActivity extends ActionBarActivity implements PointCollect
 		int dist_3and2 = diffx_1and3*diffx_1and3 + diffy_1and2*diffy_1and2;
 		
 		if (dist_1and2 < POINT_CLOSENESS*POINT_CLOSENESS & dist_1and3 < POINT_CLOSENESS*POINT_CLOSENESS && dist_3and2 < POINT_CLOSENESS*POINT_CLOSENESS) {
-			////Log.d(MainActivity.DEBUGTAG, "Touched same point");
-			
 			return true;
 		}
 		
@@ -414,23 +360,21 @@ public class LockImageActivity extends ActionBarActivity implements PointCollect
 		SharedPreferences prefs = getSharedPreferences(SHARED_PREF_FILE, MODE_PRIVATE);
 		Boolean passpointsSet = prefs.getBoolean(PASSPOINTS_SET,  false);
 				
-		////Log.d(MainActivity.DEBUGTAG, "PassPointsSet 2=" + passpointsSet);		
+
 		if (!passpointsSet) {
-			////Log.d(MainActivity.DEBUGTAG, "Saving passpoints...");
 			savePassPoints(points);
 		}
 		else {
-			////Log.d(MainActivity.DEBUGTAG, "Verifying passpoints...");	
 			verifyPasspoints(points);		
 		}
 	}
 	
 	protected void setPassPointsSaved(boolean state) {
 
-		SharedPreferences prefs = getSharedPreferences(
-				LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
+		SharedPreferences prefs = getSharedPreferences(LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
 		SharedPreferences.Editor editor = prefs.edit();
 		editor.putBoolean(LockImageActivity.PASSPOINTS_SET, state);
+
 		editor.commit();
 	}
 }

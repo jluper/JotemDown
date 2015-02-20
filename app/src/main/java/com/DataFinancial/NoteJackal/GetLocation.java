@@ -1,16 +1,13 @@
 package com.DataFinancial.NoteJackal;
 
-import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Context;
-//import android.location.Criteria; 
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
-//import android.widget.TextView; 
-import android.widget.Toast;
+
+//import android.location.Criteria;
+//import android.widget.TextView;
 
 //import com.yannick.diary.R; 
 
@@ -56,18 +53,22 @@ public class GetLocation implements LocationListener {
 	// try this by doing GetLocation.getLocation().getLongitude();
 
 	public double getGPSLat() {
-		return GPSLat;
+
+        return GPSLat;
 	}
 
 	public void setGPSLat(double gPSLat) {
-		GPSLat = gPSLat;
+
+        GPSLat = gPSLat;
 	}
 
 	public double getGPSLon() {
-		return GPSLon;
+
+        return GPSLon;
 	}
 
-	public void setGPSLon(double gPSLon) {
+	public void setGPSLon(double gPSLon)
+    {
 		GPSLon = gPSLon;
 	}
 

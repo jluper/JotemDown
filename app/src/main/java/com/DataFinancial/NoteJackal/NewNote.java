@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.Menu;
@@ -73,6 +72,7 @@ public class NewNote extends ActionBarActivity {
 			note.setLatitude(extras.getString("latitude"));
 			note.setLongitude(extras.getString("longitude"));
             note.setHasReminder(extras.getString("hasReminder"));
+            note.setImage(extras.getString("image"));
 			noteText.setText(note.getBody());
 			
 			
@@ -97,15 +97,19 @@ public class NewNote extends ActionBarActivity {
 		TextView lblPriority = (TextView) findViewById(R.id.lbl_priority);
 		TextView lblCreateDate = (TextView) findViewById(R.id.lbl_create_date);
 		TextView lblGeocode = (TextView) findViewById(R.id.lbl_geocoded);
+        TextView lblImage = (TextView) findViewById(R.id.lbl_note_image);
 		lblCreateDate.setText(Utils.convertDate(note.getCreateDate(),
 				"yy/MM/dd", "MM/dd/yy"));
 		lblPriority.setText(note.getPriority() == 0 ? "" : "Priority");
-		//Log.d(MainActivity.DEBUGTAG, "latitude=" + note.getLatitude().isEmpty());
+
 		if (!note.getLatitude().isEmpty()) {
-			lblGeocode.setText("Geocoded");
+			lblGeocode.setText("Geotag");
 		}
 
-		// TextView lblGeocode = (TextView)findViewById(R.id.lbl_geocoded);
+        if (!note.getImage().isEmpty()) {
+            lblImage.setText("Image");
+        }
+
 		EditText editText = (EditText) findViewById(R.id.note_text);
 		int textLength = editText.getText().length();
 		editText.setSelection(textLength, textLength);
@@ -118,16 +122,11 @@ public class NewNote extends ActionBarActivity {
 			SimpleDateFormat df = new SimpleDateFormat("yy/MM/dd HH:mm");
 			Date today = new Date();
 			try {
-				Date reminderDate = df.parse(reminder.getDate() + " "
-						+ reminder.getTime());
-				Log.d(MainActivity.DEBUGTAG, "today:" + today + "reminderDate:"
-						+ reminderDate);
-				if (reminderDate.compareTo(today) < 0) {
-					txtReminder.setTextColor(getResources().getColor(
-							R.color.light_red));
-					// txtReminder.setText("Reminder");
-				}
+				Date reminderDate = df.parse(reminder.getDate() + " " + reminder.getTime());
 
+				if (reminderDate.compareTo(today) < 0) {
+					txtReminder.setTextColor(getResources().getColor(R.color.light_red));
+				}
 			} catch (ParseException e) {
 				// e.printStackTrace();
 			}
@@ -189,6 +188,7 @@ public class NewNote extends ActionBarActivity {
 
 	}
 
+
 	@Override
 	public void onResume() {
 		super.onResume(); // Always call the superclass method first
@@ -198,8 +198,7 @@ public class NewNote extends ActionBarActivity {
 	@Override
 	public Intent getSupportParentActivityIntent() {
 		 super.onResume(); // Always call the superclass method first
-			//Log.d(MainActivity.DEBUGTAG, "help = " + help);
-		 
+
 		 Intent i = new Intent(NewNote.this, MainActivity.class);
 		 if (help) {
 			i.putExtra("help", "true");				
@@ -256,9 +255,11 @@ public class NewNote extends ActionBarActivity {
             if (note.getImage().isEmpty()) {
                 optionsMenu.findItem(R.id.menu_view_image).setVisible(false);
                 optionsMenu.findItem(R.id.menu_add_image).setVisible(true);
+                optionsMenu.findItem(R.id.menu_remove_image).setVisible(false);
             } else {
                 optionsMenu.findItem(R.id.menu_add_image).setVisible(false);
                 optionsMenu.findItem(R.id.menu_view_image).setVisible(true);
+                optionsMenu.findItem(R.id.menu_remove_image).setVisible(true);
             }
 		}
 
@@ -303,6 +304,7 @@ public class NewNote extends ActionBarActivity {
 		if (id == R.id.menu_priority) {
 
 			note.setPriority((note.getPriority() + 1) % 2);
+            db.updateNote(note);
 
 			return true;
 		}
@@ -326,14 +328,11 @@ public class NewNote extends ActionBarActivity {
 				double lon = loc.getLongitude();
 
 				EditText v = (EditText) findViewById(R.id.note_text);
-				// noteText.setText("in menu geo_ tag: lat = " + lat + "lon = "
-				// + lon);
 
 				note.setLatitude(Double.toString(lat));
 				note.setLongitude(Double.toString(lon));
 
-				noteText.setText("in menu geo_ tag: lat = "
-						+ note.getLatitude() + "lon = " + note.getLongitude());
+				//note.setBody(note.getBody() + "\n\nGeotag: " + note.getLatitude() + ", " + note.getLongitude());
 				long rowId = db.updateNote(note);
 
 				if (rowId != -1) {
@@ -364,10 +363,10 @@ public class NewNote extends ActionBarActivity {
 						"Unable to show map, location unavailable...",
 						Toast.LENGTH_LONG).show();
 			}
-			// Log.d(MainActivity.DEBUGTAG, "chk in newnote 2...");
+
 			EditText v = (EditText) findViewById(R.id.note_text);
 			noteText.setText("in menu_map: lat = " + lat + "lon = " + lon);
-			// Log.d(MainActivity.DEBUGTAG, "chk in newnote 3...");
+
 			Intent i = new Intent(NewNote.this, MapActivity.class);
 			i.putExtra("latitude", lat);
 			i.putExtra("longitude", lon);
@@ -394,7 +393,7 @@ public class NewNote extends ActionBarActivity {
 			Intent emailIntent = new Intent(Intent.ACTION_SEND);
 			emailIntent.setData(Uri.parse("mailto:"));
 			emailIntent.setType("text/plain");
-			Log.d(MainActivity.DEBUGTAG, "valid email: " + emailContact);
+
 			emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
 			emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Subject");
 			emailIntent.putExtra(Intent.EXTRA_TEXT, "test text");
@@ -430,6 +429,13 @@ public class NewNote extends ActionBarActivity {
             i.putExtra("image", note.getImage());
             startActivity(i);
         }
+
+        if (id == R.id.menu_remove_image) {
+
+            note.setImage("");
+            db.updateNote(note);
+        }
+
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -450,14 +456,11 @@ public class NewNote extends ActionBarActivity {
 				Toast.makeText(NewNote.this, "Note edited...",
 						Toast.LENGTH_SHORT).show();
 			} else {
-                Log.d(MainActivity.DEBUGTAG, "note in SaveNote = " + note.toString());
-				noteId = db.addNote(note);
-               // Log.d(MainActivity.DEBUGTAG, " note afte add = " + db.getNote((int)noteId).toString());
-				Toast.makeText(NewNote.this, "Note added...", Toast.LENGTH_SHORT).show();
+               	noteId = db.addNote(note);
+              	Toast.makeText(NewNote.this, "Note added...", Toast.LENGTH_SHORT).show();
 			}
 		} catch (Exception e) {
-			Toast.makeText(NewNote.this, "Unable to add/update note...",
-					Toast.LENGTH_LONG).show();
+			Toast.makeText(NewNote.this, "Unable to add/update note...", Toast.LENGTH_LONG).show();
 		}
 
 		Intent i = new Intent(NewNote.this, MainActivity.class);
@@ -497,38 +500,6 @@ public class NewNote extends ActionBarActivity {
 		confirmDelete = dlgBuilder.create();
 	}
 
-//	public void buildConfirmLocSettingsDialog() {
-//
-//		AlertDialog.Builder dlgBuilder = new AlertDialog.Builder(this);
-//		dlgBuilder.setTitle("Confirm Enable Location Settings");
-//		dlgBuilder.setIcon(R.drawable.btn_check_buttonless_on);
-//		dlgBuilder.setMessage(R.string.dialog_location_settings);
-//		dlgBuilder.setCancelable(true);
-//		dlgBuilder.setPositiveButton(R.string.dialog_positive,
-//        new DialogInterface.OnClickListener() {
-//            public void onClick(DialogInterface dialog, int id) {
-//
-//                Log.d(MainActivity.DEBUGTAG,
-//                        "confirm location settings dialog");
-//                dialog.cancel();
-//
-//                Intent intent = new Intent(
-//                Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-//                startActivity(intent);
-//
-//            }
-//        });
-//	    dlgBuilder.setNegativeButton(R.string.dialog_negative,
-//				new DialogInterface.OnClickListener() {
-//					public void onClick(DialogInterface dialog, int id) {
-//
-//						dialog.cancel();
-//					}
-//				});
-//
-//		confirmDelete = dlgBuilder.create();
-//	}
-
 
     private void browseGallery() {
         Intent i = new Intent(Intent.ACTION_PICK,
@@ -538,8 +509,6 @@ public class NewNote extends ActionBarActivity {
 
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
-
-        Log.d(MainActivity.DEBUGTAG, "onActivityResult = ");
 
         if (requestCode == MainActivity.BROWSE_GALLERY_REQUEST) {
             if (intent != null) {
@@ -554,23 +523,14 @@ public class NewNote extends ActionBarActivity {
                 note.setImage(noteImagePath);
                 db.updateNote(note);
 
-                Log.d(MainActivity.DEBUGTAG, "Note image path = " + noteImagePath);
                 cursor.close();
 
                 Uri image = Uri.parse(noteImagePath);
 
-                Toast.makeText(this, "Gallery result" + image, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Image path: " + image, Toast.LENGTH_LONG).show();
 
-//                try {
-//                    copyImageFile(imagePath);
-//                } catch (IOException e) {
-//                    Toast.makeText(this,"Unable to copy image file from gallery...", Toast.LENGTH_LONG).show();
-//                }
-
-                //Intent i = new Intent(MainActivity.this, ImageActivity.class);
-                //startActivity(i);
             } else {
-                Toast.makeText(this, "Gallery result: no data", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Unable to get image from gallery.", Toast.LENGTH_LONG).show();
             }
         }
     }

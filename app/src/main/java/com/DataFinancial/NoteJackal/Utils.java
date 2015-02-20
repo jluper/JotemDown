@@ -1,7 +1,6 @@
 package com.DataFinancial.NoteJackal;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,16 +23,13 @@ public class Utils {
 	
 	static public String convertDate(String date, String fromFormat, String toFormat) {
 
-		SimpleDateFormat oldDateFormat = new SimpleDateFormat(fromFormat,
-				Locale.getDefault());
-		SimpleDateFormat newDateFormat = new SimpleDateFormat(toFormat,
-				Locale.getDefault());
+		SimpleDateFormat oldDateFormat = new SimpleDateFormat(fromFormat, Locale.getDefault());
+		SimpleDateFormat newDateFormat = new SimpleDateFormat(toFormat,	Locale.getDefault());
 		Date oldDate = new Date();
 		Date newDate = new Date();
 
 		try {
 			oldDate = oldDateFormat.parse(date);
-			
 		} catch (ParseException e) {
 			return (date);
 		}
@@ -174,7 +170,7 @@ public class Utils {
 			if (intMinute == 0) {
 				intHour = (intHour + 1) % 24;
 			}
-            Log.d(MainActivity.DEBUGTAG, "ince minute 2");
+
 			strHour = String.valueOf(intHour);
 			if (strHour.length() == 1) {
 				strHour = "0" + strHour;
@@ -201,6 +197,4 @@ public class Utils {
 		    in.close();
 		    out.close();
 		}
-
-
 }
