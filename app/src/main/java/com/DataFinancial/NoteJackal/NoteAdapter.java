@@ -107,36 +107,61 @@ public class NoteAdapter extends BaseAdapter implements ListAdapter {
 		hasReminder = note.getHasReminder();
       
         Drawable noteIcon;
-		int image_code = note.getPriority() + (note.getLatitude().isEmpty() ? 0 : 1)*2 + (hasReminder.equals("false") ? 0 : 1)*4 + (help ? 8 : 0);
+        int image_code = (note.getImage().isEmpty() ? 0 : 1) + (note.getLatitude().isEmpty() ? 0 : 1)*2 + note.getPriority()*4 + (hasReminder.equals("false") ? 0 : 1)*8 + (help ? 16 : 0);
+		//int image_code = note.getPriority() + (note.getLatitude().isEmpty() ? 0 : 1)*2 + (hasReminder.equals("false") ? 0 : 1)*4 + (note.getImage().isEmpty() ? 0 : 8) + (help ? 16 : 0);
 		switch(image_code) {
 		case 0:
 			noteIcon = context.getResources().getDrawable(R.drawable.notepad);
 			break;
 		case 1:
-			noteIcon = context.getResources().getDrawable(R.drawable.notepad_p);
+			noteIcon = context.getResources().getDrawable(R.drawable.notepad_i);
 			break;
 		case 2:
 			noteIcon = context.getResources().getDrawable(R.drawable.notepad_g);
 			break;
 		case 3:
-			noteIcon = context.getResources().getDrawable(R.drawable.notepad_g_p);
+			noteIcon = context.getResources().getDrawable(R.drawable.notepad_ig);
 			break;
 		case 4:
-			noteIcon = context.getResources().getDrawable(R.drawable.notepad_r);
+			noteIcon = context.getResources().getDrawable(R.drawable.notepad_p);
 			break;
 		case 5:
-			noteIcon = context.getResources().getDrawable(R.drawable.notepad_p_r);
+			noteIcon = context.getResources().getDrawable(R.drawable.notepad_ip);
 			break;
 		case 6:
-			noteIcon = context.getResources().getDrawable(R.drawable.notepad_g_r);
+			noteIcon = context.getResources().getDrawable(R.drawable.notepad_pg);
 			break;
 		case 7:
-			noteIcon = context.getResources().getDrawable(R.drawable.notepad_g_p_r);
+			noteIcon = context.getResources().getDrawable(R.drawable.notepad_igp);
 			break;
 		case 8:
-			noteIcon = context.getResources().getDrawable(R.drawable.notepad_q);
+			noteIcon = context.getResources().getDrawable(R.drawable.notepad_r);
 			break;
-		default:
+        case 9:
+            noteIcon = context.getResources().getDrawable(R.drawable.notepad_ir);
+            break;
+        case 10:
+            noteIcon = context.getResources().getDrawable(R.drawable.notepad_gr);
+            break;
+        case 11:
+            noteIcon = context.getResources().getDrawable(R.drawable.notepad_igr);
+            break;
+        case 12:
+            noteIcon = context.getResources().getDrawable(R.drawable.notepad_pr);
+            break;
+        case 13:
+            noteIcon = context.getResources().getDrawable(R.drawable.notepad_ipr);
+            break;
+        case 14:
+            noteIcon = context.getResources().getDrawable(R.drawable.notepad_gpr);
+            break;
+        case 15:
+            noteIcon = context.getResources().getDrawable(R.drawable.notepad_igpr);
+            break;
+        case 16:
+            noteIcon = context.getResources().getDrawable(R.drawable.notepad_q);
+            break;
+  		default:
 			noteIcon = context.getResources().getDrawable(R.drawable.notepad);
 			break;
 		}

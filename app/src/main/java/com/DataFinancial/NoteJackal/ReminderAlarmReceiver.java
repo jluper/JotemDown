@@ -7,33 +7,32 @@ import android.content.Context;
 import android.content.Intent;
 
 public class ReminderAlarmReceiver extends BroadcastReceiver {
-	
-	Context ctx; 
-	
-	   @Override
-	    public void onReceive(Context context, Intent intent) {
 
-		   ctx = context;
-	        // For our recurring task, we'll just display a message
-	        
-			boolean srvcRunning = isReminderServiceRunning(ReminderService.class);
+    Context ctx;
 
-			Intent srvcIntent = new Intent(context, ReminderService.class);
+    @Override
+    public void onReceive(Context context, Intent intent) {
 
-			if (srvcRunning == true) {
-				context.stopService(srvcIntent);
-			}						
-        	context.startService(srvcIntent);
-	    }
+        ctx = context;
 
-		private boolean isReminderServiceRunning(Class<?> serviceClass) {
+        boolean srvcRunning = isReminderServiceRunning(ReminderService.class);
 
-		    ActivityManager manager = (ActivityManager) ctx.getSystemService(Context.ACTIVITY_SERVICE);
-		    for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-		        if (serviceClass.getName().equals(service.service.getClassName())) {
-		            return true;
-		        }
-		    }
-		    return false;
-		}	
+        Intent srvcIntent = new Intent(context, ReminderService.class);
+
+        if (srvcRunning == true) {
+            context.stopService(srvcIntent);
+        }
+        context.startService(srvcIntent);
+    }
+
+    private boolean isReminderServiceRunning(Class<?> serviceClass) {
+
+        ActivityManager manager = (ActivityManager) ctx.getSystemService(Context.ACTIVITY_SERVICE);
+        for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

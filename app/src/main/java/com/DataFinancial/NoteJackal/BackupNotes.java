@@ -27,239 +27,224 @@ import java.util.List;
 
 public class BackupNotes extends ActionBarActivity {
 
-	private EditText address;
-	private Button btnBackup;
-	private EditText googlePW;
-	private EditText backupFile;
-	private Button btnBackupAndSend;
-	// public static final String ADDRESS = "address";
-	private Note note = new Note();
+    public static final String DATABASE_NAME = "notes.db";
+    private static final String LAST_BACKUP_FILE = "LAST_BACKUP_FILE";
+    protected List<Note> notes = new ArrayList<>();
+    private EditText address;
+    private EditText backupFile;
 
-	private static final String LAST_BACKUP_FILE = "LAST_BACKUP_FILE";
-	public static final String DATABASE_NAME = "notes.db";
-	protected List<Note> notes = new ArrayList<Note>();
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.backup_notes);
 
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.backup_notes);
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(true);
+        actionBar.setIcon(R.drawable.note_yellow);
+        actionBar.setTitle("Backup");
 
-		android.support.v7.app.ActionBar actionBar = getSupportActionBar();
-		actionBar.setDisplayHomeAsUpEnabled(true);
-		actionBar.setDisplayShowHomeEnabled(true);
-		actionBar.setIcon(R.drawable.note_yellow);
-		actionBar.setTitle("Backup");
+        actionBar.setDisplayShowTitleEnabled(true);
 
-		actionBar.setDisplayShowTitleEnabled(true);
+        backupFile = (EditText) findViewById(R.id.txtBackupFile);
+        address = (EditText) findViewById(R.id.txtBackupAddress);
 
-		backupFile = (EditText) findViewById(R.id.txtBackupFile);
-		address = (EditText) findViewById(R.id.txtBackupAddress);
-		
-		SharedPreferences prefs = getSharedPreferences(LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
-		String file = prefs.getString(LAST_BACKUP_FILE, "NoteJackalBackup");
-		String addr = prefs.getString(SendNote.LAST_SEND_ADDRESS, null);
+        SharedPreferences prefs = getSharedPreferences(LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
+        String file = prefs.getString(LAST_BACKUP_FILE, "NoteJackalBackup");
+        String addr = prefs.getString(SendNote.LAST_SEND_ADDRESS, null);
 
-		if (file != null) {
-			backupFile.setText(file);
-		}
+        if (file != null) {
+            backupFile.setText(file);
+        }
 
-		if (addr != null) {
-			address.setText(addr);
-		}
-		
-		int textLength = backupFile.getText().length();
-		backupFile.setSelection(textLength, textLength);
+        if (addr != null) {
+            address.setText(addr);
+        }
 
-		addListenerBackupButton();
-		addListenerOnChkGoogleDrive();
+        int textLength = backupFile.getText().length();
+        backupFile.setSelection(textLength, textLength);
 
-	}
+        addListenerBackupButton();
+        addListenerOnChkGoogleDrive();
 
-	@Override
-	public void onResume() {
-		super.onResume(); // Always call the superclass method first
+    }
 
-		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-		imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-	}
+    @Override
+    public void onResume() {
+        super.onResume(); // Always call the superclass method first
 
-	public void addListenerBackupButton() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+    }
 
-		btnBackup = (Button) findViewById(R.id.btnBackup);
+    public void addListenerBackupButton() {
 
-		btnBackup.setOnClickListener(new OnClickListener() {
+        Button btnBackup = (Button) findViewById(R.id.btnBackup);
 
-			@Override
-			public void onClick(View v) {
+        btnBackup.setOnClickListener(new OnClickListener() {
 
-				CheckBox chk = (CheckBox) findViewById(R.id.chkGoogleDrive);
+            @Override
+            public void onClick(View v) {
 
-				if (!chk.isChecked()) {
-					makeDatabaseBackup();
-					sendDatabaseBackup();			
-				} else {
-					makeDatabaseBackup();
+                CheckBox chk = (CheckBox) findViewById(R.id.chkGoogleDrive);
 
-					String filePath = getBackupFileDir().getAbsolutePath() + "/" + backupFile.getText().toString() + ".db";
-					Intent i = new Intent(BackupNotes.this, DriveActivity.class);
-					i.putExtra("filepath", filePath);
-					startActivity(i);
-					
-					//store on Google Drive
-				}
-					
-					SharedPreferences prefs = getSharedPreferences(
-							LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
-					SharedPreferences.Editor editor = prefs.edit();
-					editor.putString(SendNote.LAST_SEND_ADDRESS, address
-							.getText().toString());
-					editor.putString(LAST_BACKUP_FILE, backupFile.getText()
-							.toString());
+                if (!chk.isChecked()) {
+                    makeDatabaseBackup();
+                    sendDatabaseBackup();
+                } else {
+                    makeDatabaseBackup();
 
-					editor.commit();
-			}
+                    String filePath = getBackupFileDir().getAbsolutePath() + "/" + backupFile.getText().toString() + ".db";
+                    Intent i = new Intent(BackupNotes.this, DriveActivity.class);
+                    i.putExtra("filepath", filePath);
+                    startActivity(i);
 
-		});
+                    //store on Google Drive
+                }
 
-	}
+                SharedPreferences prefs = getSharedPreferences(
+                        LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putString(SendNote.LAST_SEND_ADDRESS, address
+                        .getText().toString());
+                editor.putString(LAST_BACKUP_FILE, backupFile.getText()
+                        .toString());
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.menu_backup_notes, menu);
-		return true;
-	}
+                editor.apply();
+            }
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
+        });
 
-		return super.onOptionsItemSelected(item);
-	}
+    }
 
-	public void addListenerOnChkGoogleDrive() {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_backup_notes, menu);
+        return true;
+    }
 
-		CheckBox chk = (CheckBox) findViewById(R.id.chkGoogleDrive);
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
 
-		chk.setOnClickListener(new OnClickListener() {
+        return super.onOptionsItemSelected(item);
+    }
 
-			@Override
-			public void onClick(View v) {
+    public void addListenerOnChkGoogleDrive() {
 
-				if (((CheckBox) v).isChecked()) {
+        CheckBox chk = (CheckBox) findViewById(R.id.chkGoogleDrive);
 
-					address.setText("");
-					address.setEnabled(false);
-				}
-			}
-		});
-	}
+        chk.setOnClickListener(new OnClickListener() {
 
-	private void sendDatabaseBackup() {
+            @Override
+            public void onClick(View v) {
 
-		String[] TO = { "jluper@triad.rr.com" };
-		String[] CC;
+                if (((CheckBox) v).isChecked()) {
 
-		TO[0] = address.getText().toString();
+                    address.setText("");
+                    address.setEnabled(false);
+                }
+            }
+        });
+    }
 
-		Intent emailIntent = new Intent(Intent.ACTION_SEND);
-		emailIntent.setData(Uri.parse("mailto:"));
-		emailIntent.setType("text/plain");
+    private void sendDatabaseBackup() {
 
-		String emailSubject;
-		String emailText;
+        String[] TO = {"jluper@triad.rr.com"};
 
-		if (Utils.isValidEmail(TO[0])) {
+        TO[0] = address.getText().toString();
 
-			String fileName = backupFile.getText().toString() + ".db";
-			File file = new File(getBackupFileDir(), fileName);
+        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+        emailIntent.setData(Uri.parse("mailto:"));
+        emailIntent.setType("text/plain");
 
-			if (!file.exists() || !file.canRead()) {
-				Toast.makeText(this,
-						"Backup file does not exist or not readable...",
-						Toast.LENGTH_LONG).show();
-				return;
-			}
+        if (Utils.isValidEmail(TO[0])) {
 
-			Uri uri = Uri.parse(file.toString());
-			emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
-			emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
-			emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Jot'emDown backup");
-			emailIntent.putExtra(Intent.EXTRA_TEXT, "Backup file attached.");
+            String fileName = backupFile.getText().toString() + ".db";
+            File file = new File(getBackupFileDir(), fileName);
 
-			startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+            if (!file.exists() || !file.canRead()) {
+                Toast.makeText(this,
+                        "Backup file does not exist or not readable...",
+                        Toast.LENGTH_LONG).show();
+                return;
+            }
 
-		} else {
-			Toast.makeText(BackupNotes.this, "Invalid email...",
-					Toast.LENGTH_LONG).show();
-		}
-	}
+            Uri uri = Uri.parse(file.toString());
+            emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
+            emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Jot'emDown backup");
+            emailIntent.putExtra(Intent.EXTRA_TEXT, "Backup file attached.");
 
-	private File getBackupFileDir() {
-		
-		File backupDir;
-		if (checkExternalMedia()) {
-			backupDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-		} else {
-			backupDir = getFilesDir();
-		}
-		
-		return backupDir;		
-	}
-	
-	private void makeDatabaseBackup() {
+            startActivity(Intent.createChooser(emailIntent, "Send mail..."));
 
-		File backupDir;
-		if (checkExternalMedia()) {
-			backupDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-			// Environment.getExternalStorageDirectory();
-		} else {
-			backupDir = getFilesDir();
-		}
+        } else {
+            Toast.makeText(BackupNotes.this, "Invalid email...",
+                    Toast.LENGTH_LONG).show();
+        }
+    }
 
-		FileChannel source = null;
-		FileChannel destination = null;
-		String dbName = DATABASE_NAME;
+    private File getBackupFileDir() {
 
-		File currentDB = getDatabasePath(DATABASE_NAME);
+        File backupDir;
+        if (checkExternalMedia()) {
+            backupDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        } else {
+            backupDir = getFilesDir();
+        }
 
-		String fileName = backupFile.getText().toString() + ".db";
+        return backupDir;
+    }
 
-		File backupDB = new File(backupDir, fileName);
+    private void makeDatabaseBackup() {
 
-		try {
-			source = new FileInputStream(currentDB).getChannel();
-			destination = new FileOutputStream(backupDB).getChannel();
-			destination.transferFrom(source, 0, source.size());
-			source.close();
-			destination.close();
-		} catch (IOException e) {
-			Toast.makeText(this, "Unable to backup database. " + e.getMessage(),	Toast.LENGTH_LONG).show();
-		}
-	}
+        File backupDir;
+        if (checkExternalMedia()) {
+            backupDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            // Environment.getExternalStorageDirectory();
+        } else {
+            backupDir = getFilesDir();
+        }
 
-	private boolean checkExternalMedia() {
-		boolean mExternalStorageAvailable = false;
-		boolean mExternalStorageWriteable = false;
-		String state = Environment.getExternalStorageState();
+        FileChannel source;
+        FileChannel destination;
 
-		if (Environment.MEDIA_MOUNTED.equals(state)) {
-			// Can read and write the media
-			mExternalStorageAvailable = mExternalStorageWriteable = true;
-		} else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
-			// Can only read the media
-			mExternalStorageAvailable = true;
-			mExternalStorageWriteable = false;
-		} else {
-			// Can't read or write
-			mExternalStorageAvailable = mExternalStorageWriteable = false;
-		}
+        File currentDB = getDatabasePath(DATABASE_NAME);
 
-		return mExternalStorageAvailable & mExternalStorageWriteable;
-	}
+        String fileName = backupFile.getText().toString() + ".db";
+
+        File backupDB = new File(backupDir, fileName);
+
+        try {
+            source = new FileInputStream(currentDB).getChannel();
+            destination = new FileOutputStream(backupDB).getChannel();
+            destination.transferFrom(source, 0, source.size());
+            source.close();
+            destination.close();
+        } catch (IOException e) {
+            Toast.makeText(this, "Unable to backup database. " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private boolean checkExternalMedia() {
+        boolean mExternalStorageAvailable;
+        boolean mExternalStorageWriteable;
+        String state = Environment.getExternalStorageState();
+
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            // Can read and write the media
+            mExternalStorageAvailable = mExternalStorageWriteable = true;
+        } else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+            // Can only read the media
+            mExternalStorageAvailable = true;
+            mExternalStorageWriteable = false;
+        } else {
+            // Can't read or write
+            mExternalStorageAvailable = mExternalStorageWriteable = false;
+        }
+
+        return mExternalStorageAvailable & mExternalStorageWriteable;
+    }
 
 }

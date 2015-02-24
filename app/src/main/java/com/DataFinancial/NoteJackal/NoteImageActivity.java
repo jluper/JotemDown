@@ -6,29 +6,53 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Point;
+import android.media.ExifInterface;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
-
 import java.io.File;
+import java.io.IOException;
 
 public class NoteImageActivity extends ActionBarActivity {
 
-	public static ImageView noteImageView;
-	private BitmapFactory.Options options;
-	private Bitmap reusedBitmap;
+    public static ImageView noteImageView;
+    private BitmapFactory.Options options;
+    private Bitmap reusedBitmap;
     private String noteImagePath;
     private File imageFile;
     private Note note = new Note();
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.note_image_activity);
+    public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) > reqHeight
+                    && (halfWidth / inSampleSize) > reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.note_image_activity);
 
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -54,26 +78,25 @@ public class NoteImageActivity extends ActionBarActivity {
             Toast.makeText(NoteImageActivity.this, "Image not found.", Toast.LENGTH_SHORT).show();
         }
 
-		noteImageView = (ImageView)findViewById(R.id.note_image);
+        noteImageView = (ImageView) findViewById(R.id.note_image);
 
         imageFile = new File(noteImagePath);
 
-		if (!imageFile.exists()) {
+        if (!imageFile.exists()) {
             NoteImageActivity.noteImageView.setScaleType(ImageView.ScaleType.CENTER);
-			NoteImageActivity.noteImageView.setImageResource(R.drawable.image_not_found);
-		}
-		else {
-			//create and reuse bitmap memory to prevent getting out of memory exception
-			//set the size to option, the images we will load by using this option
-			options = new BitmapFactory.Options();
-			options.inJustDecodeBounds = true;
+            NoteImageActivity.noteImageView.setImageResource(R.drawable.image_not_found);
+        } else {
+            //create and reuse bitmap memory to prevent getting out of memory exception
+            //set the size to option, the images we will load by using this option
+            options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
 
-			BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
-			int imageHeight = options.outHeight;
-			int imageWidth = options.outWidth;
-			String imageType = options.outMimeType;
+            BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
+            int imageHeight = options.outHeight;
+            int imageWidth = options.outWidth;
+            String imageType = options.outMimeType;
 
-		    Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+            Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
             Point size = new Point();
             display.getSize(size);
             int width = size.x;
@@ -81,28 +104,27 @@ public class NoteImageActivity extends ActionBarActivity {
 
             int inSampleSize = calculateInSampleSize(options, width, height);
 
-			// we will create empty bitmap by using the option
-			reusedBitmap = Bitmap.createBitmap(options.outWidth, options.outHeight, Bitmap.Config.RGB_565);
+            // we will create empty bitmap by using the option
+            reusedBitmap = Bitmap.createBitmap(options.outWidth, options.outHeight, Bitmap.Config.RGB_565);
 
-			// set the option to allocate memory for the bitmap
-			options.inJustDecodeBounds = false;
-			options.inSampleSize = inSampleSize;
-			options.inMutable = true;
-			options.inBitmap = reusedBitmap;
+            // set the option to allocate memory for the bitmap
+            options.inJustDecodeBounds = false;
+            options.inSampleSize = inSampleSize;
+            options.inMutable = true;
+            options.inBitmap = reusedBitmap;
 
-			reusedBitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
+            reusedBitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
 
-			if (reusedBitmap != null) {
-				reusedBitmap = fixOrientation(reusedBitmap);
-				NoteImageActivity.noteImageView.setImageBitmap(reusedBitmap);
-			} else {
+            if (reusedBitmap != null) {
+                reusedBitmap = fixOrientation(reusedBitmap);
+                NoteImageActivity.noteImageView.setImageBitmap(reusedBitmap);
+            } else {
                 Bitmap myBitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
                 myBitmap = fixOrientation(myBitmap);
                 NoteImageActivity.noteImageView.setImageBitmap(myBitmap);
-  			}
-		}
-	}
-
+            }
+        }
+    }
 
     @Override
     public Intent getSupportParentActivityIntent() {
@@ -121,52 +143,40 @@ public class NoteImageActivity extends ActionBarActivity {
         startActivity(i);
 
         return i;
+    }
+
+    public Bitmap fixOrientation(Bitmap photo) {
+
+        ExifInterface exif = null;
+        try {
+            exif = new ExifInterface(noteImagePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        int rotation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+
+        Log.d(MainActivity.DEBUGTAG, "width = " + photo.getWidth() + " height = " + photo.getHeight() + " orientation = " + rotation);
+
+        if (photo.getWidth() > photo.getHeight() && rotation == ExifInterface.ORIENTATION_ROTATE_90) {
+            Log.d(MainActivity.DEBUGTAG, "image width = " + photo.getWidth() + " image ht = " + photo.getHeight());
+            Matrix matrix = new Matrix();
+            matrix.postRotate(90);
+            photo = Bitmap.createBitmap(photo, 0, 0, photo.getWidth(), photo.getHeight(), matrix, true);
+        }
+
+        return photo;
+    }
+
+    private void addTouchListener() {
 
     }
 
-	public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
-	    // Raw height and width of image
-	    final int height = options.outHeight;
-	    final int width = options.outWidth;
-	    int inSampleSize = 1;
-
-	    if (height > reqHeight || width > reqWidth) {
-
-	        final int halfHeight = height / 2;
-	        final int halfWidth = width / 2;
-
-	        // Calculate the largest inSampleSize value that is a power of 2 and keeps both
-	        // height and width larger than the requested height and width.
-	        while ((halfHeight / inSampleSize) > reqHeight
-	                && (halfWidth / inSampleSize) > reqWidth) {
-	            inSampleSize *= 2;
-	        }
-	    }
-
-    return inSampleSize;
-	}
-
-	 public Bitmap fixOrientation(Bitmap photo) {
-	     if (photo.getWidth() > photo.getHeight()) {
-	         Matrix matrix = new Matrix();
-	         matrix.postRotate(90);
-	         photo = Bitmap.createBitmap(photo , 0, 0, photo.getWidth(), photo.getHeight(), matrix, true);
-	     }
-
-	     return photo;
-	 }
-
-	private void addTouchListener() {
-
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		//getMenuInflater().inflate(R.menu.menu_main, menu);
-		return false;
-	}
-
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        //getMenuInflater().inflate(R.menu.menu_main, menu);
+        return false;
+    }
 
 
 }

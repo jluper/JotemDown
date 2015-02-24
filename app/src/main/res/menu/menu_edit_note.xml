@@ -13,7 +13,7 @@
         android:id="@+id/menu_delete"
         android:orderInCategory="90"
         android:title="@string/menu_delete"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="never"/>
     <item
         android:id="@+id/menu_send_note"
         android:orderInCategory="89"
@@ -21,22 +21,22 @@
         app:showAsAction="never"/>
     <item
         android:id="@+id/menu_reminder"
-        android:orderInCategory="92"
+        android:orderInCategory="91"
         android:title="@string/menu_reminder"
         app:showAsAction="never"/>
     <item
         android:id="@+id/menu_priority"
-        android:orderInCategory="94"
+        android:orderInCategory="92"
         android:title="@string/menu_priority"
         app:showAsAction="never"/>
     <item
         android:id="@+id/menu_geotag"
-        android:orderInCategory="95"
+        android:orderInCategory="93"
         android:title="@string/menu_geotag"
         app:showAsAction="never"/>
     <item
         android:id="@+id/menu_map"
-        android:orderInCategory="96"
+        android:orderInCategory="94"
         android:title="@string/menu_map"
         app:showAsAction="never"/>
     <item
@@ -54,22 +54,15 @@
         android:orderInCategory="99"
         android:title="@string/menu_goto_webpage"
         app:showAsAction="never"/>
-
     <item
-        android:id="@+id/menu_add_image"
-        android:orderInCategory="100"
-        android:title="@string/menu_add_image"
-        app:showAsAction="never"/>
-    <item
-        android:id="@+id/menu_view_image"
-        android:orderInCategory="101"
-        android:title="@string/menu_view_image"
-        app:showAsAction="never"/>
+        android:id="@+id/menu_image"
+        android:orderInCategory="90"
+        android:icon="@drawable/add_image"
+        android:title="@string/menu_image"
+        app:showAsAction="always"/>
     <item
         android:id="@+id/menu_remove_image"
-        android:orderInCategory="101"
+        android:orderInCategory="96"
         android:title="@string/menu_remove_image"
         app:showAsAction="never"/>
-
-
 </menu>

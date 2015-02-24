@@ -13,147 +13,141 @@ import android.os.PowerManager.WakeLock;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 import android.telephony.SmsManager;
-import android.widget.Toast;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 public class ReminderService extends Service {
-		
-		static boolean listEmpty = false;
-		static boolean running;
-		static Thread t;
-		static int startID;
-        private String boot = "false";
-        static private int pendingIntentRequestCode = 100;
-		WakeLock wakeLock;
-		SmsManager smsManager = SmsManager.getDefault();
-		
-		@Override
-		public IBinder onBind(Intent arg0) {
-			
-			return null;
-		}
 
-		@Override
-		  public void onCreate() {
-			 super.onCreate();
+    static boolean running;
+    static Thread t;
+    static int startID;
+    static private int pendingIntentRequestCode = 100;
+    WakeLock wakeLock;
+    SmsManager smsManager = SmsManager.getDefault();
+    private String boot = "false";
 
-				PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
-				wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyWakelockTag");
-				wakeLock.acquire();	
-		}
+    @Override
+    public IBinder onBind(Intent arg0) {
 
-		@Override
-		  public void onDestroy() {			
+        return null;
+    }
 
-			running = false;
-			t.interrupt();
-			t = null;
+    @Override
+    public void onCreate() {
+        super.onCreate();
 
-			wakeLock.release();
-			
-			super.onDestroy();	
-		}
+        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+        wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyWakelockTag");
+        wakeLock.acquire();
+    }
 
-		
-		@Override
-		public int onStartCommand(Intent intent, int flags, int startId) {
+    @Override
+    public void onDestroy() {
 
-            startID = startId;
-            running = true;
+        running = false;
+        t.interrupt();
+        t = null;
 
-            Bundle extras = intent.getExtras();
-            if (extras != null) {
-                boot = "true";
-            }
+        wakeLock.release();
 
-            final DatabaseReminders db = new DatabaseReminders(this);
-			final DatabaseNotes dbNotes = new DatabaseNotes(this);
-			List<Reminder> reminders = new ArrayList<Reminder>();
-			
-			reminders = db.getUnexpiredReminders();
-			final List<Reminder> remList = reminders;
-            Toast.makeText(getApplicationContext(), "In service after boot.", Toast.LENGTH_LONG).show();
+        super.onDestroy();
+    }
 
-			 Runnable r = new Runnable() {
-			       public void run() {
-			        	
-                        SimpleDateFormat df = new SimpleDateFormat("yy/MM/dd HH:mm");
-                        Date today = new Date();
 
-                        for (int i=remList.size(); i>0; i--) {
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
 
-                            String reminderDateTime = remList.get(i-1).getDate() + " " + remList.get(i-1).getTime();
-                            String strToday = df.format(today);
+        startID = startId;
+        running = true;
 
-                            if (strToday.compareTo(reminderDateTime) >= 0) {
+        Bundle extras = intent.getExtras();
+        if (extras != null) {
+            boot = "true";
+        }
 
-                                Note note = new Note();
-                                note = dbNotes.getNote(remList.get(i-1).getNoteId());
+        final DatabaseReminders db = new DatabaseReminders(this);
+        final DatabaseNotes dbNotes = new DatabaseNotes(this);
+        List<Reminder> reminders;
 
-                                if (!remList.get(i-1).getPhone().isEmpty()) {
-                                    smsManager.sendTextMessage(remList.get(i-1).getPhone(), null, note.getBody(), null, null);
-                                }
+        reminders = db.getUnexpiredReminders();
+        final List<Reminder> remList = reminders;
 
-                                reminderNotify(remList.get(i-1));
+        Runnable r = new Runnable() {
+            public void run() {
 
-                                db.deleteReminder(remList.get(i-1).getId());
+                SimpleDateFormat df = new SimpleDateFormat("yy/MM/dd HH:mm");
+                Date today = new Date();
 
-                                if (remList.get(i-1).getRecur().equals("true")) {
-                                    Utils utils = new Utils();
-                                    String newDate = utils.incrementDay(remList.get(i-1).getDate());
-                                    //String newTime = utils.incrementMinute(remList.get(i-1).getTime(), 2);
-                                    //remList.get(i-1).setTime(newTime);
-                                    remList.get(i-1).setDate(newDate);
-                                    String dateTime = remList.get(i-1).getDate() + " " + remList.get(i-1).getTime();
+                for (int i = remList.size(); i > 0; i--) {
 
-                                    db.addReminder(remList.get(i-1));
+                    String reminderDateTime = remList.get(i - 1).getDate() + " " + remList.get(i - 1).getTime();
+                    String strToday = df.format(today);
 
-                                    SimpleDateFormat format = new SimpleDateFormat("yy/MM/dd HH:mm", Locale.ENGLISH);
-                                    java.util.Date date;
-                                    try {
-                                        date = format.parse(dateTime);
-                                        setReminderAlarm(getApplicationContext(), date);
-                                    } catch (ParseException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                                remList.remove(i-1);
-                            } else {
+                    if (strToday.compareTo(reminderDateTime) >= 0) {
 
-                                if(boot.equals("true")) {
-                                    String dateTime = remList.get(i-1).getDate() + " " + remList.get(i-1).getTime();
-                                    SimpleDateFormat format = new SimpleDateFormat("yy/MM/dd HH:mm", Locale.ENGLISH);
+                        Note note;
+                        note = dbNotes.getNote(remList.get(i - 1).getNoteId());
 
-                                    java.util.Date date;
-                                    try {
-                                        date = format.parse(dateTime);
-
-                                        setReminderAlarm(getApplicationContext(), date);
-                                    } catch (ParseException e) {
-                                        e.printStackTrace();
-                                    }
-                                 }
-                            }
+                        if (!remList.get(i - 1).getPhone().isEmpty()) {
+                            smsManager.sendTextMessage(remList.get(i - 1).getPhone(), null, note.getBody(), null, null);
                         }
 
-				    	stopSelfResult(startID);
-					}					
-		      };
+                        reminderNotify(remList.get(i - 1));
 
-		    t = new Thread(r);
-			t.start();		
+                        db.deleteReminder(remList.get(i - 1).getId());
 
-			return Service.START_NOT_STICKY;	
-		}
+                        if (remList.get(i - 1).getRecur().equals("true")) {
+                            Utils utils = new Utils();
+                            String newDate = utils.incrementDay(remList.get(i - 1).getDate());
+                            //String newTime = utils.incrementMinute(remList.get(i-1).getTime(), 2);
+                            //remList.get(i-1).setTime(newTime);
+                            remList.get(i - 1).setDate(newDate);
+                            String dateTime = remList.get(i - 1).getDate() + " " + remList.get(i - 1).getTime();
 
-				
+                            db.addReminder(remList.get(i - 1));
+
+                            SimpleDateFormat format = new SimpleDateFormat("yy/MM/dd HH:mm", Locale.ENGLISH);
+                            java.util.Date date;
+                            try {
+                                date = format.parse(dateTime);
+                                setReminderAlarm(getApplicationContext(), date);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        remList.remove(i - 1);
+                    } else {
+
+                        if (boot.equals("true")) {
+                            String dateTime = remList.get(i - 1).getDate() + " " + remList.get(i - 1).getTime();
+                            SimpleDateFormat format = new SimpleDateFormat("yy/MM/dd HH:mm", Locale.ENGLISH);
+
+                            java.util.Date date;
+                            try {
+                                date = format.parse(dateTime);
+
+                                setReminderAlarm(getApplicationContext(), date);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+
+                stopSelfResult(startID);
+            }
+        };
+
+        t = new Thread(r);
+        t.start();
+
+        return Service.START_NOT_STICKY;
+    }
 
 
     private void setReminderAlarm(Context context, java.util.Date dateTime) {
@@ -179,41 +173,30 @@ public class ReminderService extends Service {
     }
 
 
-		 void reminderNotify(Reminder rem) {
-				
-				DatabaseNotes db = new DatabaseNotes(this);
-				
-				Note note = db.getNote(rem.getNoteId());
-				NotificationCompat.Builder mBuilder =
-					    new NotificationCompat.Builder(this)
-					    .setSmallIcon(R.drawable.note_yellow)
-					    .setContentTitle(getString(R.string.notification_title))
-					    .setContentText(note.getBody());		
-				
-				Intent resultIntent = new Intent(this, MainActivity.class);
-				
-				// Because clicking the notification opens a new ("special") activity, there's
-				// no need to create an artificial back stack.
-				PendingIntent resultPendingIntent = PendingIntent.getActivity(this, rem.getNoteId(), resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+    void reminderNotify(Reminder rem) {
 
-				mBuilder.setContentIntent(resultPendingIntent);		
-				
-				// Sets an ID for the notification
-				int mNotificationId = rem.getNoteId();
+        DatabaseNotes db = new DatabaseNotes(this);
 
-				// Gets an instance of the NotificationManager service
-				NotificationManager mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-				// Builds the notification and issues it.
-				mNotifyMgr.notify(mNotificationId, mBuilder.build());
-			}
+        Note note = db.getNote(rem.getNoteId());
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(this).setSmallIcon(R.drawable.note_yellow).setContentTitle(getString(R.string.notification_title)).setContentText(note.getBody());
 
+        Intent resultIntent = new Intent(this, MainActivity.class);
 
-    protected void onPostExecute(Boolean pass) {
-        return;
-    }
+        // Because clicking the notification opens a new ("special") activity, there's
+        // no need to create an artificial back stack.
+        PendingIntent resultPendingIntent = PendingIntent.getActivity(this, rem.getNoteId(), resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-    protected void onPostExecute() {
+        mBuilder.setContentIntent(resultPendingIntent);
 
+        // Sets an ID for the notification
+        int mNotificationId = rem.getNoteId();
+
+        // Gets an instance of the NotificationManager service
+        NotificationManager mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        // Builds the notification and issues it.
+        mNotifyMgr.notify(mNotificationId, mBuilder.build());
     }
 }	
 

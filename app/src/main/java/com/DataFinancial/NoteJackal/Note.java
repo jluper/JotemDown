@@ -4,20 +4,48 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+public class Note {
 
-
-public class Note  {
-	
-	private int id;
-	//private String title;
-	private int priority;
-	private String body;
-	private String createDate;
-	private String editDate;
-	private String latitude;
-	private String longitude;
+    private int id;
+    //private String title;
+    private int priority;
+    private String body;
+    private String createDate;
+    private String editDate;
+    private String latitude;
+    private String longitude;
     private String hasReminder;
     private String image;
+
+    public Note() {
+
+        priority = 0;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yy/MM/dd", Locale.getDefault());
+        Date curr_date = new Date();
+
+        this.createDate = dateFormat.format(curr_date);
+        this.editDate = this.createDate;
+        this.latitude = "";
+        this.longitude = "";
+        this.hasReminder = "false";
+        this.image = "";
+    }
+
+    public Note(String body) {
+
+        priority = 0;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yy/MM/dd", Locale.getDefault());
+        Date curr_date = new Date();
+
+        this.createDate = dateFormat.format(curr_date);
+        this.editDate = this.createDate;
+        this.latitude = "";
+        this.longitude = "";
+        this.hasReminder = "false";
+        this.image = "";
+
+        this.body = body;
+    }
 
     public String getImage() {
         return image;
@@ -36,119 +64,83 @@ public class Note  {
     }
 
     public String getLatitude() {
-		return latitude;
-	}
+        return latitude;
+    }
 
-	public void setLatitude(String latitude) {
-		if (latitude == null) {
-			latitude = "";
-		}
-		this.latitude = latitude;
-	}
+    public void setLatitude(String latitude) {
+        if (latitude == null) {
+            latitude = "";
+        }
+        this.latitude = latitude;
+    }
 
-	public String getLongitude()
-    {
-		return longitude;
-	}
+    public String getLongitude() {
+        return longitude;
+    }
 
-	public void setLongitude(String longitude) {
-		if (longitude == null) {
-			longitude = "";
-		}
-		this.longitude = longitude;
-	}
+    public void setLongitude(String longitude) {
+        if (longitude == null) {
+            longitude = "";
+        }
+        this.longitude = longitude;
+    }
 
-	public int getPriority() {
+    public int getPriority() {
 
         return priority;
-	}
+    }
 
-	public void setPriority(int priority)
-    {
-		this.priority = priority;
-	}
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
 
-	
-	public String getEditDate() {
-		return editDate;
-	}
+    public String getEditDate() {
+        return editDate;
+    }
 
-	public void setEditDate(String editDate) {
+    public void setEditDate(String editDate) {
 
         this.editDate = editDate;
-	}
-	
-	public int getId() {
-		return id;
-	}
+    }
 
-	public void setId(int id)
-    {
-		this.id = id;
-	}
+    public int getId() {
+        return id;
+    }
 
-	public String getBody() {
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getBody() {
 
         return body;
-	}
-	
-	public void setBody(String body) {
+    }
+
+    public void setBody(String body) {
 
         this.body = body;
-	}
-	
-	public String getCreateDate() {
+    }
+
+    public String getCreateDate() {
 
         return createDate;
-	}
-	
-		
-	@Override
-	public String toString() {
-		
-		String bdy = body.replace(System.getProperty("line.separator"), "|");
-		return id + "," + priority + "," + createDate + "," +  editDate + "," + bdy + ", " + latitude + ", " + longitude + ", " + hasReminder + image;
-	}
-	
-	public String toStringWoNewLine() {
-		
-		String bdy = body.replace(System.getProperty("line.separator"), "|");
-		return id + "," + priority + "," + createDate + "," +  editDate + "," + bdy+ ", " + latitude + ", " + longitude + ", " + hasReminder + image;
-	}
-	
-	
-	public void setCreateDate(String date) {
-		this.createDate = date;
-	}
-	
-	public Note() {
-		
-		priority = 0;
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yy/MM/dd", Locale.getDefault());
-		Date curr_date = new Date();
+    }
 
-		this.createDate = dateFormat.format(curr_date); 
-		this.editDate = this.createDate;
-		this.latitude = "";
-		this.longitude = "";
-        this.hasReminder = "false";
-        this.image = "";
-	}
-		
-	public Note(String body) {
-				
-		priority = 0;
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yy/MM/dd", Locale.getDefault());
-		Date curr_date = new Date();
+    public void setCreateDate(String date) {
+        this.createDate = date;
+    }
 
-		this.createDate = dateFormat.format(curr_date); 
-		this.editDate = this.createDate;
-		this.latitude = "";
-		this.longitude = "";
-        this.hasReminder = "false";
-        this.image = "";
+    @Override
+    public String toString() {
 
-		this.body = body;
-	}
+        String bdy = body.replace(System.getProperty("line.separator"), "|");
+        return id + "," + priority + "," + createDate + "," + editDate + "," + bdy + ", " + latitude + ", " + longitude + ", " + hasReminder + image;
+    }
+
+    public String toStringWoNewLine() {
+
+        String bdy = body.replace(System.getProperty("line.separator"), "|");
+        return id + "," + priority + "," + createDate + "," + editDate + "," + bdy + ", " + latitude + ", " + longitude + ", " + hasReminder + image;
+    }
 
 }

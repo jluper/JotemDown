@@ -27,6 +27,16 @@
                 android:orderInCategory="103"
                 android:title="@string/menu_reset_password"
                 app:showAsAction="never"/>
+            <item
+                android:id="@+id/menu_disable_privacy"
+                android:orderInCategory="104"
+                android:title="@string/menu_disable_privacy"
+                app:showAsAction="never"/>
+            <item
+                android:id="@+id/menu_enable_privacy"
+                android:orderInCategory="104"
+                android:title="@string/menu_enable_privacy"
+                app:showAsAction="never"/>
         </menu>
     </item>
     <item

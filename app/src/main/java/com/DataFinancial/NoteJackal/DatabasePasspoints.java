@@ -69,7 +69,7 @@ public class DatabasePasspoints extends SQLiteOpenHelper {
 
 	public List<Point> getPoints() {
 		
-		List<Point> points = new ArrayList<Point>();
+		List<Point> points = new ArrayList<>();
 		SQLiteDatabase db = getReadableDatabase();
 		
 		String sql = String.format("SELECT %s, %s FROM %s ORDER BY %s",  COL_X, COL_Y, POINTS_TABLE, COL_ID);
