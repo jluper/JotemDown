@@ -2,6 +2,7 @@ package com.DataFinancial.NoteJackal;
 
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -28,7 +29,7 @@ import java.util.List;
 public class ImportNotes extends ActionBarActivity {
 
 
-    private static final String LAST_BACKUP_FILE = "LAST_BACKUP_FILE";
+    private static final String LAST_IMPORT_FILE = "LAST_IMPORT_FILE";
     protected List<Note> notes = new ArrayList<>();
     private EditText importFile;
     private AlertDialog confirmImport;
@@ -49,7 +50,7 @@ public class ImportNotes extends ActionBarActivity {
         importFile = (EditText) findViewById(R.id.txtImportFile);
 
         SharedPreferences prefs = getSharedPreferences(LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
-        String file = prefs.getString(LAST_BACKUP_FILE, "NoteJackalBackup");
+        String file = prefs.getString(LAST_IMPORT_FILE, "jedimportfile.txt");
 
         if (file != null) {
             importFile.setText(file);
@@ -119,6 +120,9 @@ public class ImportNotes extends ActionBarActivity {
 
     private boolean importFromFile() {
 
+        final ProgressDialog ringProgressDialog = ProgressDialog.show(ImportNotes.this, "Please wait ...", "Downloading importing notes from file...", true);
+        ringProgressDialog.setCancelable(true);
+
         if (checkExternalMedia()) {
 
             importFile = (EditText) findViewById(R.id.txtImportFile);
@@ -165,15 +169,18 @@ public class ImportNotes extends ActionBarActivity {
                 Toast.makeText(ImportNotes.this, "Import completed...", Toast.LENGTH_LONG).show();
 
             } catch (Exception e) {
-                Toast.makeText(getBaseContext(), "Error importing notes..." + e.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getBaseContext(), "Exception importing notes: " + e.getMessage(), Toast.LENGTH_LONG).show();
 
                 return false;
+            }
+            finally {
+                ringProgressDialog.dismiss();
             }
         }
 
         SharedPreferences prefs = getSharedPreferences(LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(LAST_BACKUP_FILE, importFile.getText().toString());
+        editor.putString(LAST_IMPORT_FILE, importFile.getText().toString());
         editor.apply();
 
         return true;

@@ -135,8 +135,7 @@ public class ReminderActivity extends ActionBarActivity   implements OnClickList
 					try {
 						date = format.parse(dateTime);
                      } catch (ParseException e) {
-						Toast.makeText(context, "Unable to set reminder recurrence.", Toast.LENGTH_LONG)
-						.show();
+						Toast.makeText(context, "Exception parsing reminder date: " + e.toString(), Toast.LENGTH_LONG).show();
 					}        	
 		        }		
 			}
@@ -236,7 +235,7 @@ public class ReminderActivity extends ActionBarActivity   implements OnClickList
 						startActivity(i);
 					}
 				} catch (Exception e) {
-					Toast.makeText(ReminderActivity.this,"Unable to add reminder." + e.getMessage(), Toast.LENGTH_LONG).show();					
+					Toast.makeText(ReminderActivity.this,"Exception adding reminder: " + e.getMessage(), Toast.LENGTH_LONG).show();
 				}
 			
 			    SharedPreferences prefs = getSharedPreferences(LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);

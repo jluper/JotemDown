@@ -127,7 +127,7 @@ public class NewNote extends ActionBarActivity {
                     txtReminder.setTextColor(getResources().getColor(R.color.light_red));
                 }
             } catch (ParseException e) {
-                // e.printStackTrace();
+                Toast.makeText(NewNote.this, "Exception parsing reminder date: " + e.toString(), Toast.LENGTH_LONG).show();
             }
         }
 
@@ -333,11 +333,9 @@ public class NewNote extends ActionBarActivity {
                 long rowId = db.updateNote(note);
 
                 if (rowId != -1) {
-                    Toast.makeText(NewNote.this, "Note location updated...",
-                            Toast.LENGTH_LONG).show();
+                    Toast.makeText(NewNote.this, "Note location updated...", Toast.LENGTH_LONG).show();
                 } else {
-                    Toast.makeText(NewNote.this,
-                            "Unable to update location...", Toast.LENGTH_LONG).show();
+                    Toast.makeText(NewNote.this, "Unable to update location...", Toast.LENGTH_LONG).show();
                 }
             } else {
                 Toast.makeText(NewNote.this, "Unable to get location...", Toast.LENGTH_LONG).show();
@@ -455,7 +453,7 @@ public class NewNote extends ActionBarActivity {
                 Toast.makeText(NewNote.this, "Note added...", Toast.LENGTH_SHORT).show();
             }
         } catch (Exception e) {
-            Toast.makeText(NewNote.this, "Unable to add/update note...", Toast.LENGTH_LONG).show();
+            Toast.makeText(NewNote.this, "Exception updating note: " + e.toString(), Toast.LENGTH_LONG).show();
         }
 
         Intent i = new Intent(NewNote.this, MainActivity.class);

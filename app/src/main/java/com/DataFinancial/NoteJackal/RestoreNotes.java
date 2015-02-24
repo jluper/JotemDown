@@ -183,7 +183,7 @@ public class RestoreNotes extends ActionBarActivity {
             try {
                 util.copyFile(sourceFile, destinationFile);
             } catch (IOException e) {
-                Toast.makeText(RestoreNotes.this, "Unable to restore notes...", Toast.LENGTH_LONG).show();
+                Toast.makeText(RestoreNotes.this, "Exception restoring notes from backup: " + e.toString(), Toast.LENGTH_LONG).show();
             }
 
             SharedPreferences prefs = getSharedPreferences(

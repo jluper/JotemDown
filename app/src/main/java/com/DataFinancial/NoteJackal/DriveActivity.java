@@ -168,10 +168,9 @@ public class DriveActivity extends ActionBarActivity {
 
                         request.setPageToken(fileList.getNextPageToken());
                     } catch (UserRecoverableAuthIOException e) {
-                        startActivityForResult(e.getIntent(),
-                                REQUEST_AUTHORIZATION);
+                        startActivityForResult(e.getIntent(), REQUEST_AUTHORIZATION);
                     } catch (IOException e) {
-                        showToast("Retrieval ERROR: " + e.toString());
+                        showToast("Exception (3) getting file list from Google Drive: " + e.toString());
                         if (request != null) {
                             request.setPageToken(null);
                         }
@@ -190,35 +189,25 @@ public class DriveActivity extends ActionBarActivity {
     private void downloadItemFromList(int position) {
         mDLVal = (String) mListView.getItemAtPosition(position);
 
-        final ProgressDialog ringProgressDialog = ProgressDialog.show(DriveActivity.this, "Please wait ...",
-                "Downloading file from Google Drive...", true);
+        final ProgressDialog ringProgressDialog = ProgressDialog.show(DriveActivity.this, "Please wait ...", "Downloading file from Google Drive...", true);
         ringProgressDialog.setCancelable(true);
 
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
+                InputStream iStream;
                 for (File tmp : mResultList) {
                     if (tmp.getTitle().equalsIgnoreCase(mDLVal)) {
-                        if (tmp.getDownloadUrl() != null
-                                && tmp.getDownloadUrl().length() > 0) {
+                        if (tmp.getDownloadUrl() != null && tmp.getDownloadUrl().length() > 0) {
+
                             try {
-                                com.google.api.client.http.HttpResponse resp = mService
-                                        .getRequestFactory()
-                                        .buildGetRequest(
-                                                new GenericUrl(tmp
-                                                        .getDownloadUrl()))
-                                        .execute();
-                                try (InputStream iStream = resp.getContent()) {
-
-                                    final java.io.File file = new java.io.File(
-                                            Environment
-                                                    .getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath(), tmp.getTitle());
-
-                                    storeFile(file, iStream);
-
-                                }
+                                com.google.api.client.http.HttpResponse resp = mService.getRequestFactory().buildGetRequest(new GenericUrl(tmp.getDownloadUrl())).execute();
+                                iStream = resp.getContent();
+                                final java.io.File file = new java.io.File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath(), tmp.getTitle());
+                                storeFile(file, iStream);
+                                iStream.close();
                             } catch (IOException e) {
-                                e.printStackTrace();
+                                showToast("Exception (1) getting file from Google Drive: " + e.toString());
                             }
                         }
                     }
@@ -269,10 +258,10 @@ public class DriveActivity extends ActionBarActivity {
                     oStream.close();
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                showToast("Exception (1) saving file from Google Drive: " + e.toString());
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            showToast("Exception (2) saving file from Google Drive: " + e.toString());
         }
     }
 
@@ -363,7 +352,7 @@ public class DriveActivity extends ActionBarActivity {
                 } catch (UserRecoverableAuthIOException e) {
                     startActivityForResult(e.getIntent(), REQUEST_AUTHORIZATION);
                 } catch (IOException e) {
-                    showToast("Transfer ERROR: " + e.toString());
+                    showToast("Exception (4) getting file from Google Drive: " + e.toString());
                 }
 
                 ringProgressDialog.dismiss();
@@ -420,7 +409,7 @@ public class DriveActivity extends ActionBarActivity {
         try {
             util.copyFile(sourceFile, destinationFile);
         } catch (IOException e) {
-            Toast.makeText(DriveActivity.this, "Unable to restore notes.", Toast.LENGTH_LONG).show();
+            Toast.makeText(DriveActivity.this, "Exception (4) restoring notes from Google Drive: " + e.toString(), Toast.LENGTH_LONG).show();
         }
 
         return true;

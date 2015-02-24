@@ -12,7 +12,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,7 +37,7 @@ import java.util.List;
 public class MainActivity extends ActionBarActivity {
 
     public static final String DEBUGTAG = "JFL";
-   // public static final String TEXTFILE = "notebug.txt";
+    public static final String HELP_FILE = "JeDHelpImport.txt";
     //public static final String FILESAVED = "FileSaved";
      public static final String PASSPOINTS_SET = "RESET_PASSPOINTS";
     public static final int PHOTO_TAKEN_REQUEST = 2;
@@ -78,25 +77,20 @@ public class MainActivity extends ActionBarActivity {
         addSearchButtonListener();
         addSortButtonListener();
 
-//        SharedPreferences prefs = getPreferences(MODE_PRIVATE);
-//        boolean fileSaved = prefs.getBoolean(FILESAVED, false);
-
-//        if (fileSaved) {
-//            loadSavedFile();
-//        }
-        Context context = getApplicationContext();
-        if (!doesDatabaseExist(context, DatabaseNotes.NOTES_DB)) {
-            Log.d(MainActivity.DEBUGTAG, "database does not exist");
-            File  destinationFile = context.getDatabasePath(DatabaseNotes.NOTES_DB);
-            //File  sourceFile = context.getAssets().;
-            AssetManager assetManager = getAssets();
-            assetManager.
-            Utils.copyFile(sourceFile, destinationFile);
-        }
-
-
         db.createNotesTable();
         dbReminders.createRemindersTable();
+
+        if (db.isNotesTableEmpty()) {
+            InputStream in;
+            try {
+                AssetManager assetManager = getAssets();
+                in = assetManager.open(HELP_FILE);
+                db.importNotesFromAssets(in);
+                in.close();
+            } catch (IOException e) {
+                Toast.makeText(this, "Exception importing help notes: " + e.toString(), Toast.LENGTH_LONG).show();
+            }
+        }
 
         searchText = null;
         Bundle extras = getIntent().getExtras();
@@ -117,6 +111,7 @@ public class MainActivity extends ActionBarActivity {
         File dbFile = context.getDatabasePath(dbName);
         return dbFile.exists();
     }
+
 
     public boolean isPrivate() {
 
@@ -423,15 +418,14 @@ public class MainActivity extends ActionBarActivity {
                 try {
                     copyImageFile(imagePath);
                 } catch (IOException e) {
-                    Toast.makeText(this,
-                            "Unable to copy image file from gallery...", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "Exception creating new lock image from gallery: " + e.toString(), Toast.LENGTH_LONG).show();
                 }
 
                 setPassPointsSaved(false);
                 Intent i = new Intent(MainActivity.this, LockImageActivity.class);
                 startActivity(i);
             } else {
-                Toast.makeText(this, "Gallery result: no data", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "No image  selected.", Toast.LENGTH_LONG).show();
             }
         }
 

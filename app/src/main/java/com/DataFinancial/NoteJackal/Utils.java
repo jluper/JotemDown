@@ -198,7 +198,6 @@ public class Utils {
 
     public void copyFile(InputStream src, OutputStream dst) throws IOException {
 
-
         // Transfer bytes from in to out
         byte[] buf = new byte[1024];
         int len;

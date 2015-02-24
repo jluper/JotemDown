@@ -101,9 +101,9 @@ public class LockImageActivity extends ActionBarActivity implements PointCollect
                 outStream.flush();
                 outStream.close();
             } catch (FileNotFoundException e) {
-
+                Toast.makeText(this, "Exception (1) reading lock image file: " + e.getMessage(), Toast.LENGTH_LONG).show();
             } catch (IOException e) {
-
+                Toast.makeText(this, "Exception (2) reading lock image file: " + e.getMessage(), Toast.LENGTH_LONG).show();
             }
         } else {
             //create and reuse bitmap memory to prevent getting out of memory exception
@@ -150,6 +150,10 @@ public class LockImageActivity extends ActionBarActivity implements PointCollect
         }
     }
 
+    private boolean doesDatabaseExist(Context context, String dbName) {
+        File dbFile = context.getDatabasePath(dbName);
+        return dbFile.exists();
+    }
 
     public boolean isPrivate() {
 

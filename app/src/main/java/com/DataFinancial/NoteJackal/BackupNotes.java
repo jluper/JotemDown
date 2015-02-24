@@ -223,7 +223,7 @@ public class BackupNotes extends ActionBarActivity {
             source.close();
             destination.close();
         } catch (IOException e) {
-            Toast.makeText(this, "Unable to backup database. " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Exception creating notes backup: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 

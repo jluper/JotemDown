@@ -117,7 +117,7 @@ public class ReminderService extends Service {
                                 date = format.parse(dateTime);
                                 setReminderAlarm(getApplicationContext(), date);
                             } catch (ParseException e) {
-                                e.printStackTrace();
+                                //unable to parse reminder date, unhandled at present time
                             }
                         }
                         remList.remove(i - 1);
@@ -133,7 +133,7 @@ public class ReminderService extends Service {
 
                                 setReminderAlarm(getApplicationContext(), date);
                             } catch (ParseException e) {
-                                e.printStackTrace();
+                                //unable to parse reminder date, unhandled at present time
                             }
                         }
                     }

@@ -183,11 +183,10 @@ public class ExportNotes extends ActionBarActivity {
                 f.close();
 
                 if (!file.exists() || !file.canRead()) {
-                    Toast.makeText(this, "Unable to create export file...", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "Unable to create export file.", Toast.LENGTH_LONG).show();
                 }
-
             } catch (Exception e) {
-                Toast.makeText(this, "Exception creating export file. " + e.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Exception creating export file: " + e.getMessage(), Toast.LENGTH_LONG).show();
             }
         }
     }

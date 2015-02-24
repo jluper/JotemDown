@@ -5,7 +5,14 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class DatabaseNotes extends SQLiteOpenHelper {
@@ -19,8 +26,8 @@ public class DatabaseNotes extends SQLiteOpenHelper {
     public static final String COL_LON = "LONGITUDE";
     public static final String COL_REMINDER = "REMINDER";
     public static final String COL_IMAGE = "IMAGE";
-    public final String TABLE_NOTES = "NOTES";
     public static final String NOTES_DB = "notes.db";
+    public final String TABLE_NOTES = "NOTES";
     private SQLiteDatabase db;
     private Context context;
 
@@ -218,6 +225,55 @@ public class DatabaseNotes extends SQLiteOpenHelper {
         }
 
         return note;
+    }
+
+    public boolean isNotesTableEmpty() {
+
+        db = this.getWritableDatabase();
+
+        boolean empty = true;
+        Cursor cur = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_NOTES, null);
+        if (cur != null && cur.moveToFirst()) {
+            empty = (cur.getInt(0) == 0);
+        }
+        cur.close();
+
+        return empty;
+    }
+
+    public boolean importNotesFromAssets(InputStream in) {
+
+        Log.d(MainActivity.DEBUGTAG, "in import notes from assets");
+
+        String line;
+        List<Note> notes = new ArrayList<>();
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yy/MM/dd");
+            Date curr_date = new Date();
+
+            String today = dateFormat.format(curr_date);
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            while ((line = br.readLine()) != null && !line.isEmpty()) {
+
+                Note note = new Note();
+                note.setId(1);
+                note.setPriority(0);
+                note.setCreateDate(today);
+                note.setEditDate(today);
+                note.setBody(line.replace("|", "\n").replace("~", "|"));
+                notes.add(note);
+            }
+
+            for (int i = 0; i < notes.size(); i++) {
+                addNote(notes.get(i));
+            }
+
+        } catch (Exception e) {
+            return false;
+        }
+
+        return true;
     }
 
 //    public void clearNotesTable() {

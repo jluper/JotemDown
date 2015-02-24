@@ -151,7 +151,7 @@ public class NoteImageActivity extends ActionBarActivity {
         try {
             exif = new ExifInterface(noteImagePath);
         } catch (IOException e) {
-            e.printStackTrace();
+            Toast.makeText(this, "Exception rotating image: " + e.toString(), Toast.LENGTH_LONG).show();
         }
         int rotation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
 

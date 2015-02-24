@@ -120,7 +120,7 @@ public class SendNote extends ActionBarActivity {
                             startActivity(intent);
 
                         } catch (Exception e) {
-                            Toast.makeText(SendNote.this, "Error Sending email. " + e.getMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(SendNote.this, "Exception sending note email: " + e.getMessage(), Toast.LENGTH_LONG).show();
                         }
 
                     } else {
@@ -140,7 +140,7 @@ public class SendNote extends ActionBarActivity {
                                 startActivity(i);
 
                             } catch (Exception e) {
-                                Toast.makeText(SendNote.this, "Error Sending text. " + e.getMessage(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(SendNote.this, "Exception sending note text message: " + e.getMessage(), Toast.LENGTH_LONG).show();
                             }
                         } else {
                             Toast.makeText(SendNote.this, "Invalid phone or email...", Toast.LENGTH_LONG).show();
@@ -148,7 +148,7 @@ public class SendNote extends ActionBarActivity {
                     }
 
                 } catch (android.content.ActivityNotFoundException ex) {
-                    Toast.makeText(SendNote.this, "Unable to send note...", Toast.LENGTH_LONG).show();
+                    Toast.makeText(SendNote.this, "Exception sending note: " + ex.toString(), Toast.LENGTH_LONG).show();
                 }
 
                 SharedPreferences prefs = getSharedPreferences(LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
