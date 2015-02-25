@@ -357,7 +357,7 @@ public class NewNote extends ActionBarActivity {
             }
 
             EditText v = (EditText) findViewById(R.id.note_text);
-            noteText.setText("in menu_map: lat = " + lat + "lon = " + lon);
+            //noteText.setText(note.getBody() +"\n" +  "latitude: " + lat + " longitude: " + lon);
 
             Intent i = new Intent(NewNote.this, MapActivity.class);
             i.putExtra("latitude", lat);

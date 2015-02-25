@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -120,7 +121,7 @@ public class ExportNotes extends ActionBarActivity {
 
 
     private void sendTextExport() {
-
+        Log.d(MainActivity.DEBUGTAG, "check 1 ");
         String[] TO = {"jluper@triad.rr.com"};
 
         TO[0] = address.getText().toString();
@@ -130,7 +131,7 @@ public class ExportNotes extends ActionBarActivity {
         emailIntent.setType("text/plain");
 
         if (Utils.isValidEmail(TO[0])) {
-
+            Log.d(MainActivity.DEBUGTAG, "check 2 ");
             File exportDir;
             if (checkExternalMedia()) {
                 exportDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
@@ -149,10 +150,11 @@ public class ExportNotes extends ActionBarActivity {
             emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
             emailIntent.putExtra(Intent.EXTRA_SUBJECT, "NoteJackal export");
             emailIntent.putExtra(Intent.EXTRA_TEXT, "NoteJackal export file attached.");
-
+            Log.d(MainActivity.DEBUGTAG, "check 3 ");
             startActivity(Intent.createChooser(emailIntent, "Send mail..."));
 
         } else {
+            Log.d(MainActivity.DEBUGTAG, "check 4 ");
             Toast.makeText(ExportNotes.this, "Invalid email...", Toast.LENGTH_LONG).show();
         }
     }

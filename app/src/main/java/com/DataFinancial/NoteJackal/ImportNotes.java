@@ -9,13 +9,17 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
@@ -28,7 +32,7 @@ import java.util.List;
 
 public class ImportNotes extends ActionBarActivity {
 
-
+    public static final int IMPORT_SUCCESSFUL = 1;
     private static final String LAST_IMPORT_FILE = "LAST_IMPORT_FILE";
     protected List<Note> notes = new ArrayList<>();
     private EditText importFile;
@@ -84,11 +88,11 @@ public class ImportNotes extends ActionBarActivity {
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.cancel();
-
-                        if (importFromFile()) {
-                            Intent i = new Intent(ImportNotes.this, MainActivity.class);
-                            startActivity(i);
-                        }
+                        importFromFile();
+                        //if () {
+                            //Intent i = new Intent(ImportNotes.this, MainActivity.class);
+                            //startActivity(i);
+                        //}
 
                     }
                 });
@@ -118,74 +122,113 @@ public class ImportNotes extends ActionBarActivity {
     }
 
 
-    private boolean importFromFile() {
+    private void importFromFile() {
 
-        final ProgressDialog ringProgressDialog = ProgressDialog.show(ImportNotes.this, "Please wait ...", "Downloading importing notes from file...", true);
-        ringProgressDialog.setCancelable(true);
+        final ProgressDialog ringProgressDialog;
+        ringProgressDialog = ProgressDialog.show(ImportNotes.this, "Please wait ...", "Importing notes from file...", true);
 
         if (checkExternalMedia()) {
 
+            boolean returnCode = false;
             importFile = (EditText) findViewById(R.id.txtImportFile);
             File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-            File file = new File(dir, importFile.getText().toString() + ".txt");
+            String fileName = importFile.getText().toString();
+            final File file;
+            if (fileName.substring(fileName.length() - 4).equals(".txt")) {
+                file = new File(dir, importFile.getText().toString());
+            } else {
+                file = new File(dir, importFile.getText().toString() + ".txt");
+            }
 
+            //Log.d(MainActivity.DEBUGTAG, "file for import = " + file.toString());
             if (!file.exists() || !file.canRead()) {
-                Toast.makeText(this, "File not found...", Toast.LENGTH_LONG).show();
-                return false;
-            }
-
-            DatabaseNotes db = new DatabaseNotes(this);
-
-            String line;
-            try {
-                // Open the file that is the first
-                // command line parameter
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yy/MM/dd");
-                Date curr_date = new Date();
-
-                String today = dateFormat.format(curr_date);
-
-                FileInputStream fstream = new FileInputStream(file.getPath());
-                // Get the object of DataInputStream
-                DataInputStream in = new DataInputStream(fstream);
-                BufferedReader br = new BufferedReader(new InputStreamReader(in));
-                while ((line = br.readLine()) != null && !line.isEmpty()) {
-
-                    Note note = new Note();
-                    note.setId(1);
-                    note.setPriority(0);
-                    note.setCreateDate(today);
-                    note.setEditDate(today);
-                    note.setBody(line.replace("|", "\n").replace("~", "|"));
-                    notes.add(note);
-                }
-
-                for (int i = 0; i < notes.size(); i++) {
-                    db.addNote(notes.get(i));
-                }
-
-                in.close();
-
-                Toast.makeText(ImportNotes.this, "Import completed...", Toast.LENGTH_LONG).show();
-
-            } catch (Exception e) {
-                Toast.makeText(getBaseContext(), "Exception importing notes: " + e.getMessage(), Toast.LENGTH_LONG).show();
-
-                return false;
-            }
-            finally {
                 ringProgressDialog.dismiss();
+                Toast.makeText(this, "File not found...", Toast.LENGTH_LONG).show();
             }
+
+            final DatabaseNotes db = new DatabaseNotes(this);
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Message msg;
+                    String line;
+                    Bundle bundle = new Bundle();
+                    try {
+                        // Open the file that is the first
+                        // command line parameter
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yy/MM/dd");
+                        Date curr_date = new Date();
+
+                        String today = dateFormat.format(curr_date);
+
+                        FileInputStream fstream = new FileInputStream(file.getPath());
+                        // Get the object of DataInputStream
+                        DataInputStream in = new DataInputStream(fstream);
+                        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+                        while ((line = br.readLine()) != null && !line.isEmpty()) {
+
+                            Note note = new Note();
+                            note.setId(1);
+                            note.setPriority(0);
+                            note.setCreateDate(today);
+                            note.setEditDate(today);
+                            note.setBody(line.replace("|", "\n").replace("~", "|"));
+                            notes.add(note);
+                        }
+
+                        for (int i = 0; i < notes.size(); i++) {
+                            db.addNote(notes.get(i));
+                        }
+
+                        in.close();
+                        ringProgressDialog.dismiss();
+
+                        Log.d(MainActivity.DEBUGTAG, "after thread...");
+                        SharedPreferences prefs = getSharedPreferences(LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
+                        SharedPreferences.Editor editor = prefs.edit();
+                        editor.putString(LAST_IMPORT_FILE, importFile.getText().toString());
+                        editor.apply();
+
+                        msg = handler.obtainMessage();
+                        bundle.putInt("import_status", IMPORT_SUCCESSFUL);
+                        bundle.putString("import_msg", "Import completed...");
+                        msg.setData(bundle);
+                        handler.sendMessage(msg);
+
+                    } catch (Exception e) {
+                        ringProgressDialog.dismiss();
+                        msg = handler.obtainMessage();
+                        bundle.putInt("import_status", 0);
+                        bundle.putString("import_msg", "Exception importing notes." + e.getMessage());
+                        msg.setData(bundle);
+                        handler.sendMessage(msg);
+                    }
+                }
+            });
+
+            t.start();
         }
-
-        SharedPreferences prefs = getSharedPreferences(LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(LAST_IMPORT_FILE, importFile.getText().toString());
-        editor.apply();
-
-        return true;
     }
 
+    Handler handler = new Handler() {
+
+        @Override
+        public void handleMessage(Message msg) {
+
+            Bundle bundle = msg.getData();
+            int status = bundle.getInt("import_status");
+            String message = bundle.getString("import_msg");
+
+            if(status == IMPORT_SUCCESSFUL)
+            {
+                Toast.makeText(ImportNotes.this, message, Toast.LENGTH_LONG).show();
+                Intent i = new Intent(ImportNotes.this, MainActivity.class);
+                startActivity(i);
+            } else {
+                Toast.makeText(ImportNotes.this, message, Toast.LENGTH_LONG).show();
+            }
+        }
+    };
 
     private boolean checkExternalMedia() {
 

@@ -317,9 +317,7 @@ public class DriveActivity extends ActionBarActivity {
 
     private void saveFileToDrive() {
 
-        final ProgressDialog ringProgressDialog = ProgressDialog.show(
-                DriveActivity.this, "Please wait ...",
-                "Creating backup on Google Drive...", true);
+        final ProgressDialog ringProgressDialog = ProgressDialog.show(DriveActivity.this, "Please wait ...", "Creating backup on Google Drive...", true);
         ringProgressDialog.setCancelable(true);
 
         Thread t = new Thread(new Runnable() {
