@@ -61,8 +61,17 @@ public class Password extends ActionBarActivity {
                 pw = password.getText().toString();
                 if (pw.equals("DeleteNotes")) {
                     db.recreateNotesTable();
+
                     db2.recreateRemindersTable();
                     Toast.makeText(Password.this, "Notes and Reminders tables deleted...", Toast.LENGTH_LONG).show();
+                    Intent i = new Intent(Password.this, MainActivity.class);
+                    startActivity(i);
+                }
+
+                if (pw.equals("DeleteGroups")) {
+                    db.recreateGroupsTable();
+
+                    Toast.makeText(Password.this, "Groups table deleted...", Toast.LENGTH_LONG).show();
                     Intent i = new Intent(Password.this, MainActivity.class);
                     startActivity(i);
                 }

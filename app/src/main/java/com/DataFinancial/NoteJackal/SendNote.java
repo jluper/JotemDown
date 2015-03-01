@@ -105,15 +105,18 @@ public class SendNote extends ActionBarActivity {
 
                     if (utils.isValidEmail(TO[0])) {
 
-                        Intent emailIntent = new Intent(Intent.ACTION_SEND);
-                        emailIntent.setData(Uri.parse("mailto:"));
-                        emailIntent.setType("text/plain");
-
-                        String emailSubject = "Note from NoteJackal";
-                        String emailText = "Note from NoteJackal...\nID: " + note.getId() + "\nCreated Date: " + note.getCreateDate() + "\nLast Edit Date:" + note.getEditDate() + "\n\n" + note.getBody();
-                        emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
-                        emailIntent.putExtra(Intent.EXTRA_SUBJECT, emailSubject);
-                        emailIntent.putExtra(Intent.EXTRA_TEXT, emailText);
+                        Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+//                        emailIntent.setData(Uri.parse("mailto:"));
+//                        emailIntent.setType("text/plain");
+//
+//                        String emailSubject = "Note from NoteJackal";
+//                        String emailText = "Note from NoteJackal...\nID: " + note.getId() + "\nCreated Date: " + note.getCreateDate() + "\nLast Edit Date:" + note.getEditDate() + "\n\n" + note.getBody();
+//                        emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
+//                        emailIntent.putExtra(Intent.EXTRA_SUBJECT, emailSubject);
+//                        emailIntent.putExtra(Intent.EXTRA_TEXT, emailText);
+                        String uriText = "mailto:" + TO[0] + "?subject=Jote'emDown Note" + "&body=" + note.getBody();
+                        Uri uri = Uri.parse(uriText);
+                        emailIntent.setData(uri);
 
                         try {
                             Intent intent = Intent.createChooser(emailIntent, "Send mail...");

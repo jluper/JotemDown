@@ -91,7 +91,7 @@
     <string name="btn_import">Import</string>
     <string name="btn_reminder">Set Reminder</string>
     <string name="btn_backup_and_send">Backup+Send</string>
-    <string name="default_password">jackal</string>
+    <string name="default_password">password</string>
     <string name="password_hint">Password</string>
     <string name="reminder_date_hint">MM/DD/YY</string>
     <string name="reminder_time_hint">HH-MM</string>

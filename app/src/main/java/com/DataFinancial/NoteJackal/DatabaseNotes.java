@@ -26,8 +26,11 @@ public class DatabaseNotes extends SQLiteOpenHelper {
     public static final String COL_LON = "LONGITUDE";
     public static final String COL_REMINDER = "REMINDER";
     public static final String COL_IMAGE = "IMAGE";
+    public static final String COL_GROUP = "GRP";
     public static final String NOTES_DB = "notes.db";
     public final String TABLE_NOTES = "NOTES";
+    public final String TABLE_GROUPS = "GROUPS";
+    public static final String COL_NAME = "NAME";
     private SQLiteDatabase db;
     private Context context;
 
@@ -66,26 +69,89 @@ public class DatabaseNotes extends SQLiteOpenHelper {
 
         db = this.getWritableDatabase();
 
-        String sqlNotesTable = String.format("create table if not exists %s (%s INTEGER PRIMARY KEY, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT)",
-                TABLE_NOTES, COL_ID, COL_PRIORITY, COL_BODY, COL_CREATE_DATE, COL_EDIT_DATE, COL_LAT, COL_LON, COL_REMINDER, COL_IMAGE);
+        String sqlNotesTable = String.format("create table if not exists %s (%s INTEGER PRIMARY KEY, %s INTEGER, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s INTEGER)",
+                TABLE_NOTES, COL_ID, COL_PRIORITY, COL_BODY, COL_CREATE_DATE, COL_EDIT_DATE, COL_LAT, COL_LON, COL_REMINDER, COL_IMAGE, COL_GROUP);
 
         db.execSQL(sqlNotesTable);
     }
 
-    public List<Note> getAllNotes(String select, String order, String dir) {
+    public void createGroupsTable() {
+
+        db = this.getWritableDatabase();
+
+        String sqlGroupsTable = String.format("create table if not exists %s (%s INTEGER PRIMARY KEY, %s TEXT)", TABLE_GROUPS, COL_ID, COL_NAME);
+
+        db.execSQL(sqlGroupsTable);
+
+        //TEMP
+
+        NoteGroup group = new NoteGroup("ROOT");
+        addGroup(group);
+        group.setName(" Personal");
+        addGroup(group);
+        group.setName(" Work");
+        addGroup(group);
+        group.setName(" Book Club");
+        addGroup(group);
+        group.setName(" Pets");
+        addGroup(group);
+        group.setName(" School");
+        addGroup(group);
+        group.setName(" Travel");
+        addGroup(group);
+        group.setName(" Friends");
+        addGroup(group);
+
+    }
+
+    public List<Note> getNotes(String search, String order, String dir, int group) {
         List<Note> notes = new ArrayList<>();
 
         db = this.getWritableDatabase();
 
         String query;
 
-        String searchText = (String) this.context.getResources().getText(R.string.txt_help_search);
+        String helpText = (String) this.context.getResources().getText(R.string.txt_help_search);
 
-        if (select == null) {
-            query = "SELECT  * FROM " + TABLE_NOTES + " WHERE " + COL_BODY + " NOT LIKE '%" + searchText + "%' " + " ORDER BY " + order + " " + dir;
+        if (search == null) {
+           query = "SELECT  * FROM " + TABLE_NOTES + " WHERE " + COL_GROUP + " = " + group + " AND " + COL_BODY + " NOT LIKE '%" + helpText + "%' ORDER BY " + order + " " + dir;
         } else {
-            query = "SELECT * FROM " + TABLE_NOTES + " WHERE " + COL_BODY + " LIKE '%" + select + "%' " + "ORDER BY " + order + " " + dir;
+            query = "SELECT * FROM " + TABLE_NOTES + " WHERE " + COL_BODY + " LIKE '%" + search + "%'  ORDER BY " + order + " " + dir;
         }
+
+        Log.d(MainActivity.DEBUGTAG, "Query = " + query);
+        Cursor cursor = db.rawQuery(query, null);
+
+        Note note;
+        if (cursor.moveToFirst()) {
+            do {
+                note = new Note();
+                note.setId(cursor.getInt(0));
+                note.setPriority(cursor.getInt(1));
+                note.setBody(cursor.getString(2));
+                note.setCreateDate(cursor.getString(3));
+                note.setEditDate(cursor.getString(4));
+                note.setLatitude(cursor.getString(5));
+                note.setLongitude(cursor.getString(6));
+                note.setHasReminder(cursor.getString(7));
+                note.setImage(cursor.getString(8));
+                note.setGroup(cursor.getInt(9));
+
+                notes.add(note);
+            } while (cursor.moveToNext());
+        }
+
+        return notes;
+    }
+
+    public List<Note> getNotesByGroupId(int groupId, String order, String dir) {
+        List<Note> notes = new ArrayList<>();
+
+        db = this.getWritableDatabase();
+
+        String query;
+
+        query = "SELECT  * FROM " + TABLE_NOTES + " WHERE " + COL_GROUP + " = " + groupId + " ORDER BY " + order + " " + dir;
 
         Cursor cursor = db.rawQuery(query, null);
 
@@ -102,20 +168,57 @@ public class DatabaseNotes extends SQLiteOpenHelper {
                 note.setLongitude(cursor.getString(6));
                 note.setHasReminder(cursor.getString(7));
                 note.setImage(cursor.getString(8));
+                note.setGroup(cursor.getInt(9));
 
                 notes.add(note);
             } while (cursor.moveToNext());
         }
-        // return books
+
         return notes;
     }
 
+
+    public List<NoteGroup> getAllGroups(String order, String dir) {
+        List<NoteGroup> groups = new ArrayList<>();
+
+        db = this.getWritableDatabase();
+
+        String query;
+        if (order == null) {
+            query = "SELECT * FROM " + TABLE_GROUPS +  " ORDER BY " + order + " " + dir;;
+        } else {
+            query = "SELECT * FROM " + TABLE_GROUPS +  " ORDER BY " + order + " " + dir;
+        }
+
+
+        Cursor cursor = db.rawQuery(query, null);
+
+        NoteGroup group;
+        if (cursor.moveToFirst()) {
+            do {
+                group = new NoteGroup();
+                group.setId(cursor.getInt(0));
+                group.setName(cursor.getString(1));
+
+                groups.add(group);
+            } while (cursor.moveToNext());
+        }
+
+        return groups;
+    }
 
     public void recreateNotesTable() {
 
         db = this.getWritableDatabase();
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NOTES);
         createNotesTable();
+    }
+
+    public void recreateGroupsTable() {
+
+        db = this.getWritableDatabase();
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_GROUPS);
+        createGroupsTable();
     }
 
     @Override
@@ -139,6 +242,7 @@ public class DatabaseNotes extends SQLiteOpenHelper {
         values.put(COL_EDIT_DATE, note.getEditDate());
         values.put(COL_REMINDER, note.getHasReminder());
         values.put(COL_IMAGE, note.getImage());
+        values.put(COL_GROUP, note.getGroup());
 
         long rowId = -1;
         try {
@@ -152,6 +256,26 @@ public class DatabaseNotes extends SQLiteOpenHelper {
         return rowId;
     }
 
+    public long addGroup(NoteGroup grp) {
+
+        db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        //values.put(COL_ID, note.getId());
+        values.put(COL_NAME, grp.getName());
+
+        long rowId = -1;
+        try {
+            rowId = db.insert(TABLE_GROUPS, null, values);
+        } catch (Exception e) {
+            return rowId;   // should be -1
+        }
+
+        db.close();
+
+        return rowId;
+    }
 
     public long deleteNote(int id) {
 
@@ -188,6 +312,7 @@ public class DatabaseNotes extends SQLiteOpenHelper {
         values.put(COL_LON, note.getLongitude());
         values.put(COL_REMINDER, note.getHasReminder());
         values.put(COL_IMAGE, note.getImage());
+        values.put(COL_GROUP, note.getGroup());
 
         long rowId = -1;
         try {
@@ -222,6 +347,7 @@ public class DatabaseNotes extends SQLiteOpenHelper {
             note.setLongitude(cursor.getString(6));
             note.setHasReminder(cursor.getString(7));
             note.setImage(cursor.getString(8));
+            note.setGroup(cursor.getInt(9));
         }
 
         return note;
@@ -242,8 +368,6 @@ public class DatabaseNotes extends SQLiteOpenHelper {
     }
 
     public boolean importNotesFromAssets(InputStream in) {
-
-        Log.d(MainActivity.DEBUGTAG, "in import notes from assets");
 
         String line;
         List<Note> notes = new ArrayList<>();

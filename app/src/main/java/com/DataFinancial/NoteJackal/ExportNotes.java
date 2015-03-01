@@ -28,6 +28,7 @@ public class ExportNotes extends ActionBarActivity {
 
     public static final String DATABASE_NAME = "notes.db";
     private static final String LAST_EXPORT_FILE = "LAST_EXPORT_FILE";
+    public static final int NO_GROUP = -1;
     protected List<Note> notes = new ArrayList<Note>();
     private EditText address;
     private Button btnExport;
@@ -97,8 +98,8 @@ public class ExportNotes extends ActionBarActivity {
                 editor.putString(LAST_EXPORT_FILE, exportFile.getText().toString());
                 editor.apply();
 
-                Intent i = new Intent(ExportNotes.this, MainActivity.class);
-                startActivity(i);
+                //Intent i = new Intent(ExportNotes.this, MainActivity.class);
+                //startActivity(i);
             }
         });
 
@@ -126,12 +127,12 @@ public class ExportNotes extends ActionBarActivity {
 
         TO[0] = address.getText().toString();
 
-        Intent emailIntent = new Intent(Intent.ACTION_SEND);
-        emailIntent.setData(Uri.parse("mailto:"));
-        emailIntent.setType("text/plain");
+        Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+        //Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", "jluper@triad.rr.com", null));
+        // emailIntent.setData(Uri.parse("mailto:"));
+        // emailIntent.setType("message/rfc822");
 
         if (Utils.isValidEmail(TO[0])) {
-            Log.d(MainActivity.DEBUGTAG, "check 2 ");
             File exportDir;
             if (checkExternalMedia()) {
                 exportDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
@@ -141,20 +142,34 @@ public class ExportNotes extends ActionBarActivity {
             File file = new File(exportDir, exportFile.getText().toString() + ".txt");
 
             if (!file.exists() || !file.canRead()) {
+                Log.d(MainActivity.DEBUGTAG, "check 3 ");
                 Toast.makeText(this, "Unable to access export file...", Toast.LENGTH_LONG).show();
                 return;
             }
 
-            Uri uri = Uri.parse(file.toString());
-            emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
-            emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
-            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "NoteJackal export");
-            emailIntent.putExtra(Intent.EXTRA_TEXT, "NoteJackal export file attached.");
-            Log.d(MainActivity.DEBUGTAG, "check 3 ");
+             //Uri uri = Uri.parse(file.toString());
+             //emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
+             //emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
+             //emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Jote'emDown export");
+             //emailIntent.putExtra(Intent.EXTRA_TEXT, "Jot'emDown notes export file attached.");
+
+            String uriText = "mailto:" + TO[0] + "?subject=Jote'emDown export" + "&body=Jot'emDown notes export file attached.";
+            Uri uri = Uri.parse(uriText);
+            emailIntent.setData(uri);
+
+//            PackageManager pm = getPackageManager();
+//            Intent sendIntent = new Intent(Intent.ACTION_SENDTO);
+//            List<ResolveInfo> resInfo = pm.queryIntentActivities(emailIntent, 0);
+//            for (int i = 0; i < resInfo.size(); i++) {
+//                // Extract the label, append it, and repackage it in a LabeledIntent
+//                ResolveInfo ri = resInfo.get(i);
+//                String packageName = ri.activityInfo.packageName;
+//                Log.d(MainActivity.DEBUGTAG, "package name " + packageName);
+//            }
+
             startActivity(Intent.createChooser(emailIntent, "Send mail..."));
 
         } else {
-            Log.d(MainActivity.DEBUGTAG, "check 4 ");
             Toast.makeText(ExportNotes.this, "Invalid email...", Toast.LENGTH_LONG).show();
         }
     }
@@ -167,7 +182,7 @@ public class ExportNotes extends ActionBarActivity {
             exportFile = (EditText) findViewById(R.id.txtExportFile);
 
             DatabaseNotes db = new DatabaseNotes(this);
-            notes = db.getAllNotes(null, DatabaseNotes.COL_CREATE_DATE, "DESC");
+            notes = db.getNotes(null, DatabaseNotes.COL_CREATE_DATE, "DESC", NO_GROUP);
 
             File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
             File file = new File(dir, exportFile.getText().toString() + ".txt");

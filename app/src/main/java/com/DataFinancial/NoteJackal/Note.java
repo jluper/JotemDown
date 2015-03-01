@@ -16,6 +16,7 @@ public class Note {
     private String longitude;
     private String hasReminder;
     private String image;
+    private int group;
 
     public Note() {
 
@@ -29,6 +30,7 @@ public class Note {
         this.longitude = "";
         this.hasReminder = "false";
         this.image = "";
+        this.group = MainActivity.ROOT;;
     }
 
     public Note(String body) {
@@ -43,8 +45,16 @@ public class Note {
         this.longitude = "";
         this.hasReminder = "false";
         this.image = "";
-
+        this.group = MainActivity.ROOT;
         this.body = body;
+    }
+
+    public int getGroup() {
+        return group;
+    }
+
+    public void setGroup(int group) {
+        this.group = group;
     }
 
     public String getImage() {
@@ -134,13 +144,13 @@ public class Note {
     public String toString() {
 
         String bdy = body.replace(System.getProperty("line.separator"), "|");
-        return id + "," + priority + "," + createDate + "," + editDate + "," + bdy + ", " + latitude + ", " + longitude + ", " + hasReminder + image;
+        return id + "," + priority + "," + createDate + "," + editDate + "," + bdy + ", " + latitude + ", " + longitude + ", " + hasReminder + ", " + image + ", " + group;
     }
 
     public String toStringWoNewLine() {
 
         String bdy = body.replace(System.getProperty("line.separator"), "|");
-        return id + "," + priority + "," + createDate + "," + editDate + "," + bdy + ", " + latitude + ", " + longitude + ", " + hasReminder + image;
+        return id + "," + priority + "," + createDate + "," + editDate + "," + bdy + ", " + latitude + ", " + longitude + ", " + hasReminder + ", " + image + ", " + group;
     }
 
 }

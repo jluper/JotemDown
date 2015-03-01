@@ -21,6 +21,7 @@
             android:scaleType="fitCenter"
             android:src="@drawable/sort" />
 
+
         <EditText
             android:id="@+id/searchText"
             android:layout_width="0dp"
@@ -41,6 +42,15 @@
             android:background="@color/black"
             android:scaleType="fitCenter"
             android:src="@drawable/search" />
+        <ImageButton
+            android:id="@+id/groupButton"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_marginLeft="5dp"
+            android:layout_weight="1"
+            android:background="@color/black"
+            android:scaleType="fitCenter"
+            android:src="@drawable/sort" />
     </LinearLayout>
 
     <LinearLayout
@@ -55,21 +65,32 @@
         android:orientation="horizontal" >
 
         <TextView
-            android:id="@+id/lbl_sort"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top|left"
-            android:text="Edited"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/white" />
-
-        <TextView
             android:id="@+id/lbl_num_notes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top|left"
             android:layout_marginLeft="5dp"
             android:text="(0)"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/white" />
+        <TextView
+            android:id="@+id/lbl_sort"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|left"
+            android:text="Sort: "
+            android:layout_marginLeft="10dp"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/white" />
+
+
+        <TextView
+            android:id="@+id/lbl_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|left"
+            android:text="Group: "
+            android:layout_marginLeft="10dp"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@color/white" />
     </LinearLayout>
