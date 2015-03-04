@@ -20,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -49,7 +50,7 @@ public class NewNote extends ActionBarActivity {
     private EditText noteText;
     private File imageFile;
     private ArrayAdapter grpAdapter;
-    private ListView groupListView;
+    private ListView groupList;
     private String noteImagePath;
     private int selectedGroupRow;
     private EditText editText;
@@ -68,10 +69,10 @@ public class NewNote extends ActionBarActivity {
 
         noteText = (EditText) findViewById(R.id.note_text);
         noteText.setGravity(Gravity.TOP);
-        groupListView = (ListView) findViewById(R.id.group_list);
+        groupList = (ListView) findViewById(R.id.group_list);
 
 
-        //groupListView.setSelectionFromTop(2, 0);
+        //groupList.setSelectionFromTop(2, 0);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -104,16 +105,17 @@ public class NewNote extends ActionBarActivity {
             }
         }
 
-        populateGroupListView();
-        List<NoteGroup> grps = db.getAllGroups(DatabaseNotes.COL_ID, "ASC");
+        populategroupList();
+
+        List<NoteGroup> grps = db.getGroups(DatabaseNotes.COL_ID, "ASC");
         int grp = note.getGroup();
         for (int i = 0; i < grps.size(); i++) {
             Log.d(MainActivity.DEBUGTAG, "i = " + i + "grps.get(i).getId() = " + grps.get(i).getId() + "note.getgroup() = " + note.getGroup());
             if (grps.get(i).getId() == note.getGroup()) {
-                groupListView.setItemChecked(i, true);
+                groupList.setItemChecked(i, true);
                 break;
             }
-            groupListView.setItemChecked(MainActivity.ROOT, true);
+            groupList.setItemChecked(MainActivity.ROOT, true);
         }
 
         TextView lblPriority = (TextView) findViewById(R.id.lbl_priority);
@@ -222,7 +224,7 @@ public class NewNote extends ActionBarActivity {
         Intent i = new Intent(NewNote.this, MainActivity.class);
         Log.d(MainActivity.DEBUGTAG, "check 1 newnote");
         i.putExtra("group", note.getGroup());
-        i.putExtra("group_name",  ((TextView) groupListView.getAdapter().getView(groupListView.getCheckedItemPosition(), null, groupListView)).getText());
+        i.putExtra("group_name",  ((TextView)(groupList.getAdapter().getView(groupList.getCheckedItemPosition(), null, groupList)).findViewById(R.id.group_row_text)).getText());
         if (help) {
             i.putExtra("help", "true");
         }
@@ -330,13 +332,6 @@ public class NewNote extends ActionBarActivity {
 
             note.setPriority((note.getPriority() + 1) % 2);
             db.updateNote(note);
-
-           // Intent emailIntent = new Intent(Intent.ACTION_SEND);
-            Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto:", "jluper@triad.rr.com", null));
-            emailIntent.setType("text/plain");
-            //emailIntent.setData(Uri.parse("mailto:"));
-            //emailIntent.setType("message/rfc822");
-            startActivity(Intent.createChooser(emailIntent, "Send mail..."));
 
             return true;
         }
@@ -477,9 +472,10 @@ public class NewNote extends ActionBarActivity {
 
         Intent i = new Intent(NewNote.this, MainActivity.class);
         try {
-            Log.d(MainActivity.DEBUGTAG, "save note = " + note.toString());
+
             i.putExtra("group", note.getGroup());
-            i.putExtra("group_name",  ((TextView) groupListView.getAdapter().getView(groupListView.getCheckedItemPosition(), null, groupListView)).getText());
+            //i.putExtra("group_name",  ((TextView) groupList.getAdapter().getView(groupList.getCheckedItemPosition(), null, groupList)).getText());
+            i.putExtra("group_name",  ((TextView)(groupList.getAdapter().getView(groupList.getCheckedItemPosition(), null, groupList)).findViewById(R.id.group_row_text)).getText());
             if (editFunction == true) {
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yy/MM/dd");
                 Date curr_date = new Date();
@@ -576,29 +572,29 @@ public class NewNote extends ActionBarActivity {
         }
     }
 
-    private void populateGroupListView() {
+    private void populategroupList() {
 
-                final List<NoteGroup> grps;
+                Log.d(MainActivity.DEBUGTAG, "populate group list ");
+                List<NoteGroup> grps;
 
-                grps = db.getAllGroups(DatabaseNotes.COL_ID, "ASC");
+                grps = db.getGroups(DatabaseNotes.COL_ID, "ASC");
+//        for (NoteGroup temp : grps) {
+//            Log.d(MainActivity.DEBUGTAG, "Group: " + temp.toString());
+//        }
+                GroupAdapter grpAdapter = new GroupAdapter(this, grps);
 
-                grpAdapter = new ArrayAdapter<>(this, R.layout.simple_list_item_activated_3, grps);
+                groupList.setAdapter(grpAdapter);
 
-                groupListView.setAdapter(grpAdapter);
-
-        groupListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        groupList.setOnItemClickListener(new OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> adapter, View view, int pos, long arg3) {
 
                 selectedGroupRow = pos;
-                note.setGroup(grps.get(pos).getId());
-                Log.d(MainActivity.DEBUGTAG, "note group ID: " + grps.get(pos).getId());
-                //db.updateNote(note);
-
-                //editText.setText(editText.getText() + ((TextView) view.findViewById(R.id.group_row_text)).getText().toString());
-                //editText.setText(editText.getText() + note.getGroup());
-
+                NoteGroup grp = (NoteGroup) adapter.getItemAtPosition(pos);
+                Log.d(MainActivity.DEBUGTAG, "pos = " + pos + " grp id = " + grp.getId() + " grp name = " + grp.getName());
+                note.setGroup(grp.getId());
+                groupList.setItemChecked(pos, true);
             }
         });
     }

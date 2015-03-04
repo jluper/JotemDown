@@ -155,9 +155,12 @@ public class BackupNotes extends ActionBarActivity {
 
         TO[0] = address.getText().toString();
 
-        Intent emailIntent = new Intent(Intent.ACTION_SEND);
-        emailIntent.setData(Uri.parse("mailto:"));
-        emailIntent.setType("text/plain");
+        //Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+        //Intent emailIntent = new android.content.Intent.ACTION_SENDTO (new Intent(Intent.ACTION_SENDTO);
+        Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", TO[0], null));
+
+        emailIntent.setData(Uri.parse("mailto:" + TO[0]));
+        emailIntent.setType("message/rfc822");
 
         if (Utils.isValidEmail(TO[0])) {
 
@@ -173,7 +176,7 @@ public class BackupNotes extends ActionBarActivity {
 
             Uri uri = Uri.parse(file.toString());
             emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
-            emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
+           // emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
             emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Jot'emDown backup");
             emailIntent.putExtra(Intent.EXTRA_TEXT, "Backup file attached.");
 

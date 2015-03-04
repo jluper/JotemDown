@@ -37,7 +37,12 @@ public class Utils {
 
     static public boolean isValidPhone(String target) {
 
-        return !TextUtils.isEmpty(target) && android.util.Patterns.PHONE.matcher(target).matches();
+        // the check in the return statement was considering a string of digits as valid. ex: "12345"
+        if (target.length() < 10) {
+            return false;
+        }
+
+        return  !TextUtils.isEmpty(target) && android.util.Patterns.PHONE.matcher(target).matches();
     }
 
     static public boolean isValidEmail(CharSequence target) {

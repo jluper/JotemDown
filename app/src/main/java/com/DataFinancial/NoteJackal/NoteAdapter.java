@@ -82,16 +82,17 @@ public class NoteAdapter extends BaseAdapter implements ListAdapter {
 
 		String title = note.getBody();
 		String strHelp = (String) this.context.getResources().getText(R.string.txt_help_search);
-		Boolean help = title.substring(0, strHelp.length()).equals(strHelp);
+
+		Boolean help = title.contains(strHelp); //title.substring(0, strHelp.length()).equals(strHelp);
 		
 		if (!help) {
 			if (title.length() > 75) {
 				title = title.substring(0,75) + "...";
 				String[] s;
-				if ((s = title.split("\n")).length > 2) {        	
+				if ((s = title.split("\n")).length > 2) {
 					title = s[0] + "\n" + s[1] + "...";
 				}
-			}	
+			}
 		} else {
 			title = note.getBody().substring(0,note.getBody().indexOf('/')-1);
 		}

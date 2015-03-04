@@ -6,7 +6,10 @@
     <string name="menu_passpoints_reset">Reset passpoints</string>
     <string name="menu_replace_lock_image">Replace lock image</string>
     <string name="menu_reset_password">Change password</string>
+    <string name="menu_new_group">Add</string>
     <string name="menu_new">New</string>
+    <string name="menu_delete_group">Delete</string>
+    <string name="menu_edit_group">Change</string>
     <string name="menu_map">Map</string>
     <string name="menu_privacy">Privacy...</string>
     <string name="menu_data">Data...</string>
@@ -20,6 +23,7 @@
     <string name="menu_send_done">Done</string>
     <string name="menu_reminder">Reminder</string>
     <string name="menu_geotag">Geotag</string>
+    <string name="menu_groups">Folders</string>
     <string name="menu_call_phone">Call phone</string>
     <string name="menu_send_email">Send email</string>
     <string name="menu_goto_webpage">Web page</string>
@@ -82,10 +86,10 @@
     <string name="lbl_export_title">Export</string>
     <string name="lbl_restore_title">Restore</string>
     <string name="lbl_restore_file">Filename</string>
-     <string name="lbl_google_password">Google Password</string>
+    <string name="lbl_google_password">Google Password</string>
     <string name="btn_submit">Submit</string>
     <string name="btn_send">Send</string>
-     <string name="btn_next">Next</string>
+    <string name="btn_next">Next</string>
     <string name="btn_backup">Backup</string>
     <string name="btn_restore">Restore</string>
     <string name="btn_import">Import</string>
@@ -121,5 +125,7 @@
     <string name="main_activity_title">Jot\'emDown</string>
     <string name="txt_help_search">HELP:</string>
     <string name="help_title">Help</string>
+    <string name="title_groups">Folders</string>
+    <string name="action_settings">Settings</string>
 
 </resources>

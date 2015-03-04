@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -65,7 +64,6 @@ public class MainActivity extends ActionBarActivity {
     private static String sortDir = "DESC";
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,68 +76,51 @@ public class MainActivity extends ActionBarActivity {
         actionBar.setDisplayShowTitleEnabled(true);
 
         lblSort = (TextView) findViewById(R.id.lbl_sort);
-        lblSort.setText("Sort: Created");
+        lblSort.setText("Created");
         lblGroup = (TextView) findViewById(R.id.lbl_group);
 
         noteList = (ListView) findViewById(R.id.note_list);
-        Log.d(MainActivity.DEBUGTAG, "check 0.2");
+
         addSearchButtonListener();
         addSortButtonListener();
         addGroupButtonListener();
-        Log.d(MainActivity.DEBUGTAG, "check 0.3");
+
         db.createNotesTable();
+        db.createGroupsTable();
         dbReminders.createRemindersTable();
-        Log.d(MainActivity.DEBUGTAG, "check 0.4");
-        if (db.isNotesTableEmpty()) {
-            InputStream in;
-            try {
-                AssetManager assetManager = getAssets();
-                in = assetManager.open(HELP_FILE);
-                db.importNotesFromAssets(in);
-                in.close();
-            } catch (IOException e) {
-                Toast.makeText(this, "Exception importing help notes: " + e.toString(), Toast.LENGTH_LONG).show();
-            }
-        }
-        Log.d(MainActivity.DEBUGTAG, "check 0.5");
+
         searchText = null;
         Bundle extras = getIntent().getExtras();
-        Log.d(MainActivity.DEBUGTAG, "check 0.6");
+
         if (extras != null) {
             Log.d(MainActivity.DEBUGTAG, "check 0.7");
             if (extras.getString("help") != null) {
-                Log.d(MainActivity.DEBUGTAG, "check 1");
                 fromHelp = extras.getString("help");
                 searchText = (String) getResources().getText(
                         R.string.txt_help_search);
                 loadNotes(searchText, DatabaseNotes.COL_ID, "ASC", groupId);
             } else {
-                Log.d(MainActivity.DEBUGTAG, "group extra = " + extras.getInt("group"));
-//                if (extras.getInt("group") != 0) {
-                    Log.d(MainActivity.DEBUGTAG, "check 0.8");
-                    Log.d(MainActivity.DEBUGTAG, "check 2");
-                    groupId = extras.getInt("group");
+                Log.d(MainActivity.DEBUGTAG, "check 0.8");
+                Log.d(MainActivity.DEBUGTAG, "check 2");
+                groupId = extras.getInt("group");
 
 
-                    List<NoteGroup> grps = db.getAllGroups(DatabaseNotes.COL_NAME, "ASC");
-                    for (int i = 0; i < grps.size(); i++) {
-                        Log.d(MainActivity.DEBUGTAG, "i = " + i + " grps.get(i).getId() = " + grps.get(i).getId() + " name = " + grps.get(i).getName() + " note.getgroup() = " + groupId);
-                        if (grps.get(i).getId() == groupId) {
-                            groupIdx = i;
-                            break;
-                        }
-                        groupIdx = -1;
+                List<NoteGroup> grps = db.getGroups(DatabaseNotes.COL_NAME, "ASC");
+                for (int i = 0; i < grps.size(); i++) {
+                    Log.d(MainActivity.DEBUGTAG, "i = " + i + " grps.get(i).getId() = " + grps.get(i).getId() + " name = " + grps.get(i).getName() + " note.getgroup() = " + groupId);
+                    if (grps.get(i).getId() == groupId) {
+                        groupIdx = i;
+                        break;
                     }
-                    Log.d(MainActivity.DEBUGTAG, "groupIdx = " + groupIdx);
-                    lblGroup.setText("Folder: " + extras.getString("group_name"));
-                    loadNotes(null, DatabaseNotes.COL_CREATE_DATE, "DESC", groupId);
-//                }
+                    groupIdx = -1;
+                }
+                Log.d(MainActivity.DEBUGTAG, "groupIdx = " + groupIdx);
+                lblGroup.setText(extras.getString("group_name"));
+                loadNotes(null, DatabaseNotes.COL_CREATE_DATE, "DESC", groupId);
             }
         } else {
-            Log.d(MainActivity.DEBUGTAG, "check 4");
             groupId = ROOT;
-            Log.d(MainActivity.DEBUGTAG, "check 5");
-            lblGroup.setText("Folder: ROOT");
+            lblGroup.setText("General");
             loadNotes(null, DatabaseNotes.COL_CREATE_DATE, "DESC", groupId);
         }
     }
@@ -205,6 +186,7 @@ public class MainActivity extends ActionBarActivity {
                 sortDir = "DESC";
 
                 lblSort = (TextView) findViewById(R.id.lbl_sort);
+                Log.d(MainActivity.DEBUGTAG, "BEFORE sort = " + sortCol + " group = " + groupId);
 
                 switch (sortCol) {
                     case DatabaseNotes.COL_CREATE_DATE:
@@ -220,20 +202,24 @@ public class MainActivity extends ActionBarActivity {
                         lblSort.setText("Edited");
                         break;
                     case DatabaseNotes.COL_PRIORITY:
-                        sortCol = DatabaseNotes.COL_BODY + " COLLATE NOCASE";
+                        sortCol = DatabaseNotes.COL_BODY;
                         lblSort.setText("Content");
                         sortDir = "ASC";
                         break;
                     default:
                         sortCol = DatabaseNotes.COL_CREATE_DATE;
+                        lblSort.setText("Content");
+                        sortDir = "ASC";
                 }
 
-                loadNotes(null, sortCol, sortDir, groupId);
-
+                Log.d(MainActivity.DEBUGTAG, "AFTER sort = " + sortCol + " group = " + groupId);
+                if (sortCol.equals(DatabaseNotes.COL_BODY)) {
+                    loadNotes(null, sortCol + " COLLATE NOCASE", sortDir, groupId);
+                } else {
+                    loadNotes(null, sortCol, sortDir, groupId);
+                }
             }
-
         });
-
     }
 
     public void addGroupButtonListener() {
@@ -247,16 +233,17 @@ public class MainActivity extends ActionBarActivity {
 
                 //get a list of all the groups
                 List<NoteGroup> grps;
-                grps = db.getAllGroups(DatabaseNotes.COL_NAME, "ASC");
+                grps = db.getGroups(DatabaseNotes.COL_NAME, "ASC");
 
-                for (int i = 0; i < grps.size(); i++) {
-                    Log.d(MainActivity.DEBUGTAG, "grp: " + grps.get(i).getId() + ", " + grps.get(i).getName());
-                }
+//                for (int i = 0; i < grps.size(); i++) {
+//                    Log.d(MainActivity.DEBUGTAG, "grp: " + grps.get(i).getId() + ", " + grps.get(i).getName());
+//                }
 
                 groupIdx = (groupIdx + 1) % grps.size();
-                    Log.d(MainActivity.DEBUGTAG, "groupIdx: " + groupIdx + " groupId: " + grps.get(groupIdx).getId());
-                    lblGroup.setText("Folder: " + grps.get(groupIdx).getName());
-                    loadNotes(null, sortCol, sortDir, grps.get(groupIdx).getId());
+                groupId = grps.get(groupIdx).getId();
+                Log.d(MainActivity.DEBUGTAG, "groupIdx: " + groupIdx + " groupId: " + groupId);
+                lblGroup.setText(grps.get(groupIdx).getName());
+                loadNotes(null, sortCol, sortDir, grps.get(groupIdx).getId());
             }
         });
 
@@ -396,6 +383,10 @@ public class MainActivity extends ActionBarActivity {
                 break;
             case R.id.menu_export:
                 i = new Intent(MainActivity.this, ExportNotes.class);
+                startActivity(i);
+                break;
+            case R.id.menu_groups:
+                i = new Intent(MainActivity.this, GroupMaintenance.class);
                 startActivity(i);
                 break;
             case R.id.menu_help_main:

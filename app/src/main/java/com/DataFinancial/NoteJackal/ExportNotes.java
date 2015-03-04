@@ -127,10 +127,10 @@ public class ExportNotes extends ActionBarActivity {
 
         TO[0] = address.getText().toString();
 
-        Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
-        //Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", "jluper@triad.rr.com", null));
-        // emailIntent.setData(Uri.parse("mailto:"));
-        // emailIntent.setType("message/rfc822");
+        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+
+        emailIntent.setData(Uri.parse("mailto:"));
+        emailIntent.setType("message/rfc822");
 
         if (Utils.isValidEmail(TO[0])) {
             File exportDir;
@@ -147,27 +147,13 @@ public class ExportNotes extends ActionBarActivity {
                 return;
             }
 
-             //Uri uri = Uri.parse(file.toString());
-             //emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
-             //emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
-             //emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Jote'emDown export");
-             //emailIntent.putExtra(Intent.EXTRA_TEXT, "Jot'emDown notes export file attached.");
+             Uri uri = Uri.parse(file.toString());
+             emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
+             emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
+             emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Jote'emDown export");
+             emailIntent.putExtra(Intent.EXTRA_TEXT, "Jot'emDown notes export file attached.");
 
-            String uriText = "mailto:" + TO[0] + "?subject=Jote'emDown export" + "&body=Jot'emDown notes export file attached.";
-            Uri uri = Uri.parse(uriText);
-            emailIntent.setData(uri);
-
-//            PackageManager pm = getPackageManager();
-//            Intent sendIntent = new Intent(Intent.ACTION_SENDTO);
-//            List<ResolveInfo> resInfo = pm.queryIntentActivities(emailIntent, 0);
-//            for (int i = 0; i < resInfo.size(); i++) {
-//                // Extract the label, append it, and repackage it in a LabeledIntent
-//                ResolveInfo ri = resInfo.get(i);
-//                String packageName = ri.activityInfo.packageName;
-//                Log.d(MainActivity.DEBUGTAG, "package name " + packageName);
-//            }
-
-            startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+             startActivity(Intent.createChooser(emailIntent, "Send mail..."));
 
         } else {
             Toast.makeText(ExportNotes.this, "Invalid email...", Toast.LENGTH_LONG).show();

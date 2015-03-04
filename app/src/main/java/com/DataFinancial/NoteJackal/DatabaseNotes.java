@@ -2,12 +2,15 @@ package com.DataFinancial.NoteJackal;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
@@ -73,6 +76,19 @@ public class DatabaseNotes extends SQLiteOpenHelper {
                 TABLE_NOTES, COL_ID, COL_PRIORITY, COL_BODY, COL_CREATE_DATE, COL_EDIT_DATE, COL_LAT, COL_LON, COL_REMINDER, COL_IMAGE, COL_GROUP);
 
         db.execSQL(sqlNotesTable);
+
+
+        if (isNotesTableEmpty()) {
+            InputStream in;
+            try {
+                AssetManager assetManager = context.getAssets();
+                in = assetManager.open(MainActivity.HELP_FILE);
+                importNotesFromAssets(in);
+                in.close();
+            } catch (IOException e) {
+                Toast.makeText(context, "Exception importing help notes: " + e.toString(), Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
     public void createGroupsTable() {
@@ -83,24 +99,28 @@ public class DatabaseNotes extends SQLiteOpenHelper {
 
         db.execSQL(sqlGroupsTable);
 
+        if (isGroupsTableEmpty()) {
+            NoteGroup ng = new NoteGroup("General");
+            addGroup(ng);
+        }
         //TEMP
 
-        NoteGroup group = new NoteGroup("ROOT");
-        addGroup(group);
-        group.setName(" Personal");
-        addGroup(group);
-        group.setName(" Work");
-        addGroup(group);
-        group.setName(" Book Club");
-        addGroup(group);
-        group.setName(" Pets");
-        addGroup(group);
-        group.setName(" School");
-        addGroup(group);
-        group.setName(" Travel");
-        addGroup(group);
-        group.setName(" Friends");
-        addGroup(group);
+//        NoteGroup group = new NoteGroup("ROOT");
+//        addGroup(group);
+//        group.setName("Personal");
+//        addGroup(group);
+//        group.setName("Work");
+//        addGroup(group);
+//        group.setName("Book Club");
+//        addGroup(group);
+//        group.setName("Pets");
+//        addGroup(group);
+//        group.setName("School");
+//        addGroup(group);
+//        group.setName("Travel");
+//        addGroup(group);
+//        group.setName("Friends");
+//        addGroup(group);
 
     }
 
@@ -114,9 +134,13 @@ public class DatabaseNotes extends SQLiteOpenHelper {
         String helpText = (String) this.context.getResources().getText(R.string.txt_help_search);
 
         if (search == null) {
-           query = "SELECT  * FROM " + TABLE_NOTES + " WHERE " + COL_GROUP + " = " + group + " AND " + COL_BODY + " NOT LIKE '%" + helpText + "%' ORDER BY " + order + " " + dir;
+            if (group != ExportNotes.NO_GROUP) {
+                query = "SELECT  * FROM " + TABLE_NOTES + " WHERE " + COL_GROUP + " = " + group + " AND " + COL_BODY + " NOT LIKE '%" + helpText + "%' ORDER BY " + order + " " + dir;
+            } else {
+                query = "SELECT  * FROM " + TABLE_NOTES + " WHERE " + COL_BODY + " NOT LIKE '%" + helpText + "%' ORDER BY " + order + " " + dir;
+            }
         } else {
-            query = "SELECT * FROM " + TABLE_NOTES + " WHERE " + COL_BODY + " LIKE '%" + search + "%'  ORDER BY " + order + " " + dir;
+            query = "SELECT * FROM " + TABLE_NOTES + " WHERE " + COL_BODY + " LIKE '%" + search + "%' AND " + COL_GROUP + " = " + group + " ORDER BY " + order + " " + dir;
         }
 
         Log.d(MainActivity.DEBUGTAG, "Query = " + query);
@@ -178,7 +202,7 @@ public class DatabaseNotes extends SQLiteOpenHelper {
     }
 
 
-    public List<NoteGroup> getAllGroups(String order, String dir) {
+    public List<NoteGroup> getGroups(String order, String dir) {
         List<NoteGroup> groups = new ArrayList<>();
 
         db = this.getWritableDatabase();
@@ -277,6 +301,23 @@ public class DatabaseNotes extends SQLiteOpenHelper {
         return rowId;
     }
 
+    public long deleteGroup(int id) {
+
+        db = this.getWritableDatabase();
+
+        long rowId = -1;
+        try {
+            db.delete(TABLE_GROUPS, COL_ID + "=" + id, null);
+
+        } catch (Exception e) {
+            return rowId;   // should be -1
+        }
+
+        db.close();
+
+        return rowId;
+    }
+
     public long deleteNote(int id) {
 
         db = this.getWritableDatabase();
@@ -287,6 +328,26 @@ public class DatabaseNotes extends SQLiteOpenHelper {
             dbReminders.deleteReminderByNoteId(id);
             db.delete(TABLE_NOTES, COL_ID + "=" + id, null);
 
+        } catch (Exception e) {
+            return rowId;   // should be -1
+        }
+
+        db.close();
+
+        return rowId;
+    }
+
+    public long updateGroup(NoteGroup grp) {
+
+        db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put(COL_NAME, grp.getName());
+
+        long rowId = -1;
+        try {
+            rowId = db.update(TABLE_GROUPS, values, COL_ID + "=" + grp.getId(), null);
         } catch (Exception e) {
             return rowId;   // should be -1
         }
@@ -366,6 +427,21 @@ public class DatabaseNotes extends SQLiteOpenHelper {
 
         return empty;
     }
+
+    public boolean isGroupsTableEmpty() {
+
+        db = this.getWritableDatabase();
+
+        boolean empty = true;
+        Cursor cur = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_GROUPS, null);
+        if (cur != null && cur.moveToFirst()) {
+            empty = (cur.getInt(0) == 0);
+        }
+        cur.close();
+
+        return empty;
+    }
+
 
     public boolean importNotesFromAssets(InputStream in) {
 
