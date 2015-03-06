@@ -56,10 +56,10 @@ public class ChangePassword extends ActionBarActivity {
                     editor.putString(Password.PASSWORD, password.getText().toString());
                     editor.apply();
 
-                    Intent i = new Intent(ChangePassword.this, Password.class);
+                    Intent i = new Intent(ChangePassword.this, MainActivity.class);
                     startActivity(i);
                 } else {
-                    Toast.makeText(ChangePassword.this, "Password don't match, try again...", Toast.LENGTH_LONG).show();
+                    Toast.makeText(ChangePassword.this, "Passwords don't match, try again...", Toast.LENGTH_LONG).show();
                 }
             }
         });

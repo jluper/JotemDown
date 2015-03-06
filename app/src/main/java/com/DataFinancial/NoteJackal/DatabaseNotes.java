@@ -131,8 +131,8 @@ public class DatabaseNotes extends SQLiteOpenHelper {
 
         String query;
 
-        String helpText = (String) this.context.getResources().getText(R.string.txt_help_search);
-
+        //String helpText = (String) this.context.getResources().getText(R.string.txt_help_search);txt_help_search
+        String helpText = context.getResources().getString(R.string.txt_help_search);
         if (search == null) {
             if (group != ExportNotes.NO_GROUP) {
                 query = "SELECT  * FROM " + TABLE_NOTES + " WHERE " + COL_GROUP + " = " + group + " AND " + COL_BODY + " NOT LIKE '%" + helpText + "%' ORDER BY " + order + " " + dir;
@@ -140,7 +140,11 @@ public class DatabaseNotes extends SQLiteOpenHelper {
                 query = "SELECT  * FROM " + TABLE_NOTES + " WHERE " + COL_BODY + " NOT LIKE '%" + helpText + "%' ORDER BY " + order + " " + dir;
             }
         } else {
-            query = "SELECT * FROM " + TABLE_NOTES + " WHERE " + COL_BODY + " LIKE '%" + search + "%' AND " + COL_GROUP + " = " + group + " ORDER BY " + order + " " + dir;
+            if (group != ExportNotes.NO_GROUP) {
+                query = "SELECT * FROM " + TABLE_NOTES + " WHERE " + COL_BODY + " LIKE '%" + search + "%' AND " + COL_GROUP + " = " + group + " ORDER BY " + order + " " + dir;
+            } else {
+                query = "SELECT * FROM " + TABLE_NOTES + " WHERE " + COL_BODY + " LIKE '%" + search + "%'  ORDER BY " + order + " " + dir;
+            }
         }
 
         Log.d(MainActivity.DEBUGTAG, "Query = " + query);
@@ -176,6 +180,39 @@ public class DatabaseNotes extends SQLiteOpenHelper {
         String query;
 
         query = "SELECT  * FROM " + TABLE_NOTES + " WHERE " + COL_GROUP + " = " + groupId + " ORDER BY " + order + " " + dir;
+        Log.d(MainActivity.DEBUGTAG, "Query = " + query);
+        Cursor cursor = db.rawQuery(query, null);
+
+        Note note;
+        if (cursor.moveToFirst()) {
+            do {
+                note = new Note();
+                note.setId(cursor.getInt(0));
+                note.setPriority(cursor.getInt(1));
+                note.setBody(cursor.getString(2));
+                note.setCreateDate(cursor.getString(3));
+                note.setEditDate(cursor.getString(4));
+                note.setLatitude(cursor.getString(5));
+                note.setLongitude(cursor.getString(6));
+                note.setHasReminder(cursor.getString(7));
+                note.setImage(cursor.getString(8));
+                note.setGroup(cursor.getInt(9));
+
+                notes.add(note);
+                Log.d(MainActivity.DEBUGTAG, "note = " + note.toString());
+            } while (cursor.moveToNext());
+        }
+
+        return notes;
+    }
+    public List<Note> getNotesByGroupID(int id, String order, String dir) {
+        List<Note> notes = new ArrayList<>();
+
+        db = this.getWritableDatabase();
+
+        String query;
+
+        query = "SELECT  * FROM " + TABLE_NOTES + " WHERE " + COL_GROUP + " = " + id + " ORDER BY " + order + " " + dir;
 
         Cursor cursor = db.rawQuery(query, null);
 
@@ -200,7 +237,6 @@ public class DatabaseNotes extends SQLiteOpenHelper {
 
         return notes;
     }
-
 
     public List<NoteGroup> getGroups(String order, String dir) {
         List<NoteGroup> groups = new ArrayList<>();

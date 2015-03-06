@@ -7,11 +7,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 
@@ -38,7 +40,7 @@ public class GroupMaintenance extends ActionBarActivity {
         actionBar.setDisplayShowTitleEnabled(true);
 
         groupEditText = (EditText) findViewById(R.id.editview_group);
-        groupEditText.setFilters(new InputFilter[] { new InputFilter.LengthFilter(16) });
+        groupEditText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(16)});
         groupList = (ListView) findViewById(R.id.group_list_maint);
         populategroupList();
     }
@@ -98,20 +100,39 @@ public class GroupMaintenance extends ActionBarActivity {
 
         if (id == R.id.menu_delete_group) {
 
+            NoteGroup deleteGrp = null;
+            String action = "delete";
             String grpName = groupEditText.getText().toString();
             if (grpName.length() > 0) {
+
+                // check if there is a group by that name
                 for (NoteGroup grp : grps) {
                     if (grp.getName().equals(grpName)) {
-
-                        db.deleteGroup(grp.getId());
-                        groupEditText.setText("");
-                        populategroupList();
-                        return true;
+                        deleteGrp = grp;
+                        break;
                     }
                 }
 
-                Toast.makeText(GroupMaintenance.this, "Can't delete the folder because it doesn't exist.", Toast.LENGTH_LONG).show();
+                //if there is such a group then make sure there are no notes in that group
+                if (deleteGrp != null) {
+                    List<Note> notes;
+                    notes = db.getNotesByGroupId(deleteGrp.getId(), DatabaseNotes.COL_GROUP, "ASC");
+                    Log.d(MainActivity.DEBUGTAG, "notes Size = " + notes.size());
+                    Log.d(MainActivity.DEBUGTAG, "group id = " + deleteGrp.getId());
+                    if (notes.size() == 0) {
+                        db.deleteGroup(deleteGrp.getId());
+                        groupEditText.setText("");
+                        populategroupList();
+                        return true;
+                    } else {
+                        action = "Can't delete the folder because it contains notes.";
+                    }
+                } else {
+                    action = "Can't delete the folder because it doesn't exist.";
+                }
 
+                Toast.makeText(GroupMaintenance.this, action, Toast.LENGTH_LONG).show();
+                return false;
             }
         }
 
@@ -135,5 +156,23 @@ public class GroupMaintenance extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onMenuOpened(int featureId, Menu menu) {
+        // enable visible icons in action bar
+        if (featureId == Window.FEATURE_ACTION_BAR && menu != null) {
+            if (menu.getClass().getSimpleName().equals("MenuBuilder")) {
+                try {
+                    Field field = menu.getClass().
+                            getDeclaredField("mOptionalIconsVisible");
+                    field.setAccessible(true);
+                    field.setBoolean(menu, true);
+                } catch (IllegalAccessException | NoSuchFieldException e) {
+                    Log.d(MainActivity.DEBUGTAG, "onMenuOpened(" + featureId + ", " + menu + ")", e);
+                }
+            }
+        }
+        return super.onMenuOpened(featureId, menu);
     }
 }

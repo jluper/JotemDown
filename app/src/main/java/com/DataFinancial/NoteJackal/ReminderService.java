@@ -93,8 +93,13 @@ public class ReminderService extends Service {
                         Note note;
                         note = dbNotes.getNote(remList.get(i - 1).getNoteId());
 
+                        String msg = note.getBody();
+                        if (msg.length() > 160) {
+                            msg = msg.substring(0, 158);
+                        }
+
                         if (!remList.get(i - 1).getPhone().isEmpty()) {
-                            smsManager.sendTextMessage(remList.get(i - 1).getPhone(), null, note.getBody(), null, null);
+                            smsManager.sendTextMessage(remList.get(i - 1).getPhone(), null, msg, null, null);
                         }
 
                         reminderNotify(remList.get(i - 1));

@@ -3,89 +3,104 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:divider="#000000"
     android:dividerHeight="2dp"
+    app:showAsAction="always"
     tools:context="com.DataFinancial.NoteJackal.MainActivity" >
-
     <item
         android:id="@+id/menu_privacy"
-        android:orderInCategory="100"
-        android:showAsAction="never"
+        android:orderInCategory="105"
+        app:showAsAction="never"
         android:title="@string/menu_privacy">
         <menu>
             <item
                 android:id="@+id/menu_passpoints_reset"
-                android:orderInCategory="105"
+                android:orderInCategory="106"
                 android:title="@string/menu_passpoints_reset"
-                app:showAsAction="never"/>
+                app:showAsAction="ifRoom"/>
             <item
                 android:id="@+id/menu_replace_lock_image"
                 android:background="@color/grey"
-                android:orderInCategory="104"
+                android:orderInCategory="107"
                 android:title="@string/menu_replace_lock_image"
-                app:showAsAction="never"/>
+                app:showAsAction="ifRoom"/>
             <item
                 android:id="@+id/menu_password_reset"
-                android:orderInCategory="103"
+                android:orderInCategory="108"
                 android:title="@string/menu_reset_password"
-                app:showAsAction="never"/>
+                app:showAsAction="ifRoom"/>
             <item
                 android:id="@+id/menu_disable_privacy"
-                android:orderInCategory="104"
+                android:orderInCategory="109"
                 android:title="@string/menu_disable_privacy"
-                app:showAsAction="never"/>
+                app:showAsAction="ifRoom"/>
             <item
                 android:id="@+id/menu_enable_privacy"
-                android:orderInCategory="104"
+                android:orderInCategory="110"
                 android:title="@string/menu_enable_privacy"
-                app:showAsAction="never"/>
+                app:showAsAction="ifRoom"/>
         </menu>
     </item>
     <item
         android:id="@+id/menu_data"
-        android:orderInCategory="101"
-        android:showAsAction="never"
+        android:orderInCategory="1111"
+        app:showAsAction="never"
         android:title="@string/menu_data">
         <menu>
             <item
                 android:id="@+id/menu_backup"
-                android:orderInCategory="100"
+                android:orderInCategory="112"
                 android:title="@string/menu_backup"
-                app:showAsAction="never"/>
+                app:showAsAction="ifRoom"/>
             <item
                 android:id="@+id/menu_restore"
-                android:orderInCategory="101"
+                android:orderInCategory="113"
                 android:title="@string/menu_restore"
-                app:showAsAction="never"/>
+                app:showAsAction="ifRoom"/>
             <item
                 android:id="@+id/menu_import"
-                android:orderInCategory="102"
+                android:orderInCategory="114"
+                android:icon="@drawable/ic_action_import_export"
                 android:title="@string/menu_import"
-                app:showAsAction="never"/>
+                app:showAsAction="ifRoom"/>
             <item
                 android:id="@+id/menu_export"
-                android:orderInCategory="103"
+                android:orderInCategory="115"
+                android:icon="@drawable/ic_action_import_export"
                 android:title="@string/menu_export"
-                app:showAsAction="never"/>
+                app:showAsAction="ifRoom"/>
         </menu>
     </item>
-    <item
+  <!--  <item
+        android:id="@+id/menu_overflow"
+        android:icon="@drawable/ic_action_overflow"
+        android:orderInCategory="11111"
+        android:showAsAction="always">
+     <menu>
+-->
+     <item
         android:id="@+id/menu_new"
         android:orderInCategory="101"
         android:title="@string/menu_new"
-        app:showAsAction="always"/>
+        android:icon="@drawable/ic_action_new"
+        app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/menu_lock"
         android:orderInCategory="100"
         android:title="@string/menu_lock"
-        app:showAsAction="always"/>
+        android:icon="@drawable/ic_action_screen_locked_to_portrait"
+        app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/menu_groups"
-        android:orderInCategory="102"
+        android:orderInCategory="104"
         android:title="@string/menu_groups"
-        app:showAsAction="never"/>
+        android:icon="@drawable/ic_action_collection"
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/menu_help_main"
         android:orderInCategory="103"
+        android:icon="@drawable/ic_action_help"
         android:title="@string/menu_help"
-        app:showAsAction="never"/>
+        app:showAsAction="ifRoom"/>
+  <!--  </menu>
+    </item>-->
 
 </menu>

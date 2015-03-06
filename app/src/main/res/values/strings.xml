@@ -17,7 +17,7 @@
     <string name="menu_export">Export</string>
     <string name="menu_lock">Lock</string>
     <string name="menu_save">Save</string>
-    <string name="menu_send">Send note</string>
+    <string name="menu_send">Share note</string>
     <string name="menu_priority">Toggle priority</string>
     <string name="menu_backup">Backup</string>
     <string name="menu_send_done">Done</string>

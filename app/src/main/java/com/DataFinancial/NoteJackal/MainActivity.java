@@ -5,16 +5,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -31,6 +31,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,7 +69,6 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Log.d(MainActivity.DEBUGTAG, "check 0.1");
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setIcon(R.drawable.note_yellow);
@@ -93,28 +93,22 @@ public class MainActivity extends ActionBarActivity {
         Bundle extras = getIntent().getExtras();
 
         if (extras != null) {
-            Log.d(MainActivity.DEBUGTAG, "check 0.7");
+
             if (extras.getString("help") != null) {
                 fromHelp = extras.getString("help");
-                searchText = (String) getResources().getText(
-                        R.string.txt_help_search);
+                searchText = (String) getResources().getText(R.string.txt_help_search);
                 loadNotes(searchText, DatabaseNotes.COL_ID, "ASC", groupId);
             } else {
-                Log.d(MainActivity.DEBUGTAG, "check 0.8");
-                Log.d(MainActivity.DEBUGTAG, "check 2");
                 groupId = extras.getInt("group");
-
 
                 List<NoteGroup> grps = db.getGroups(DatabaseNotes.COL_NAME, "ASC");
                 for (int i = 0; i < grps.size(); i++) {
-                    Log.d(MainActivity.DEBUGTAG, "i = " + i + " grps.get(i).getId() = " + grps.get(i).getId() + " name = " + grps.get(i).getName() + " note.getgroup() = " + groupId);
                     if (grps.get(i).getId() == groupId) {
                         groupIdx = i;
                         break;
                     }
                     groupIdx = -1;
                 }
-                Log.d(MainActivity.DEBUGTAG, "groupIdx = " + groupIdx);
                 lblGroup.setText(extras.getString("group_name"));
                 loadNotes(null, DatabaseNotes.COL_CREATE_DATE, "DESC", groupId);
             }
@@ -186,7 +180,6 @@ public class MainActivity extends ActionBarActivity {
                 sortDir = "DESC";
 
                 lblSort = (TextView) findViewById(R.id.lbl_sort);
-                Log.d(MainActivity.DEBUGTAG, "BEFORE sort = " + sortCol + " group = " + groupId);
 
                 switch (sortCol) {
                     case DatabaseNotes.COL_CREATE_DATE:
@@ -211,9 +204,7 @@ public class MainActivity extends ActionBarActivity {
                         lblSort.setText("Content");
                         sortDir = "ASC";
                 }
-
-                Log.d(MainActivity.DEBUGTAG, "AFTER sort = " + sortCol + " group = " + groupId);
-                if (sortCol.equals(DatabaseNotes.COL_BODY)) {
+                  if (sortCol.equals(DatabaseNotes.COL_BODY)) {
                     loadNotes(null, sortCol + " COLLATE NOCASE", sortDir, groupId);
                 } else {
                     loadNotes(null, sortCol, sortDir, groupId);
@@ -241,7 +232,7 @@ public class MainActivity extends ActionBarActivity {
 
                 groupIdx = (groupIdx + 1) % grps.size();
                 groupId = grps.get(groupIdx).getId();
-                Log.d(MainActivity.DEBUGTAG, "groupIdx: " + groupIdx + " groupId: " + groupId);
+//                Log.d(MainActivity.DEBUGTAG, "groupIdx: " + groupIdx + " groupId: " + groupId);
                 lblGroup.setText(grps.get(groupIdx).getName());
                 loadNotes(null, sortCol, sortDir, grps.get(groupIdx).getId());
             }
@@ -271,7 +262,6 @@ public class MainActivity extends ActionBarActivity {
                 selectedRow = pos;
 
                 Note note = (Note) adapter.getItemAtPosition(pos);
-                Log.d(MainActivity.DEBUGTAG, "note  when select = " + note.toString());
 
                 Intent i = new Intent(MainActivity.this, NewNote.class);
                 i.putExtra("id", note.getId());
@@ -285,10 +275,8 @@ public class MainActivity extends ActionBarActivity {
                 i.putExtra("image", note.getImage());
                 i.putExtra("group", note.getGroup());
                 startActivityForResult(i, EDIT_NOTE);
-
             }
         });
-
     }
 
     private void loadSavedFile() {
@@ -307,7 +295,6 @@ public class MainActivity extends ActionBarActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
-        //Log.d(MainActivity.DEBUGTAG, "Private in onCreateOptionsMenu = " + isPrivate());
         if (isPrivate()) {
             menu.findItem(R.id.menu_disable_privacy).setVisible(true);
             menu.findItem(R.id.menu_enable_privacy).setVisible(false);
@@ -390,8 +377,8 @@ public class MainActivity extends ActionBarActivity {
                 startActivity(i);
                 break;
             case R.id.menu_help_main:
-                String searchText = (String) getResources().getText(R.string.txt_help_search);
-                //loadNotes(searchText, DatabaseNotes.COL_ID, "ASC");
+                String searchText = this.getResources().getString(R.string.txt_help_search);
+                loadNotes(searchText, DatabaseNotes.COL_ID, "ASC", ExportNotes.NO_GROUP);
                 break;
             default:
                 break;
@@ -436,24 +423,24 @@ public class MainActivity extends ActionBarActivity {
 
     private void takePhoto() {
 
-        File picsDirectory = getFilesDir();
-        imageFile = new File(picsDirectory, getString(R.string.PASSPOINTS_PHOTO));
+        File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+
+        imageFile = new File(dir, getString(R.string.PASSPOINTS_PHOTO)+".jpg");
 
         Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         i.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(imageFile));
         startActivityForResult(i, PHOTO_TAKEN_REQUEST);
     }
 
-    protected void onActivityResult(int requestCode, int resultCode,
-                                    Intent intent) {
-        super.onActivityResult(requestCode, resultCode, intent);
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+
 
         if (requestCode == BROWSE_GALLERY_REQUEST) {
-            if (intent != null) {
+
+            if (resultCode == RESULT_OK) {
                 String[] columns = {MediaStore.Images.Media.DATA};
                 Uri imageUri = intent.getData();
-                Cursor cursor = getContentResolver().query(imageUri, columns,
-                        null, null, null);
+                Cursor cursor = getContentResolver().query(imageUri, columns, null, null, null);
 
                 cursor.moveToFirst();
                 int columnIndex = cursor.getColumnIndex(columns[0]);
@@ -463,11 +450,11 @@ public class MainActivity extends ActionBarActivity {
 
                 Uri image = Uri.parse(imagePath);
 
-                Toast.makeText(this, "Gallery result" + image,
-                        Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Gallery result" + image, Toast.LENGTH_LONG).show();
 
                 try {
                     copyImageFile(imagePath);
+
                 } catch (IOException e) {
                     Toast.makeText(this, "Exception creating new lock image from gallery: " + e.toString(), Toast.LENGTH_LONG).show();
                 }
@@ -482,18 +469,18 @@ public class MainActivity extends ActionBarActivity {
 
         if (requestCode == PHOTO_TAKEN_REQUEST) {
 
-            if (intent != null) {
-                Bitmap photo = BitmapFactory.decodeFile(imageFile
-                        .getAbsolutePath());
-
-                if (photo != null) {
+            if (resultCode == RESULT_OK) {
+                  String imagePath = imageFile.getAbsolutePath();
+                try {
+                    copyImageFile(imagePath);
                     setPassPointsSaved(false);
-                    Intent i = new Intent(MainActivity.this,
-                            LockImageActivity.class);
+                    Intent i = new Intent(MainActivity.this, LockImageActivity.class);
                     startActivity(i);
-                } else {
-                    Toast.makeText(this, R.string.PHOTO_NOT_SAVED, Toast.LENGTH_LONG).show();
+                } catch (IOException e) {
+                    Toast.makeText(this, "Unable to replace lock image. " + e.getMessage(), Toast.LENGTH_LONG).show();
                 }
+            } else {
+                Toast.makeText(this, "No image  selected.", Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -531,6 +518,22 @@ public class MainActivity extends ActionBarActivity {
         editor.commit();
     }
 
-
+    @Override
+    public boolean onMenuOpened(int featureId, Menu menu) {
+        // enable visible icons in action bar
+        if (featureId == Window.FEATURE_ACTION_BAR && menu != null) {
+            if (menu.getClass().getSimpleName().equals("MenuBuilder")) {
+                try {
+                    Field field = menu.getClass().
+                            getDeclaredField("mOptionalIconsVisible");
+                    field.setAccessible(true);
+                    field.setBoolean(menu, true);
+                } catch (IllegalAccessException | NoSuchFieldException e) {
+                    Log.d(MainActivity.DEBUGTAG, "onMenuOpened(" + featureId + ", " + menu + ")", e);
+                }
+            }
+        }
+        return super.onMenuOpened(featureId, menu);
+    }
 
 }

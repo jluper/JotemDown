@@ -84,7 +84,7 @@ public class LockImageActivity extends ActionBarActivity implements PointCollect
 
         File picsDirectory = getFilesDir();
         File imageFile = new File(picsDirectory, getString(R.string.PASSPOINTS_PHOTO));
-
+        //Log.d(MainActivity.DEBUGTAG, "passpoints_image exists = " + imageFile.exists());
         Boolean passPointsSet;
         if (!imageFile.exists()) {
 
@@ -112,9 +112,6 @@ public class LockImageActivity extends ActionBarActivity implements PointCollect
             options.inJustDecodeBounds = true;
 
             BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
-            int imageHeight = options.outHeight;
-            int imageWidth = options.outWidth;
-            String imageType = options.outMimeType;
 
             Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
             Point size = new Point();
@@ -123,18 +120,13 @@ public class LockImageActivity extends ActionBarActivity implements PointCollect
             int height = size.y;
 
             int inSampleSize = calculateInSampleSize(options, width, height);
-
-            // we will create empty bitmap by using the option
-            reusedBitmap = Bitmap.createBitmap(options.outWidth, options.outHeight, Bitmap.Config.RGB_565);
-
             // set the option to allocate memory for the bitmap
             options.inJustDecodeBounds = false;
             options.inSampleSize = inSampleSize;
             options.inMutable = true;
-            options.inBitmap = reusedBitmap;
 
             reusedBitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
-
+            //Log.d(MainActivity.DEBUGTAG, "reused bitmap2 = " + reusedBitmap);
             if (reusedBitmap != null) {
                 reusedBitmap = fixOrientation(reusedBitmap);
                 LockImageActivity.activityImageView.setImageBitmap(reusedBitmap);
@@ -203,7 +195,7 @@ public class LockImageActivity extends ActionBarActivity implements PointCollect
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
         return false;

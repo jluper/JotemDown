@@ -29,6 +29,7 @@ public class BackupNotes extends ActionBarActivity {
 
     public static final String DATABASE_NAME = "notes.db";
     private static final String LAST_BACKUP_FILE = "LAST_BACKUP_FILE";
+    private static final String LAST_BACKUP_ADDRESS = "LAST_BACKUP_ADDRESS";
     protected List<Note> notes = new ArrayList<>();
     private EditText address;
     private EditText backupFile;
@@ -51,8 +52,8 @@ public class BackupNotes extends ActionBarActivity {
         address = (EditText) findViewById(R.id.txtBackupAddress);
 
         SharedPreferences prefs = getSharedPreferences(LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
-        String file = prefs.getString(LAST_BACKUP_FILE, "NoteJackalBackup");
-        String addr = prefs.getString(SendNote.LAST_SEND_ADDRESS, null);
+        String file = prefs.getString(LAST_BACKUP_FILE, "Jot'emDownBackup");
+        String addr = prefs.getString(BackupNotes.LAST_BACKUP_ADDRESS, null);
 
         if (file != null) {
             backupFile.setText(file);
@@ -106,10 +107,8 @@ public class BackupNotes extends ActionBarActivity {
                 SharedPreferences prefs = getSharedPreferences(
                         LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
                 SharedPreferences.Editor editor = prefs.edit();
-                editor.putString(SendNote.LAST_SEND_ADDRESS, address
-                        .getText().toString());
-                editor.putString(LAST_BACKUP_FILE, backupFile.getText()
-                        .toString());
+                editor.putString(BackupNotes.LAST_BACKUP_ADDRESS, address.getText().toString());
+                editor.putString(LAST_BACKUP_FILE, backupFile.getText().toString());
 
                 editor.apply();
             }
@@ -155,9 +154,7 @@ public class BackupNotes extends ActionBarActivity {
 
         TO[0] = address.getText().toString();
 
-        //Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
-        //Intent emailIntent = new android.content.Intent.ACTION_SENDTO (new Intent(Intent.ACTION_SENDTO);
-        Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", TO[0], null));
+        Intent emailIntent = new Intent(Intent.ACTION_SEND);
 
         emailIntent.setData(Uri.parse("mailto:" + TO[0]));
         emailIntent.setType("message/rfc822");
@@ -176,7 +173,7 @@ public class BackupNotes extends ActionBarActivity {
 
             Uri uri = Uri.parse(file.toString());
             emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
-           // emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
+            emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
             emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Jot'emDown backup");
             emailIntent.putExtra(Intent.EXTRA_TEXT, "Backup file attached.");
 

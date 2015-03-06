@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.telephony.SmsManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -105,18 +106,15 @@ public class SendNote extends ActionBarActivity {
 
                     if (utils.isValidEmail(TO[0])) {
 
-                        Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
-//                        emailIntent.setData(Uri.parse("mailto:"));
-//                        emailIntent.setType("text/plain");
-//
-//                        String emailSubject = "Note from NoteJackal";
-//                        String emailText = "Note from NoteJackal...\nID: " + note.getId() + "\nCreated Date: " + note.getCreateDate() + "\nLast Edit Date:" + note.getEditDate() + "\n\n" + note.getBody();
-//                        emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
-//                        emailIntent.putExtra(Intent.EXTRA_SUBJECT, emailSubject);
-//                        emailIntent.putExtra(Intent.EXTRA_TEXT, emailText);
-                        String uriText = "mailto:" + TO[0] + "?subject=Jote'emDown Note" + "&body=" + note.getBody();
-                        Uri uri = Uri.parse(uriText);
-                        emailIntent.setData(uri);
+                        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                        emailIntent.setData(Uri.parse("mailto:"));
+                        emailIntent.setType("message/rfc822");
+
+                        String emailSubject = "Note from Jot'emDown";
+                        String emailText = "Note from Jot'emDown...\n\nCreated Date: " + note.getCreateDate() + "\nLast Edit Date:" + note.getEditDate() + "\n\n" + note.getBody();
+                        emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
+                        emailIntent.putExtra(Intent.EXTRA_SUBJECT, emailSubject);
+                        emailIntent.putExtra(Intent.EXTRA_TEXT, emailText);
 
                         try {
                             Intent intent = Intent.createChooser(emailIntent, "Send mail...");
@@ -131,9 +129,9 @@ public class SendNote extends ActionBarActivity {
 
                             String msg = note.getBody();
                             if (msg.length() > 160) {
-                                msg = msg.substring(0, 159);
+                                msg = msg.substring(0, 134);
                             }
-
+                            Log.d(MainActivity.DEBUGTAG, "msg =" + msg);
                             SmsManager smsManager = SmsManager.getDefault();
                             try {
                                 smsManager.sendTextMessage(TO[0], null, "Note from NoteJackal...\n" + msg, null, null);

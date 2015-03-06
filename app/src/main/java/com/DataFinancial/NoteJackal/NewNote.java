@@ -19,6 +19,7 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -28,6 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -100,6 +102,9 @@ public class NewNote extends ActionBarActivity {
                     noteText.setText(Html.fromHtml(note.getBody()));
                     noteText.setFocusable(false);
                     actionBar.setTitle(getResources().getString(R.string.help_title));
+                    ListView groupList = (ListView) findViewById(R.id.group_list);
+                    groupList.setVisibility(View.GONE);
+
                     //Log.d(MainActivity.DEBUGTAG, "check 2");
                 }
             }
@@ -282,11 +287,11 @@ public class NewNote extends ActionBarActivity {
             }
 
             if (note.getImage().isEmpty()) {
-                optionsMenu.findItem(R.id.menu_image).setIcon(R.drawable.add_image);
+                optionsMenu.findItem(R.id.menu_image).setIcon(R.drawable.ic_action_new_picture);
                 optionsMenu.findItem(R.id.menu_remove_image).setVisible(false);
             } else {
                 optionsMenu.findItem(R.id.menu_remove_image).setVisible(true);
-                optionsMenu.findItem(R.id.menu_image).setIcon(R.drawable.view_image);
+                optionsMenu.findItem(R.id.menu_image).setIcon(R.drawable.ic_action_picture);
             }
         }
 
@@ -455,8 +460,7 @@ public class NewNote extends ActionBarActivity {
 
             buildConfirmDeleteDialog("Confirm Delete Image");
             confirmDelete.show();
-//            note.setImage("");
-//            db.updateNote(note);
+
         }
 
         return super.onOptionsItemSelected(item);
@@ -509,6 +513,7 @@ public class NewNote extends ActionBarActivity {
         dlgBuilder.setIcon(R.drawable.btn_check_buttonless_on);
         dlgBuilder.setMessage(R.string.dialog_delete_item);
         dlgBuilder.setCancelable(true);
+
         dlgBuilder.setPositiveButton(R.string.dialog_positive,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -516,17 +521,19 @@ public class NewNote extends ActionBarActivity {
                         if (dialogTitle.equals("Confirm Delete Image")) {
                             note.setImage("");
                             db.updateNote(note);
+                           //optionsMenu = (Menu) findViewById(R.id.menu_edit_note);
+                            optionsMenu.findItem(R.id.menu_image).setIcon(R.drawable.ic_action_new_picture);
+                            dialog.cancel();
                         } else {
                             db.deleteNote(note.getId());
+                            dialog.cancel();
+                            Intent i = new Intent(NewNote.this, MainActivity.class);
+                            startActivity(i);
                         }
-
-                        dialog.cancel();
-                        Intent i = new Intent(NewNote.this, MainActivity.class);
-                        startActivity(i);
-
                     }
                 });
-        dlgBuilder.setNegativeButton(R.string.dialog_negative,
+
+                dlgBuilder.setNegativeButton(R.string.dialog_negative,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
 
@@ -564,6 +571,8 @@ public class NewNote extends ActionBarActivity {
 
                 Uri image = Uri.parse(noteImagePath);
 
+                optionsMenu.findItem(R.id.menu_image).setIcon(R.drawable.ic_action_picture);
+
                 Toast.makeText(this, "Image path: " + image, Toast.LENGTH_LONG).show();
 
             } else {
@@ -597,6 +606,24 @@ public class NewNote extends ActionBarActivity {
                 groupList.setItemChecked(pos, true);
             }
         });
+    }
+
+    @Override
+    public boolean onMenuOpened(int featureId, Menu menu) {
+        // enable visible icons in action bar
+        if (featureId == Window.FEATURE_ACTION_BAR && menu != null) {
+            if (menu.getClass().getSimpleName().equals("MenuBuilder")) {
+                try {
+                    Field field = menu.getClass().
+                            getDeclaredField("mOptionalIconsVisible");
+                    field.setAccessible(true);
+                    field.setBoolean(menu, true);
+                } catch (IllegalAccessException | NoSuchFieldException e) {
+                    Log.d(MainActivity.DEBUGTAG, "onMenuOpened(" + featureId + ", " + menu + ")", e);
+                }
+            }
+        }
+        return super.onMenuOpened(featureId, menu);
     }
 
 }

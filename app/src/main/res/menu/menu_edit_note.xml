@@ -1,27 +1,31 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/menu_new_note"
+    android:id="@+id/menu_edit_note"
     tools:context="com.DataFinancial.NoteJackal.NewNote" >
 
     <item
         android:id="@+id/menu_save"
         android:orderInCategory="89"
+        android:icon="@drawable/ic_action_save"
         android:title="@string/menu_save"
         app:showAsAction="always"/>
     <item
         android:id="@+id/menu_delete"
         android:orderInCategory="90"
+        android:icon="@drawable/ic_action_discard"
         android:title="@string/menu_delete"
         app:showAsAction="never"/>
     <item
         android:id="@+id/menu_send_note"
         android:orderInCategory="89"
+        android:icon="@drawable/ic_action_share"
         android:title="@string/menu_send"
         app:showAsAction="never"/>
     <item
         android:id="@+id/menu_reminder"
         android:orderInCategory="91"
+        android:icon="@drawable/ic_action_alarms"
         android:title="@string/menu_reminder"
         app:showAsAction="never"/>
     <item
@@ -32,36 +36,42 @@
     <item
         android:id="@+id/menu_geotag"
         android:orderInCategory="93"
+        android:icon="@drawable/ic_action_place"
         android:title="@string/menu_geotag"
         app:showAsAction="never"/>
     <item
         android:id="@+id/menu_map"
         android:orderInCategory="94"
+        android:icon="@drawable/ic_action_map"
         android:title="@string/menu_map"
         app:showAsAction="never"/>
     <item
         android:id="@+id/menu_call_phone"
+        android:icon="@drawable/ic_action_call"
         android:orderInCategory="97"
         android:title="@string/menu_call_phone"
         app:showAsAction="never"/>
     <item
         android:id="@+id/menu_send_email"
+        android:icon="@drawable/ic_action_email"
         android:orderInCategory="98"
         android:title="@string/menu_send_email"
         app:showAsAction="never"/>
      <item
         android:id="@+id/menu_goto_webpage"
+         android:icon="@drawable/ic_action_web_site"
         android:orderInCategory="99"
         android:title="@string/menu_goto_webpage"
         app:showAsAction="never"/>
     <item
         android:id="@+id/menu_image"
         android:orderInCategory="90"
-        android:icon="@drawable/add_image"
+        android:icon="@drawable/ic_action_picture"
         android:title="@string/menu_image"
         app:showAsAction="always"/>
     <item
         android:id="@+id/menu_remove_image"
+        android:icon="@drawable/ic_action_remove"
         android:orderInCategory="96"
         android:title="@string/menu_remove_image"
         app:showAsAction="never"/>

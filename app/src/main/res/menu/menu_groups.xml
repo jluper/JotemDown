@@ -6,16 +6,19 @@
     <item
         android:id="@+id/menu_new_group"
         android:orderInCategory="89"
+        android:icon="@drawable/ic_action_new"
         android:title="@string/menu_new_group"
         app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/menu_delete_group"
         android:orderInCategory="90"
+        android:icon="@drawable/ic_action_discard"
         android:title="@string/menu_delete_group"
         app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/menu_edit_group"
         android:orderInCategory="91"
+        android:icon="@drawable/ic_action_edit"
         android:title="@string/menu_edit_group"
         app:showAsAction="ifRoom"/>
 </menu>
