@@ -31,7 +31,7 @@ public class GroupMaintenance extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_maintenance);
-        Log.d(MainActivity.DEBUGTAG, "check 0.1");
+
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
@@ -49,9 +49,9 @@ public class GroupMaintenance extends ActionBarActivity {
     private void populategroupList() {
 
         grps = db.getGroups(DatabaseNotes.COL_ID, "ASC");
-        Log.d(MainActivity.DEBUGTAG, "grps = " +  grps.toString());
+
         grpAdapter = new GroupAdapter(this, grps);
-        Log.d(MainActivity.DEBUGTAG, "grpAdapter = " + grpAdapter.toString());
+
         groupList.setAdapter(grpAdapter);
 
         groupList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -169,7 +169,7 @@ public class GroupMaintenance extends ActionBarActivity {
                     field.setAccessible(true);
                     field.setBoolean(menu, true);
                 } catch (IllegalAccessException | NoSuchFieldException e) {
-                    Log.d(MainActivity.DEBUGTAG, "onMenuOpened(" + featureId + ", " + menu + ")", e);
+
                 }
             }
         }

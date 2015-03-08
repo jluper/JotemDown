@@ -84,7 +84,7 @@ public class LockImageActivity extends ActionBarActivity implements PointCollect
 
         File picsDirectory = getFilesDir();
         File imageFile = new File(picsDirectory, getString(R.string.PASSPOINTS_PHOTO));
-        //Log.d(MainActivity.DEBUGTAG, "passpoints_image exists = " + imageFile.exists());
+
         Boolean passPointsSet;
         if (!imageFile.exists()) {
 

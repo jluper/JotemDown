@@ -56,14 +56,15 @@ public class MainActivity extends ActionBarActivity {
     private TextView lblNumNotes;
     private DatabaseNotes db = new DatabaseNotes(this);
     private DatabaseReminders dbReminders = new DatabaseReminders(this);
-    private String fromHelp = null;
+    private boolean fromHelp = false;
     private ListView noteList;
     private static int groupId = ROOT;
     private static int groupIdx = ROOT;
+    private String groupName = "General";
     private String searchText = null;
-    private static String sortCol = DatabaseNotes.COL_CREATE_DATE;
-    private static String sortDir = "DESC";
-
+    private String sortCol = DatabaseNotes.COL_CREATE_DATE;
+    private String sortDir = "DESC";
+    private String sortName = "Created";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,9 +76,14 @@ public class MainActivity extends ActionBarActivity {
         actionBar.setTitle(getResources().getString(R.string.main_activity_title));
         actionBar.setDisplayShowTitleEnabled(true);
 
-        lblSort = (TextView) findViewById(R.id.lbl_sort);
-        lblSort.setText("Created");
-        lblGroup = (TextView) findViewById(R.id.lbl_group);
+        if (savedInstanceState != null) {
+            groupId = savedInstanceState.getInt("group");
+            groupName = savedInstanceState.getString("group_name");
+
+            sortCol = savedInstanceState.getString("sort_col");
+            sortName = savedInstanceState.getString("sort_name");
+            sortDir = savedInstanceState.getString("sort_dir");
+        }
 
         noteList = (ListView) findViewById(R.id.note_list);
 
@@ -91,14 +97,9 @@ public class MainActivity extends ActionBarActivity {
 
         searchText = null;
         Bundle extras = getIntent().getExtras();
-
+        //Log.d(MainActivity.DEBUGTAG, "extras = " + extras);
         if (extras != null) {
 
-            if (extras.getString("help") != null) {
-                fromHelp = extras.getString("help");
-                searchText = (String) getResources().getText(R.string.txt_help_search);
-                loadNotes(searchText, DatabaseNotes.COL_ID, "ASC", groupId);
-            } else {
                 groupId = extras.getInt("group");
 
                 List<NoteGroup> grps = db.getGroups(DatabaseNotes.COL_NAME, "ASC");
@@ -109,14 +110,36 @@ public class MainActivity extends ActionBarActivity {
                     }
                     groupIdx = -1;
                 }
-                lblGroup.setText(extras.getString("group_name"));
-                loadNotes(null, DatabaseNotes.COL_CREATE_DATE, "DESC", groupId);
+                groupName = extras.getString("group_name");
+
+            sortCol = extras.getString("sort_col");
+            sortName = extras.getString("sort_name");
+            sortDir = extras.getString("sort_dir");
+
+            if (extras.getBoolean("help") == true) {
+                fromHelp = extras.getBoolean("help");
+                searchText = (String) getResources().getText(R.string.txt_help_search);
             }
-        } else {
-            groupId = ROOT;
-            lblGroup.setText("General");
-            loadNotes(null, DatabaseNotes.COL_CREATE_DATE, "DESC", groupId);
+
         }
+            lblSort = (TextView) findViewById(R.id.lbl_sort);
+            lblSort.setText(sortName);
+
+            lblGroup = (TextView) findViewById(R.id.lbl_group);
+            lblGroup.setText(groupName);
+
+            loadNotes(searchText, sortCol, sortDir, groupId);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle state) {
+        super.onSaveInstanceState(state);
+        //state.putInt("position",selectedRow);
+        state.putInt("group", groupId);
+        state.putString("group_name", groupName);
+        state.putString("sort_col", sortCol);
+        state.putString("sort_name", sortName);
+        state.putString("sort_dir", sortDir);
     }
 
 
@@ -184,24 +207,29 @@ public class MainActivity extends ActionBarActivity {
                 switch (sortCol) {
                     case DatabaseNotes.COL_CREATE_DATE:
                         sortCol = DatabaseNotes.COL_PRIORITY;
-                        lblSort.setText("Priority");
+                        sortName = "Priority";
+                        lblSort.setText(sortName);
                         break;
                     case DatabaseNotes.COL_EDIT_DATE:
                         sortCol = DatabaseNotes.COL_CREATE_DATE;
-                        lblSort.setText("Created");
+                        sortName = "Created";
+                        lblSort.setText(sortName);
                         break;
                     case DatabaseNotes.COL_BODY:
                         sortCol = DatabaseNotes.COL_EDIT_DATE;
-                        lblSort.setText("Edited");
+                        sortName = "Edited";
+                        lblSort.setText(sortName);
                         break;
                     case DatabaseNotes.COL_PRIORITY:
                         sortCol = DatabaseNotes.COL_BODY;
-                        lblSort.setText("Content");
+                        sortName = "Content";
+                        lblSort.setText(sortName);
                         sortDir = "ASC";
                         break;
                     default:
                         sortCol = DatabaseNotes.COL_CREATE_DATE;
-                        lblSort.setText("Content");
+                        sortName = "Created";
+                        lblSort.setText(sortName);
                         sortDir = "ASC";
                 }
                   if (sortCol.equals(DatabaseNotes.COL_BODY)) {
@@ -232,8 +260,8 @@ public class MainActivity extends ActionBarActivity {
 
                 groupIdx = (groupIdx + 1) % grps.size();
                 groupId = grps.get(groupIdx).getId();
-//                Log.d(MainActivity.DEBUGTAG, "groupIdx: " + groupIdx + " groupId: " + groupId);
-                lblGroup.setText(grps.get(groupIdx).getName());
+                groupName = grps.get(groupIdx).getName();
+                lblGroup.setText(groupName);
                 loadNotes(null, sortCol, sortDir, grps.get(groupIdx).getId());
             }
         });
@@ -264,6 +292,7 @@ public class MainActivity extends ActionBarActivity {
                 Note note = (Note) adapter.getItemAtPosition(pos);
 
                 Intent i = new Intent(MainActivity.this, NewNote.class);
+                i.putExtra("edit", true);
                 i.putExtra("id", note.getId());
                 i.putExtra("priority", note.getPriority());
                 i.putExtra("createDate", note.getCreateDate());
@@ -274,6 +303,10 @@ public class MainActivity extends ActionBarActivity {
                 i.putExtra("hasReminder", note.getHasReminder());
                 i.putExtra("image", note.getImage());
                 i.putExtra("group", note.getGroup());
+                i.putExtra("group_name", groupName);
+                i.putExtra("sort_col", sortCol);
+                i.putExtra("sort_name", sortName);
+                i.putExtra("sort_dir", sortDir);
                 startActivityForResult(i, EDIT_NOTE);
             }
         });
@@ -326,6 +359,13 @@ public class MainActivity extends ActionBarActivity {
                 break;
             case R.id.menu_new:
                 i = new Intent(MainActivity.this, NewNote.class);
+                Note note = new Note();
+                i.putExtra("edit", "false");
+
+                i.putExtra("group_name", groupName);
+                i.putExtra("sort_col", sortCol);
+                i.putExtra("sort_name", sortName);
+                i.putExtra("sort_dir", sortDir);
                 startActivity(i);
                 break;
             case R.id.menu_passpoints_reset:
@@ -535,5 +575,7 @@ public class MainActivity extends ActionBarActivity {
         }
         return super.onMenuOpened(featureId, menu);
     }
+
+
 
 }

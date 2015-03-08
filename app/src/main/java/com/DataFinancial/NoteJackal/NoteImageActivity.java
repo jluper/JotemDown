@@ -9,12 +9,12 @@ import android.graphics.Point;
 import android.media.ExifInterface;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -155,10 +155,7 @@ public class NoteImageActivity extends ActionBarActivity {
         }
         int rotation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
 
-        Log.d(MainActivity.DEBUGTAG, "width = " + photo.getWidth() + " height = " + photo.getHeight() + " orientation = " + rotation);
-
         if (photo.getWidth() > photo.getHeight() && rotation == ExifInterface.ORIENTATION_ROTATE_90) {
-            Log.d(MainActivity.DEBUGTAG, "image width = " + photo.getWidth() + " image ht = " + photo.getHeight());
             Matrix matrix = new Matrix();
             matrix.postRotate(90);
             photo = Bitmap.createBitmap(photo, 0, 0, photo.getWidth(), photo.getHeight(), matrix, true);

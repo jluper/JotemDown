@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.telephony.SmsManager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,6 +13,8 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import java.io.File;
 
 /**
  * @author jluper
@@ -24,6 +25,7 @@ public class SendNote extends ActionBarActivity {
     private EditText address;
     private Button btnSend;
     private Note note = new Note();
+    private String groupName;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,6 +48,9 @@ public class SendNote extends ActionBarActivity {
             note.setCreateDate(extras.getString("createDate"));
             note.setEditDate(extras.getString("editDate"));
             note.setBody(extras.getString("body"));
+            note.setImage(extras.getString("image"));
+            note.setGroup(extras.getInt("group"));
+            groupName = extras.getString("group_name");
         }
 
         address = (EditText) findViewById(R.id.txtAddress);
@@ -73,7 +78,18 @@ public class SendNote extends ActionBarActivity {
         return true;
     }
 
+    @Override
+    public Intent getSupportParentActivityIntent() {
+        super.onResume();
 
+        Intent i = new Intent(SendNote.this, MainActivity.class);
+
+        i.putExtra("group", note.getGroup());
+        i.putExtra("group_name", groupName);
+
+        return i;
+
+    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -110,6 +126,12 @@ public class SendNote extends ActionBarActivity {
                         emailIntent.setData(Uri.parse("mailto:"));
                         emailIntent.setType("message/rfc822");
 
+                        if (!note.getImage().isEmpty()) {
+                            File imageFile = new File(note.getImage());
+                            Uri uri = Uri.parse(imageFile.toString());
+                            emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
+                        }
+
                         String emailSubject = "Note from Jot'emDown";
                         String emailText = "Note from Jot'emDown...\n\nCreated Date: " + note.getCreateDate() + "\nLast Edit Date:" + note.getEditDate() + "\n\n" + note.getBody();
                         emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
@@ -131,7 +153,7 @@ public class SendNote extends ActionBarActivity {
                             if (msg.length() > 160) {
                                 msg = msg.substring(0, 134);
                             }
-                            Log.d(MainActivity.DEBUGTAG, "msg =" + msg);
+
                             SmsManager smsManager = SmsManager.getDefault();
                             try {
                                 smsManager.sendTextMessage(TO[0], null, "Note from NoteJackal...\n" + msg, null, null);

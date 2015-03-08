@@ -87,7 +87,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top|left"
-            android:text="Sort: "
+            android:text=""
             android:layout_marginLeft="2dp"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@color/yellow" />
@@ -105,7 +105,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top|left"
-            android:text="Folder: "
+            android:text=""
             android:layout_marginLeft="0dp"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@color/yellow" />

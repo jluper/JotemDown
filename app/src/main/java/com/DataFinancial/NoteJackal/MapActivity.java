@@ -1,5 +1,6 @@
 package com.DataFinancial.NoteJackal;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -15,6 +16,9 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MapActivity extends ActionBarActivity {
+
+    int groupId;
+    private String groupName;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +37,8 @@ public class MapActivity extends ActionBarActivity {
 		Double longitude = extras.getDouble("longitude");
 		String title = extras.getString("title");		
 		String text = extras.getString("text");
+        groupId = extras.getInt("group");
+        groupName = extras.getString("group_name");
 
 		if (latitude != 0.0 && longitude != 0.0) {
 			
@@ -78,4 +84,16 @@ public class MapActivity extends ActionBarActivity {
 		return true;
 	}
 
+    @Override
+    public Intent getSupportParentActivityIntent() {
+        super.onResume();
+
+        Intent i = new Intent(MapActivity.this, MainActivity.class);
+
+        i.putExtra("group", groupId);
+        i.putExtra("group_name", groupName);
+
+        return i;
+
+    }
 }

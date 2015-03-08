@@ -38,7 +38,7 @@
     <string name="menu_prev_help_page">Prev</string>
     <string name="menu_sort_edit_date">By edit date</string>
     <string name="menu_restore">Restore</string>
-    <string name="menu_delete">Delete Note</string>
+    <string name="menu_delete">Delete note</string>
     <string name="menu_drive">Drive</string>
     <string name="menu_image">Image</string>
     <string name="menu_remove_image">Delete Image</string>
@@ -72,7 +72,7 @@
     <string name="PHOTO_NOT_SAVED">Unable to save photo file.</string>
     <string name="PASSPOINTS_PHOTO">passpoints_image</string>
     <string name="lbl_enter_new_password">New password</string>
-    <string name="lbl_password_change_title">Change Password</string>
+    <string name="lbl_password_change_title">Change password</string>
     <string name="lbl_current_password">Password</string>
     <string name="lbl_reenter_new_password">Repeat password</string>
     <string name="lbl_send_address">Email or phone #</string>
@@ -82,7 +82,7 @@
     <string name="lbl_backup_file">Filename</string>
     <string name="lbl_export_file">Filename</string>
     <string name="lbl_backup_title">Backup</string>
-    <string name="lbl_select_file">Select File...</string>
+    <string name="lbl_select_file">Select file...</string>
     <string name="lbl_export_title">Export</string>
     <string name="lbl_restore_title">Restore</string>
     <string name="lbl_restore_file">Filename</string>
@@ -115,7 +115,7 @@
     <string name="lbl_import_title">Import</string>
     <string name="webview_activity_title">View Web Page</string>
     <string name="btn_time_picker">Clock</string>
-    <string name="notification_title">NoteJackal Notification</string>
+    <string name="notification_title">Jot\'emDown Notification</string>
     <string name="btn_contact_picker">Contacts</string>
     <string name="btn_export">Export</string>
     <string name="btn_calendar">Calendar</string>

@@ -6,7 +6,6 @@ import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
@@ -147,7 +146,7 @@ public class DatabaseNotes extends SQLiteOpenHelper {
             }
         }
 
-        Log.d(MainActivity.DEBUGTAG, "Query = " + query);
+        //Log.d(MainActivity.DEBUGTAG, "Query = " + query);
         Cursor cursor = db.rawQuery(query, null);
 
         Note note;
@@ -180,7 +179,7 @@ public class DatabaseNotes extends SQLiteOpenHelper {
         String query;
 
         query = "SELECT  * FROM " + TABLE_NOTES + " WHERE " + COL_GROUP + " = " + groupId + " ORDER BY " + order + " " + dir;
-        Log.d(MainActivity.DEBUGTAG, "Query = " + query);
+        //Log.d(MainActivity.DEBUGTAG, "Query = " + query);
         Cursor cursor = db.rawQuery(query, null);
 
         Note note;
@@ -199,7 +198,7 @@ public class DatabaseNotes extends SQLiteOpenHelper {
                 note.setGroup(cursor.getInt(9));
 
                 notes.add(note);
-                Log.d(MainActivity.DEBUGTAG, "note = " + note.toString());
+
             } while (cursor.moveToNext());
         }
 

@@ -56,6 +56,10 @@ public class NewNote extends ActionBarActivity {
     private String noteImagePath;
     private int selectedGroupRow;
     private EditText editText;
+    private String groupName;
+    private String sortCol;
+    private String sortName;
+    private String sortDir;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,36 +82,38 @@ public class NewNote extends ActionBarActivity {
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            Log.d(MainActivity.DEBUGTAG, "check 20");
-            editFunction = true;
-            note.setId(extras.getInt("id"));
-            note.setPriority(extras.getInt("priority"));
-            note.setCreateDate(extras.getString("createDate"));
-            note.setEditDate(extras.getString("editDate"));
-            note.setBody(extras.getString("body"));
-            note.setLatitude(extras.getString("latitude"));
-            note.setLongitude(extras.getString("longitude"));
-            note.setHasReminder(extras.getString("hasReminder"));
-            note.setImage(extras.getString("image"));
-            note.setGroup(extras.getInt("group"));
-            noteText.setText(note.getBody());
-            //noteText.setText(note.toString());
+            editFunction = extras.getBoolean("edit");
+            if (editFunction == true) {
+                note.setId(extras.getInt("id"));
+                note.setPriority(extras.getInt("priority"));
+                note.setCreateDate(extras.getString("createDate"));
+                note.setEditDate(extras.getString("editDate"));
+                note.setBody(extras.getString("body"));
+                note.setLatitude(extras.getString("latitude"));
+                note.setLongitude(extras.getString("longitude"));
+                note.setHasReminder(extras.getString("hasReminder"));
+                note.setImage(extras.getString("image"));
+                note.setGroup(extras.getInt("group"));
+                noteText.setText(note.getBody());
 
-            String strHelp = (String) getResources().getText(R.string.txt_help_search);
-            if (note.getBody().length() >= strHelp.length()) {
-                //Log.d(MainActivity.DEBUGTAG, "check 1");
-                if (note.getBody().substring(0, strHelp.length()).equals(strHelp)) {
-                    help = true;
-                    noteText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
-                    noteText.setText(Html.fromHtml(note.getBody()));
-                    noteText.setFocusable(false);
-                    actionBar.setTitle(getResources().getString(R.string.help_title));
-                    ListView groupList = (ListView) findViewById(R.id.group_list);
-                    groupList.setVisibility(View.GONE);
+                String strHelp = (String) getResources().getText(R.string.txt_help_search);
+                if (note.getBody().length() >= strHelp.length()) {
 
-                    //Log.d(MainActivity.DEBUGTAG, "check 2");
+                    if (note.getBody().substring(0, strHelp.length()).equals(strHelp)) {
+                        help = true;
+                        noteText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+                        noteText.setText(Html.fromHtml(note.getBody()));
+                        noteText.setFocusable(false);
+                        actionBar.setTitle(getResources().getString(R.string.help_title));
+                        ListView groupList = (ListView) findViewById(R.id.group_list);
+                        groupList.setVisibility(View.GONE);
+                    }
                 }
             }
+            groupName = (extras.getString("group_name"));
+            sortCol = extras.getString("sort_col");
+            sortName = extras.getString("sort_name");
+            sortDir = extras.getString("sort_dir");
         }
 
         populategroupList();
@@ -115,7 +121,6 @@ public class NewNote extends ActionBarActivity {
         List<NoteGroup> grps = db.getGroups(DatabaseNotes.COL_ID, "ASC");
         int grp = note.getGroup();
         for (int i = 0; i < grps.size(); i++) {
-            Log.d(MainActivity.DEBUGTAG, "i = " + i + "grps.get(i).getId() = " + grps.get(i).getId() + "note.getgroup() = " + note.getGroup());
             if (grps.get(i).getId() == note.getGroup()) {
                 groupList.setItemChecked(i, true);
                 break;
@@ -227,11 +232,14 @@ public class NewNote extends ActionBarActivity {
         super.onResume(); // Always call the superclass method first
 
         Intent i = new Intent(NewNote.this, MainActivity.class);
-        Log.d(MainActivity.DEBUGTAG, "check 1 newnote");
+
         i.putExtra("group", note.getGroup());
         i.putExtra("group_name",  ((TextView)(groupList.getAdapter().getView(groupList.getCheckedItemPosition(), null, groupList)).findViewById(R.id.group_row_text)).getText());
+        i.putExtra("sort_col", sortCol);
+        i.putExtra("sort_name", sortName);
+        i.putExtra("sort_dir", sortDir);
         if (help) {
-            i.putExtra("help", "true");
+            i.putExtra("help", true);
         }
 
         return i;
@@ -320,6 +328,9 @@ public class NewNote extends ActionBarActivity {
             i.putExtra("createDate", note.getCreateDate());
             i.putExtra("editDate", note.getEditDate());
             i.putExtra("body", note.getBody());
+            i.putExtra("image", note.getImage());
+            i.putExtra("group", note.getGroup());
+            i.putExtra("group_name",  ((TextView)(groupList.getAdapter().getView(groupList.getCheckedItemPosition(), null, groupList)).findViewById(R.id.group_row_text)).getText());
             startActivity(i);
 
             return true;
@@ -345,6 +356,8 @@ public class NewNote extends ActionBarActivity {
 
             Intent i = new Intent(NewNote.this, ReminderActivity.class);
             i.putExtra("id", note.getId());
+            i.putExtra("group", note.getGroup());
+            i.putExtra("group_name",  ((TextView)(groupList.getAdapter().getView(groupList.getCheckedItemPosition(), null, groupList)).findViewById(R.id.group_row_text)).getText());
             startActivity(i);
 
             return true;
@@ -399,6 +412,8 @@ public class NewNote extends ActionBarActivity {
             i.putExtra("longitude", lon);
             i.putExtra("title", "Note: " + note.getEditDate());
             i.putExtra("text", note.getBody());
+            i.putExtra("group", note.getGroup());
+            i.putExtra("group_name",  ((TextView)(groupList.getAdapter().getView(groupList.getCheckedItemPosition(), null, groupList)).findViewById(R.id.group_row_text)).getText());
             startActivity(i);
 
             return true;
@@ -452,6 +467,7 @@ public class NewNote extends ActionBarActivity {
                 i.putExtra("longitude", note.getLongitude());
                 i.putExtra("hasReminder", note.getHasReminder());
                 i.putExtra("image", note.getImage());
+                i.putExtra("group_name",  ((TextView)(groupList.getAdapter().getView(groupList.getCheckedItemPosition(), null, groupList)).findViewById(R.id.group_row_text)).getText());
                 startActivity(i);
             }
         }
@@ -484,9 +500,6 @@ public class NewNote extends ActionBarActivity {
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yy/MM/dd");
                 Date curr_date = new Date();
                 note.setEditDate(dateFormat.format(curr_date));
-                Log.d(MainActivity.DEBUGTAG, "save note = " + note.toString());
-
-                //JFL
                 noteId = db.updateNote(note);
                 Toast.makeText(NewNote.this, "Note edited...",
                         Toast.LENGTH_SHORT).show();
@@ -498,7 +511,9 @@ public class NewNote extends ActionBarActivity {
             Toast.makeText(NewNote.this, "Exception updating note: " + e.toString(), Toast.LENGTH_LONG).show();
         }
 
-
+        i.putExtra("sort_col", sortCol);
+        i.putExtra("sort_name", sortName);
+        i.putExtra("sort_dir", sortDir);
         startActivity(i);
 
         return noteId;
@@ -583,7 +598,6 @@ public class NewNote extends ActionBarActivity {
 
     private void populategroupList() {
 
-                Log.d(MainActivity.DEBUGTAG, "populate group list ");
                 List<NoteGroup> grps;
 
                 grps = db.getGroups(DatabaseNotes.COL_ID, "ASC");
@@ -601,7 +615,6 @@ public class NewNote extends ActionBarActivity {
 
                 selectedGroupRow = pos;
                 NoteGroup grp = (NoteGroup) adapter.getItemAtPosition(pos);
-                Log.d(MainActivity.DEBUGTAG, "pos = " + pos + " grp id = " + grp.getId() + " grp name = " + grp.getName());
                 note.setGroup(grp.getId());
                 groupList.setItemChecked(pos, true);
             }

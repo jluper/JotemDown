@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -122,7 +121,7 @@ public class ExportNotes extends ActionBarActivity {
 
 
     private void sendTextExport() {
-        Log.d(MainActivity.DEBUGTAG, "check 1 ");
+
         String[] TO = {"jluper@triad.rr.com"};
 
         TO[0] = address.getText().toString();
@@ -142,7 +141,6 @@ public class ExportNotes extends ActionBarActivity {
             File file = new File(exportDir, exportFile.getText().toString() + ".txt");
 
             if (!file.exists() || !file.canRead()) {
-                Log.d(MainActivity.DEBUGTAG, "check 3 ");
                 Toast.makeText(this, "Unable to access export file...", Toast.LENGTH_LONG).show();
                 return;
             }

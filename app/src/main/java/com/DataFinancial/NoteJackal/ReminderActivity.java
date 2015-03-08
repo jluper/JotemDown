@@ -37,7 +37,9 @@ public class ReminderActivity extends ActionBarActivity   implements OnClickList
 	DatabaseReminders db = new DatabaseReminders(this);
     DatabaseNotes notesDb = new DatabaseNotes(this);
 	Reminder reminder = new Reminder();
-	int noteId;
+	private int noteId;
+    private int groupId;
+    private String groupName;
     ImageButton btnCalendar, btnTimePicker, btnContactPicker;
     EditText txtDate, txtTime, txtPhone;
     CheckBox chkRecurDaily;
@@ -46,7 +48,6 @@ public class ReminderActivity extends ActionBarActivity   implements OnClickList
     int reminderId;
     private AlertDialog confirmDelete; 
     static private PendingIntent pendingIntent;
-
     static final int CONTACT_PICKER_RESULT = 1001;
     static final String REMINDER_INTENT = "com.DataFinancial.NoteJackal.reminder";
 	public static final String SHARED_PREF_FILE = "NoteJackalSharedPreferences";	
@@ -92,6 +93,8 @@ public class ReminderActivity extends ActionBarActivity   implements OnClickList
     	Bundle extras = getIntent().getExtras(); 
 		if (extras != null) {
 			noteId = extras.getInt("id");
+            groupId = extras.getInt("group");
+            groupName = extras.getString("group_name");
 			Reminder rem = new Reminder();
 			rem = db.getReminder(noteId);
 
@@ -118,6 +121,18 @@ public class ReminderActivity extends ActionBarActivity   implements OnClickList
 		}
     }
 
+    @Override
+    public Intent getSupportParentActivityIntent() {
+        super.onResume();
+
+        Intent i = new Intent(ReminderActivity.this, MainActivity.class);
+
+        i.putExtra("group", groupId);
+        i.putExtra("group_name", groupName);
+
+        return i;
+
+    }
 
     public static class mReceiver extends BroadcastReceiver {
 

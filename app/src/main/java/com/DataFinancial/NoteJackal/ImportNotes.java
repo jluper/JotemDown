@@ -12,7 +12,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
@@ -183,7 +182,6 @@ public class ImportNotes extends ActionBarActivity {
                         in.close();
                         ringProgressDialog.dismiss();
 
-                        Log.d(MainActivity.DEBUGTAG, "after thread...");
                         SharedPreferences prefs = getSharedPreferences(LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
                         SharedPreferences.Editor editor = prefs.edit();
                         editor.putString(LAST_IMPORT_FILE, importFile.getText().toString());
