@@ -24,7 +24,7 @@ public class GroupMaintenance extends ActionBarActivity {
     EditText groupEditText;
     NoteGroup currentGroup;
     List<NoteGroup> grps;
-    GroupAdapter grpAdapter;
+    GroupsAdapter grpAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +49,7 @@ public class GroupMaintenance extends ActionBarActivity {
 
         grps = db.getGroups(DatabaseNotes.COL_ID, "ASC");
 
-        grpAdapter = new GroupAdapter(this, grps);
+        grpAdapter = new GroupsAdapter(this, grps);
 
         groupList.setAdapter(grpAdapter);
 

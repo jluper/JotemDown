@@ -623,7 +623,7 @@ public class NewNote extends ActionBarActivity {
 //        for (NoteGroup temp : grps) {
 //            Log.d(MainActivity.DEBUGTAG, "Group: " + temp.toString());
 //        }
-                GroupAdapter grpAdapter = new GroupAdapter(this, grps);
+                GroupsAdapter grpAdapter = new GroupsAdapter(this, grps);
 
                 groupList.setAdapter(grpAdapter);
 
