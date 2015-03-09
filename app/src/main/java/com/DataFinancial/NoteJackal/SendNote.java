@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.ActionBarActivity;
 import android.telephony.SmsManager;
 import android.view.Menu;
@@ -15,6 +16,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * @author jluper
@@ -26,6 +28,9 @@ public class SendNote extends ActionBarActivity {
     private Button btnSend;
     private Note note = new Note();
     private String groupName;
+    private String sortCol;
+    private String sortName;
+    private String sortDir;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -37,7 +42,7 @@ public class SendNote extends ActionBarActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setIcon(R.drawable.note_yellow);
-        actionBar.setTitle("Send Note");
+        actionBar.setTitle("Share Note");
         actionBar.setDisplayShowTitleEnabled(true);
 
         addListenerOnButton();
@@ -51,6 +56,9 @@ public class SendNote extends ActionBarActivity {
             note.setImage(extras.getString("image"));
             note.setGroup(extras.getInt("group"));
             groupName = extras.getString("group_name");
+            sortCol = extras.getString("sort_col");
+            sortName = extras.getString("sort_name");
+            sortDir = extras.getString("sort_dir");
         }
 
         address = (EditText) findViewById(R.id.txtAddress);
@@ -63,6 +71,7 @@ public class SendNote extends ActionBarActivity {
         int textLength = address.getText().length();
         address.setSelection(textLength, textLength);
     }
+
 
     @Override
     public void onResume() {
@@ -81,11 +90,13 @@ public class SendNote extends ActionBarActivity {
     @Override
     public Intent getSupportParentActivityIntent() {
         super.onResume();
-
         Intent i = new Intent(SendNote.this, MainActivity.class);
 
         i.putExtra("group", note.getGroup());
         i.putExtra("group_name", groupName);
+        i.putExtra("sort_col", sortCol);
+        i.putExtra("sort_name", sortName);
+        i.putExtra("sort_dir", sortDir);
 
         return i;
 
@@ -102,7 +113,6 @@ public class SendNote extends ActionBarActivity {
 
 
     public void addListenerOnButton() {
-
 
         btnSend = (Button) findViewById(R.id.btnSend);
 
@@ -122,25 +132,33 @@ public class SendNote extends ActionBarActivity {
 
                     if (utils.isValidEmail(TO[0])) {
 
-                        Intent emailIntent = new Intent(Intent.ACTION_SEND);
-                        emailIntent.setData(Uri.parse("mailto:"));
-                        emailIntent.setType("message/rfc822");
+                        //Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                        List<Intent> emailIntents = utils.filterIntents(SendNote.this);
 
-                        if (!note.getImage().isEmpty()) {
-                            File imageFile = new File(note.getImage());
-                            Uri uri = Uri.parse(imageFile.toString());
-                            emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
+                        for (Intent i : emailIntents) {
+
+                            i.setData(Uri.parse("mailto:"));
+                            i.setType("message/rfc822");
+
+                            if (!note.getImage().isEmpty()) {
+                                File imageFile = new File(note.getImage());
+                                Uri uri = Uri.parse(imageFile.toString());
+                                i.putExtra(Intent.EXTRA_STREAM, uri);
+                            }
+
+                            String emailSubject = "Note from Jot'emDown";
+                            String emailText = "Note from Jot'emDown...\n\nCreated Date: " + note.getCreateDate() + "\nLast Edit Date:" + note.getEditDate() + "\n\n" + note.getBody();
+                            i.putExtra(Intent.EXTRA_EMAIL, TO);
+                            i.putExtra(Intent.EXTRA_SUBJECT, emailSubject);
+                            i.putExtra(Intent.EXTRA_TEXT, emailText);
                         }
-
-                        String emailSubject = "Note from Jot'emDown";
-                        String emailText = "Note from Jot'emDown...\n\nCreated Date: " + note.getCreateDate() + "\nLast Edit Date:" + note.getEditDate() + "\n\n" + note.getBody();
-                        emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
-                        emailIntent.putExtra(Intent.EXTRA_SUBJECT, emailSubject);
-                        emailIntent.putExtra(Intent.EXTRA_TEXT, emailText);
-
                         try {
-                            Intent intent = Intent.createChooser(emailIntent, "Send mail...");
-                            startActivity(intent);
+
+                            Intent chooserIntent = Intent.createChooser(emailIntents.remove(0), "Select app to share...");
+                            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, emailIntents.toArray(new Parcelable[]{}));
+                            startActivity(chooserIntent);
+                            //Intent intent = Intent.createChooser(emailIntent, "Send mail...");
+                            //startActivity(intent);
 
                         } catch (Exception e) {
                             Toast.makeText(SendNote.this, "Exception sending note email: " + e.getMessage(), Toast.LENGTH_LONG).show();

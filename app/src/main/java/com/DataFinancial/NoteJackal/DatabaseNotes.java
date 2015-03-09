@@ -131,7 +131,7 @@ public class DatabaseNotes extends SQLiteOpenHelper {
         String query;
 
         //String helpText = (String) this.context.getResources().getText(R.string.txt_help_search);txt_help_search
-        String helpText = context.getResources().getString(R.string.txt_help_search);
+        String helpText = (String) context.getResources().getText(R.string.txt_help_search); //context.getResources().getString(R.string.txt_help_search);
         if (search == null) {
             if (group != ExportNotes.NO_GROUP) {
                 query = "SELECT  * FROM " + TABLE_NOTES + " WHERE " + COL_GROUP + " = " + group + " AND " + COL_BODY + " NOT LIKE '%" + helpText + "%' ORDER BY " + order + " " + dir;

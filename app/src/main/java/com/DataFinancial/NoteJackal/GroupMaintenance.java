@@ -3,7 +3,6 @@ package com.DataFinancial.NoteJackal;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.text.InputFilter;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -117,8 +116,6 @@ public class GroupMaintenance extends ActionBarActivity {
                 if (deleteGrp != null) {
                     List<Note> notes;
                     notes = db.getNotesByGroupId(deleteGrp.getId(), DatabaseNotes.COL_GROUP, "ASC");
-                    Log.d(MainActivity.DEBUGTAG, "notes Size = " + notes.size());
-                    Log.d(MainActivity.DEBUGTAG, "group id = " + deleteGrp.getId());
                     if (notes.size() == 0) {
                         db.deleteGroup(deleteGrp.getId());
                         groupEditText.setText("");
@@ -140,11 +137,16 @@ public class GroupMaintenance extends ActionBarActivity {
 
             String grpName = groupEditText.getText().toString();
             NoteGroup groupSelected = (NoteGroup) groupList.getItemAtPosition(groupList.getCheckedItemPosition());
-            Log.d(MainActivity.DEBUGTAG, "groupSelected = " + groupSelected.getName() + "grpName = " + grpName);
             if (groupSelected != null) {
                 if (!grpName.isEmpty()) {
+
+                    for (NoteGroup grp : grps) {
+                        if (grp.getName().equals(grpName)) {
+                            Toast.makeText(GroupMaintenance.this, "Can't use that name because it already exists.", Toast.LENGTH_LONG).show();
+                            return false;
+                        }
+                    }
                     groupSelected.setName(groupEditText.getText().toString());
-                    Log.d(MainActivity.DEBUGTAG, "new name = " + groupSelected.getName());
                     db.updateGroup(groupSelected);
                     groupEditText.setText("");
                     populategroupList();

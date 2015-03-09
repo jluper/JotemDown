@@ -32,7 +32,7 @@
             android:layout_marginLeft="10dp"
             android:text="Priority"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/white" />
+            android:textColor="@color/yellow" />
 
         <TextView
             android:id="@+id/lbl_geocoded"
@@ -42,7 +42,7 @@
             android:layout_marginLeft="10dp"
             android:text=""
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/white" />
+            android:textColor="@color/yellow" />
 
         <TextView
             android:id="@+id/lbl_note_reminder"
@@ -52,7 +52,7 @@
             android:layout_marginLeft="10dp"
             android:text=""
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/light_green" />
+            android:textColor="@color/yellow" />
 
         <TextView
             android:id="@+id/lbl_note_image"
@@ -62,7 +62,7 @@
             android:layout_marginLeft="10dp"
             android:text=""
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/white" />
+            android:textColor="@color/yellow" />
 
     </LinearLayout>
 

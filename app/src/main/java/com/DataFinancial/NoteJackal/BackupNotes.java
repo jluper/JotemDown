@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Parcelable;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -156,9 +157,6 @@ public class BackupNotes extends ActionBarActivity {
 
         Intent emailIntent = new Intent(Intent.ACTION_SEND);
 
-        emailIntent.setData(Uri.parse("mailto:" + TO[0]));
-        emailIntent.setType("message/rfc822");
-
         if (Utils.isValidEmail(TO[0])) {
 
             String fileName = backupFile.getText().toString() + ".db";
@@ -172,12 +170,22 @@ public class BackupNotes extends ActionBarActivity {
             }
 
             Uri uri = Uri.parse(file.toString());
-            emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
-            emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
-            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Jot'emDown backup");
-            emailIntent.putExtra(Intent.EXTRA_TEXT, "Backup file attached.");
 
-            startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+            Utils utils = new Utils();
+            List<Intent> emailIntents = utils.filterIntents(this);
+            for (Intent i : emailIntents) {
+                i.setData(Uri.parse("mailto:" + TO[0]));
+                i.setType("message/rfc822");
+                i.putExtra(Intent.EXTRA_STREAM, uri);
+                i.putExtra(Intent.EXTRA_EMAIL, TO);
+                i.putExtra(Intent.EXTRA_SUBJECT, "Jot'emDown backup");
+                i.putExtra(Intent.EXTRA_TEXT, "Backup file attached.");
+            }
+            Intent chooserIntent = Intent.createChooser(emailIntents.remove(0), "Select app to send...");
+            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, emailIntents.toArray(new Parcelable[]{}));
+            startActivity(chooserIntent);
+
+            //startActivity(Intent.createChooser(emailIntent, "Send mail..."));
 
         } else {
             Toast.makeText(BackupNotes.this, "Invalid email...",

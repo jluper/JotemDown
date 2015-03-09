@@ -55,6 +55,9 @@ public class ReminderActivity extends ActionBarActivity   implements OnClickList
 	static private int pendingIntentRequestCode = 0;
 	public mReceiver reminderReceiver;
     static private AlarmManager am;
+    private String sortCol;
+    private String sortName;
+    private String sortDir;
 
     // Variable for storing current date and time
     private int mYear, mMonth, mDay, mHour, mMinute;
@@ -95,6 +98,9 @@ public class ReminderActivity extends ActionBarActivity   implements OnClickList
 			noteId = extras.getInt("id");
             groupId = extras.getInt("group");
             groupName = extras.getString("group_name");
+            sortCol = extras.getString("sort_col");
+            sortName = extras.getString("sort_name");
+            sortDir = extras.getString("sort_dir");
 			Reminder rem = new Reminder();
 			rem = db.getReminder(noteId);
 
@@ -129,6 +135,9 @@ public class ReminderActivity extends ActionBarActivity   implements OnClickList
 
         i.putExtra("group", groupId);
         i.putExtra("group_name", groupName);
+        i.putExtra("sort_col", sortCol);
+        i.putExtra("sort_name", sortName);
+        i.putExtra("sort_dir", sortDir);
 
         return i;
 

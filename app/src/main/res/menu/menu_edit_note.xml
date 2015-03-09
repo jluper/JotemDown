@@ -6,16 +6,16 @@
 
     <item
         android:id="@+id/menu_save"
-        android:orderInCategory="89"
+        android:orderInCategory="88"
         android:icon="@drawable/ic_action_save"
         android:title="@string/menu_save"
         app:showAsAction="always"/>
     <item
         android:id="@+id/menu_delete"
-        android:orderInCategory="90"
+        android:orderInCategory="89"
         android:icon="@drawable/ic_action_discard"
         android:title="@string/menu_delete"
-        app:showAsAction="never"/>
+        app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/menu_send_note"
         android:orderInCategory="89"

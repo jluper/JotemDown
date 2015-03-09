@@ -56,6 +56,7 @@ public class NewNote extends ActionBarActivity {
     private String noteImagePath;
     private int selectedGroupRow;
     private EditText editText;
+    private int groupId;
     private String groupName;
     private String sortCol;
     private String sortName;
@@ -76,7 +77,6 @@ public class NewNote extends ActionBarActivity {
         noteText = (EditText) findViewById(R.id.note_text);
         noteText.setGravity(Gravity.TOP);
         groupList = (ListView) findViewById(R.id.group_list);
-
 
         //groupList.setSelectionFromTop(2, 0);
 
@@ -110,6 +110,7 @@ public class NewNote extends ActionBarActivity {
                     }
                 }
             }
+            groupId = extras.getInt("group");
             groupName = (extras.getString("group_name"));
             sortCol = extras.getString("sort_col");
             sortName = extras.getString("sort_name");
@@ -157,9 +158,7 @@ public class NewNote extends ActionBarActivity {
             try {
                 Date reminderDate = df.parse(reminder.getDate() + " " + reminder.getTime());
 
-                if (reminderDate.compareTo(today) < 0) {
-                    txtReminder.setTextColor(getResources().getColor(R.color.light_red));
-                }
+//
             } catch (ParseException e) {
                 Toast.makeText(NewNote.this, "Exception parsing reminder date: " + e.toString(), Toast.LENGTH_LONG).show();
             }
@@ -233,14 +232,17 @@ public class NewNote extends ActionBarActivity {
 
         Intent i = new Intent(NewNote.this, MainActivity.class);
 
-        i.putExtra("group", note.getGroup());
         i.putExtra("group_name",  ((TextView)(groupList.getAdapter().getView(groupList.getCheckedItemPosition(), null, groupList)).findViewById(R.id.group_row_text)).getText());
         i.putExtra("sort_col", sortCol);
         i.putExtra("sort_name", sortName);
         i.putExtra("sort_dir", sortDir);
-        if (help) {
-            i.putExtra("help", true);
+        i.putExtra("help", help);
+        if (help == false) {
+            i.putExtra("group", note.getGroup());
+        } else {
+            i.putExtra("group", groupId);
         }
+
 
         return i;
 
@@ -331,6 +333,9 @@ public class NewNote extends ActionBarActivity {
             i.putExtra("image", note.getImage());
             i.putExtra("group", note.getGroup());
             i.putExtra("group_name",  ((TextView)(groupList.getAdapter().getView(groupList.getCheckedItemPosition(), null, groupList)).findViewById(R.id.group_row_text)).getText());
+            i.putExtra("sort_col", sortCol);
+            i.putExtra("sort_name", sortName);
+            i.putExtra("sort_dir", sortDir);
             startActivity(i);
 
             return true;
@@ -358,6 +363,9 @@ public class NewNote extends ActionBarActivity {
             i.putExtra("id", note.getId());
             i.putExtra("group", note.getGroup());
             i.putExtra("group_name",  ((TextView)(groupList.getAdapter().getView(groupList.getCheckedItemPosition(), null, groupList)).findViewById(R.id.group_row_text)).getText());
+            i.putExtra("sort_col", sortCol);
+            i.putExtra("sort_name", sortName);
+            i.putExtra("sort_dir", sortDir);
             startActivity(i);
 
             return true;
@@ -408,12 +416,17 @@ public class NewNote extends ActionBarActivity {
             //noteText.setText(note.getBody() +"\n" +  "latitude: " + lat + " longitude: " + lon);
 
             Intent i = new Intent(NewNote.this, MapActivity.class);
+            i.putExtra("edit", editFunction);
             i.putExtra("latitude", lat);
             i.putExtra("longitude", lon);
             i.putExtra("title", "Note: " + note.getEditDate());
-            i.putExtra("text", note.getBody());
+            i.putExtra("body", note.getBody());
             i.putExtra("group", note.getGroup());
+            i.putExtra("image", note.getImage());
             i.putExtra("group_name",  ((TextView)(groupList.getAdapter().getView(groupList.getCheckedItemPosition(), null, groupList)).findViewById(R.id.group_row_text)).getText());
+            i.putExtra("sort_col", sortCol);
+            i.putExtra("sort_name", sortName);
+            i.putExtra("sort_dir", sortDir);
             startActivity(i);
 
             return true;
@@ -458,6 +471,7 @@ public class NewNote extends ActionBarActivity {
                 browseGallery();
             } else {
                 Intent i = new Intent(NewNote.this, NoteImageActivity.class);
+                i.putExtra("edit", editFunction);
                 i.putExtra("id", note.getId());
                 i.putExtra("priority", note.getPriority());
                 i.putExtra("createDate", note.getCreateDate());
@@ -467,7 +481,12 @@ public class NewNote extends ActionBarActivity {
                 i.putExtra("longitude", note.getLongitude());
                 i.putExtra("hasReminder", note.getHasReminder());
                 i.putExtra("image", note.getImage());
-                i.putExtra("group_name",  ((TextView)(groupList.getAdapter().getView(groupList.getCheckedItemPosition(), null, groupList)).findViewById(R.id.group_row_text)).getText());
+                i.putExtra("group", note.getGroup());
+                //i.putExtra("group_name",  ((TextView)(groupList.getAdapter().getView(groupList.getCheckedItemPosition(), null, groupList)).findViewById(R.id.group_row_text)).getText());
+                i.putExtra("group_name", groupName);
+                i.putExtra("sort_col", sortCol);
+                i.putExtra("sort_name", sortName);
+                i.putExtra("sort_dir", sortDir);
                 startActivity(i);
             }
         }

@@ -1,6 +1,10 @@
 package com.DataFinancial.NoteJackal;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.ResolveInfo;
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,8 +17,10 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class Utils {
@@ -211,5 +217,28 @@ public class Utils {
         }
         src.close();
         dst.close();
+    }
+
+    List<Intent> filterIntents(Context context) {
+
+        List<Intent> targetedShareIntents = new ArrayList<>();
+        Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
+        shareIntent.setType("message/rfc822");
+        //shareIntent.setType("text/plain");
+        List<ResolveInfo> resInfo = context.getPackageManager().queryIntentActivities(shareIntent, 0);
+        if (!resInfo.isEmpty()) {
+            for (ResolveInfo resolveInfo : resInfo) {
+                String packageName = resolveInfo.activityInfo.packageName;
+                Intent targetedShareIntent = new Intent(android.content.Intent.ACTION_SEND);
+                targetedShareIntent.setType("message/rfc822");
+                targetedShareIntent.setPackage(packageName);
+                if (packageName.equals("com.lge.email") || packageName.equals("com.google.android.gm")) {
+                    targetedShareIntents.add(targetedShareIntent);
+                    Log.d(MainActivity.DEBUGTAG, "intents = " + targetedShareIntent + " package name = " + packageName);
+                }
+            }
+        }
+
+        return targetedShareIntents;
     }
 }

@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Parcelable;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -126,11 +127,6 @@ public class ExportNotes extends ActionBarActivity {
 
         TO[0] = address.getText().toString();
 
-        Intent emailIntent = new Intent(Intent.ACTION_SEND);
-
-        emailIntent.setData(Uri.parse("mailto:"));
-        emailIntent.setType("message/rfc822");
-
         if (Utils.isValidEmail(TO[0])) {
             File exportDir;
             if (checkExternalMedia()) {
@@ -145,13 +141,22 @@ public class ExportNotes extends ActionBarActivity {
                 return;
             }
 
-             Uri uri = Uri.parse(file.toString());
-             emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
-             emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
-             emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Jote'emDown export");
-             emailIntent.putExtra(Intent.EXTRA_TEXT, "Jot'emDown notes export file attached.");
+            Uri uri = Uri.parse(file.toString());
+            Utils utils = new Utils();
+            List<Intent> emailIntents = utils.filterIntents(this);
+            for (Intent i : emailIntents) {
+                i.setData(Uri.parse("mailto:"));
+                i.setType("message/rfc822");
+                i.putExtra(Intent.EXTRA_STREAM, uri);
+                i.putExtra(Intent.EXTRA_EMAIL, TO);
+                i.putExtra(Intent.EXTRA_SUBJECT, "Jote'emDown export");
+                i.putExtra(Intent.EXTRA_TEXT, "Jot'emDown notes export file attached.");
+            }
 
-             startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+            Intent chooserIntent = Intent.createChooser(emailIntents.remove(0), "Select app to share...");
+            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, emailIntents.toArray(new Parcelable[]{}));
+            startActivity(chooserIntent);
+            //startActivity(Intent.createChooser(emailIntent, "Send mail..."));
 
         } else {
             Toast.makeText(ExportNotes.this, "Invalid email...", Toast.LENGTH_LONG).show();

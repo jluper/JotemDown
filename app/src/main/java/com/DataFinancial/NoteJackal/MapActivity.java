@@ -19,6 +19,9 @@ public class MapActivity extends ActionBarActivity {
 
     int groupId;
     private String groupName;
+    private String sortCol;
+    private String sortName;
+    private String sortDir;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +42,9 @@ public class MapActivity extends ActionBarActivity {
 		String text = extras.getString("text");
         groupId = extras.getInt("group");
         groupName = extras.getString("group_name");
+        sortCol = extras.getString("sort_col");
+        sortName = extras.getString("sort_name");
+        sortDir = extras.getString("sort_dir");
 
 		if (latitude != 0.0 && longitude != 0.0) {
 			
@@ -92,6 +98,9 @@ public class MapActivity extends ActionBarActivity {
 
         i.putExtra("group", groupId);
         i.putExtra("group_name", groupName);
+        i.putExtra("sort_col", sortCol);
+        i.putExtra("sort_name", sortName);
+        i.putExtra("sort_dir", sortDir);
 
         return i;
 

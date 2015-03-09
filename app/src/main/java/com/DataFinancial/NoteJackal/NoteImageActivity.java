@@ -26,6 +26,11 @@ public class NoteImageActivity extends ActionBarActivity {
     private String noteImagePath;
     private File imageFile;
     private Note note = new Note();
+    private String groupName;
+    private String sortCol;
+    private String sortName;
+    private String sortDir;
+    private boolean editFunction = false;
 
     public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
         // Raw height and width of image
@@ -63,6 +68,7 @@ public class NoteImageActivity extends ActionBarActivity {
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
+            editFunction = extras.getBoolean("edit");
             noteImagePath = extras.getString("image");
             note.setId(extras.getInt("id"));
             note.setPriority(extras.getInt("priority"));
@@ -72,8 +78,12 @@ public class NoteImageActivity extends ActionBarActivity {
             note.setLatitude(extras.getString("latitude"));
             note.setLongitude(extras.getString("longitude"));
             note.setHasReminder(extras.getString("hasReminder"));
+            note.setGroup(extras.getInt("group"));
             note.setImage(extras.getString("image"));
-
+            groupName = extras.getString("group_name");
+            sortCol = extras.getString("sort_col");
+            sortName = extras.getString("sort_name");
+            sortDir = extras.getString("sort_dir");
         } else {
             Toast.makeText(NoteImageActivity.this, "Image not found.", Toast.LENGTH_SHORT).show();
         }
@@ -128,9 +138,9 @@ public class NoteImageActivity extends ActionBarActivity {
 
     @Override
     public Intent getSupportParentActivityIntent() {
-        super.onResume(); // Always call the superclass method first
-
+        super.onResume();
         Intent i = new Intent(NoteImageActivity.this, NewNote.class);
+        i.putExtra("edit", editFunction);
         i.putExtra("id", note.getId());
         i.putExtra("priority", note.getPriority());
         i.putExtra("createDate", note.getCreateDate());
@@ -140,6 +150,11 @@ public class NoteImageActivity extends ActionBarActivity {
         i.putExtra("longitude", note.getLongitude());
         i.putExtra("hasReminder", note.getHasReminder());
         i.putExtra("image", note.getImage());
+        i.putExtra("group", note.getGroup());
+        i.putExtra("group_name", groupName);
+        i.putExtra("sort_col", sortCol);
+        i.putExtra("sort_name", sortName);
+        i.putExtra("sort_dir", sortDir);
         startActivity(i);
 
         return i;
