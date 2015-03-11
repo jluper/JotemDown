@@ -89,7 +89,7 @@ public class SendNote extends ActionBarActivity {
 
     @Override
     public Intent getSupportParentActivityIntent() {
-        super.onResume();
+
         Intent i = new Intent(SendNote.this, MainActivity.class);
 
         i.putExtra("group", note.getGroup());
@@ -99,8 +99,8 @@ public class SendNote extends ActionBarActivity {
         i.putExtra("sort_dir", sortDir);
 
         return i;
-
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will

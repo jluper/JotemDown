@@ -17,6 +17,7 @@ import android.os.SystemClock;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.provider.ContactsContract.Contacts;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -43,6 +44,7 @@ public class ReminderActivity extends ActionBarActivity   implements OnClickList
     ImageButton btnCalendar, btnTimePicker, btnContactPicker;
     EditText txtDate, txtTime, txtPhone;
     CheckBox chkRecurDaily;
+    CheckBox chkVibrate;
     Button btnAdd, btnCancel;
     boolean update = false;
     int reminderId;
@@ -83,6 +85,7 @@ public class ReminderActivity extends ActionBarActivity   implements OnClickList
         txtTime = (EditText) findViewById(R.id.txt_reminder_time);
         txtPhone = (EditText) findViewById(R.id.txt_reminder_phone);
         chkRecurDaily = (CheckBox) findViewById(R.id.chk_recur_daily);
+        chkVibrate = (CheckBox) findViewById(R.id.chk_vibrate);
         btnAdd = (Button) findViewById(R.id.btn_reminder_add);
         btnCancel = (Button) findViewById(R.id.btn_reminder_cancel);
         
@@ -228,6 +231,8 @@ public class ReminderActivity extends ActionBarActivity   implements OnClickList
 				reminder.setDate(convertedDate);
 				reminder.setTime(txtTime.getText().toString());
 				reminder.setRecur(chkRecurDaily.isChecked() ? "true" : "false");
+                reminder.setVibrate(chkVibrate.isChecked() ? "true" : "false");
+                Log.d(MainActivity.DEBUGTAG, "vibrate in actvity = " + reminder.getVibrate());
 				reminder.setPhone(txtPhone.getText().toString());
 				
 

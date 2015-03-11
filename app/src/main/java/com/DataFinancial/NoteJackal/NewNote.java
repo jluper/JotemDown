@@ -10,6 +10,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
@@ -441,25 +442,36 @@ public class NewNote extends ActionBarActivity {
 
         if (id == R.id.menu_send_email) {
             String[] TO = {"jluper@triad.rr.com"};
-            ;
             String[] CC;
 
             TO[0] = emailContact;
-            Intent emailIntent = new Intent(Intent.ACTION_SEND);
-            emailIntent.setData(Uri.parse("mailto:"));
-            emailIntent.setType("text/plain");
+            Utils utils = new Utils();
+            List<Intent> emailIntents = utils.filterIntents(NewNote.this);
+            for (Intent i : emailIntents) {
+                //Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                i.setData(Uri.parse("mailto:"));
+                i.setType("message/rfc822");
 
-            emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
-            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Subject");
-            emailIntent.putExtra(Intent.EXTRA_TEXT, "test text");
-            Intent intent = Intent.createChooser(emailIntent, "Send email...");
-            startActivity(intent);
+                i.putExtra(Intent.EXTRA_EMAIL, TO);
+                i.putExtra(Intent.EXTRA_SUBJECT, "Subject");
+                i.putExtra(Intent.EXTRA_TEXT, "test text");
+            }
+            //Intent intent = Intent.createChooser(emailIntent, "Send email...");
+            //startActivity(intent);
+            Intent chooserIntent = Intent.createChooser(emailIntents.remove(0), "Select app to share...");
+            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, emailIntents.toArray(new Parcelable[]{}));
+            startActivity(chooserIntent);
 
         }
 
         if (id == R.id.menu_goto_webpage) {
 
             Intent i = new Intent(NewNote.this, WebviewActivity.class);
+            i.putExtra("group", note.getGroup());
+            i.putExtra("group_name", groupName);
+            i.putExtra("sort_col", sortCol);
+            i.putExtra("sort_name", sortName);
+            i.putExtra("sort_dir", sortDir);
             i.putExtra("url", urlContact);
 
             startActivity(i);

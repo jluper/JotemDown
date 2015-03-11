@@ -34,6 +34,11 @@ public class BackupNotes extends ActionBarActivity {
     protected List<Note> notes = new ArrayList<>();
     private EditText address;
     private EditText backupFile;
+    private int group;
+    private String groupName;
+    private String sortCol;
+    private String sortName;
+    private String sortDir;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,8 +51,16 @@ public class BackupNotes extends ActionBarActivity {
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setIcon(R.drawable.note_yellow);
         actionBar.setTitle("Backup");
-
         actionBar.setDisplayShowTitleEnabled(true);
+
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            group = (extras.getInt("group"));
+            groupName = extras.getString("group_name");
+            sortCol = extras.getString("sort_col");
+            sortName = extras.getString("sort_name");
+            sortDir = extras.getString("sort_dir");
+        }
 
         backupFile = (EditText) findViewById(R.id.txtBackupFile);
         address = (EditText) findViewById(R.id.txtBackupAddress);
@@ -72,6 +85,20 @@ public class BackupNotes extends ActionBarActivity {
 
     }
 
+    @Override
+    public Intent getSupportParentActivityIntent() {
+
+        Intent i = new Intent(BackupNotes.this, MainActivity.class);
+
+        i.putExtra("group", group);
+        i.putExtra("group_name", groupName);
+        i.putExtra("sort_col", sortCol);
+        i.putExtra("sort_name", sortName);
+        i.putExtra("sort_dir", sortDir);
+
+        return i;
+
+    }
     @Override
     public void onResume() {
         super.onResume(); // Always call the superclass method first

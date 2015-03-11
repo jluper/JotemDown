@@ -8,6 +8,15 @@ public class Reminder {
     private String time;
     private String recur;
     private String phone;
+    private String vibrate;
+
+    public String getVibrate() {
+        return vibrate;
+    }
+
+    public void setVibrate(String vibrate) {
+        this.vibrate = vibrate;
+    }
 
     public Reminder() {
 
@@ -16,6 +25,7 @@ public class Reminder {
         time = "00:00";
         recur = "false";
         phone = "";
+        vibrate = "false";
     }
 
     public Reminder(int ntId, String dt, String tm, String rec, String ph) {

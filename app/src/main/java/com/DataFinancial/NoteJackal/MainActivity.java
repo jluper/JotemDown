@@ -97,6 +97,7 @@ public class MainActivity extends ActionBarActivity {
 
         searchText = null;
         Bundle extras = getIntent().getExtras();
+        Log.d(MainActivity.DEBUGTAG, "extras in main = " + extras);
         if (extras != null) {
 
             groupId = extras.getInt("group");
@@ -376,6 +377,11 @@ public class MainActivity extends ActionBarActivity {
         switch (id) {
             case R.id.menu_lock:
                 i = new Intent(MainActivity.this, LockImageActivity.class);
+                i.putExtra("group", groupId);
+                i.putExtra("group_name", groupName);
+                i.putExtra("sort_col", sortCol);
+                i.putExtra("sort_name", sortName);
+                i.putExtra("sort_dir", sortDir);
                 startActivity(i);
                 break;
             case R.id.menu_new:
@@ -392,6 +398,11 @@ public class MainActivity extends ActionBarActivity {
             case R.id.menu_passpoints_reset:
                 setPassPointsSaved(false);
                 i = new Intent(MainActivity.this, LockImageActivity.class);
+                i.putExtra("group", groupId);
+                i.putExtra("group_name", groupName);
+                i.putExtra("sort_col", sortCol);
+                i.putExtra("sort_name", sortName);
+                i.putExtra("sort_dir", sortDir);
                 startActivity(i);
                 break;
             case R.id.menu_replace_lock_image:
@@ -399,6 +410,11 @@ public class MainActivity extends ActionBarActivity {
                 break;
             case R.id.menu_password_reset:
                 i = new Intent(MainActivity.this, ChangePassword.class);
+                i.putExtra("group", groupId);
+                i.putExtra("group_name", groupName);
+                i.putExtra("sort_col", sortCol);
+                i.putExtra("sort_name", sortName);
+                i.putExtra("sort_dir", sortDir);
                 startActivity(i);
                 break;
             case R.id.menu_disable_privacy:
@@ -419,22 +435,48 @@ public class MainActivity extends ActionBarActivity {
                 break;
             case R.id.menu_backup:
                 i = new Intent(MainActivity.this, BackupNotes.class);
+                i.putExtra("group", groupId);
+                i.putExtra("group_name", groupName);
+                i.putExtra("sort_col", sortCol);
+                i.putExtra("sort_name", sortName);
+                i.putExtra("sort_dir", sortDir);
                 startActivity(i);
                 break;
             case R.id.menu_restore:
                 i = new Intent(MainActivity.this, RestoreNotes.class);
+                i.putExtra("group", groupId);
+                i.putExtra("group_name", groupName);
+                i.putExtra("sort_col", sortCol);
+                i.putExtra("sort_name", sortName);
+                i.putExtra("sort_dir", sortDir);
                 startActivity(i);
                 break;
             case R.id.menu_import:
                 i = new Intent(MainActivity.this, ImportNotes.class);
+                i.putExtra("group", groupId);
+                i.putExtra("group_name", groupName);
+                i.putExtra("sort_col", sortCol);
+                i.putExtra("sort_name", sortName);
+                i.putExtra("sort_dir", sortDir);
                 startActivity(i);
                 break;
             case R.id.menu_export:
                 i = new Intent(MainActivity.this, ExportNotes.class);
+                i.putExtra("group", groupId);
+                i.putExtra("group_name", groupName);
+                i.putExtra("sort_col", sortCol);
+                i.putExtra("sort_name", sortName);
+                i.putExtra("sort_dir", sortDir);
+
                 startActivity(i);
                 break;
             case R.id.menu_groups:
                 i = new Intent(MainActivity.this, GroupMaintenance.class);
+                i.putExtra("group", groupId);
+                i.putExtra("group_name", groupName);
+                i.putExtra("sort_col", sortCol);
+                i.putExtra("sort_name", sortName);
+                i.putExtra("sort_dir", sortDir);
                 startActivity(i);
                 break;
             case R.id.menu_help_main:
@@ -480,6 +522,7 @@ public class MainActivity extends ActionBarActivity {
 
     private void browseGallery() {
         Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
         startActivityForResult(i, BROWSE_GALLERY_REQUEST);
     }
 
@@ -490,7 +533,9 @@ public class MainActivity extends ActionBarActivity {
         imageFile = new File(dir, getString(R.string.PASSPOINTS_PHOTO)+".jpg");
 
         Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
         i.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(imageFile));
+
         startActivityForResult(i, PHOTO_TAKEN_REQUEST);
     }
 
@@ -523,6 +568,12 @@ public class MainActivity extends ActionBarActivity {
 
                 setPassPointsSaved(false);
                 Intent i = new Intent(MainActivity.this, LockImageActivity.class);
+                i.putExtra("group", groupId);
+                i.putExtra("group_name", groupName);
+                i.putExtra("sort_col", sortCol);
+                i.putExtra("sort_name", sortName);
+                i.putExtra("sort_dir", sortDir);
+
                 startActivity(i);
             } else {
                 Toast.makeText(this, "No image  selected.", Toast.LENGTH_LONG).show();
@@ -537,6 +588,11 @@ public class MainActivity extends ActionBarActivity {
                     copyImageFile(imagePath);
                     setPassPointsSaved(false);
                     Intent i = new Intent(MainActivity.this, LockImageActivity.class);
+                    i.putExtra("group", groupId);
+                    i.putExtra("group_name", groupName);
+                    i.putExtra("sort_col", sortCol);
+                    i.putExtra("sort_name", sortName);
+                    i.putExtra("sort_dir", sortDir);
                     startActivity(i);
                 } catch (IOException e) {
                     Toast.makeText(this, "Unable to replace lock image. " + e.getMessage(), Toast.LENGTH_LONG).show();

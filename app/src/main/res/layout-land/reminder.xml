@@ -114,11 +114,21 @@
 
             <Button
                 android:id="@+id/btn_reminder_add"
-                android:layout_width="fill_parent"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="fill_parent"
                 android:layout_marginLeft="@dimen/top_margin_xlarge"
                 android:background="@color/grey"
                 android:text="@string/lbl_reminder_add" />
+            <Button
+                android:id="@+id/btn_reminder_cancel"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="fill_parent"
+                android:layout_marginLeft="@dimen/top_margin_xlarge"
+                android:background="@color/grey"
+                android:text="@string/lbl_reminder_cancel" />
+
         </LinearLayout>
     </LinearLayout>
 
@@ -165,6 +175,16 @@
             android:background="@android:color/transparent"
             android:scaleType="fitCenter"
             android:src="@drawable/contacts" />
+        <CheckBox
+            android:id="@+id/chk_vibrate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_marginLeft="@dimen/top_margin_medium"
+            android:button="@drawable/selector_recur_check"
+            android:text="@string/vibrate"
+            android:textColor="@color/grey" >
+        </CheckBox>
 
         <LinearLayout
             android:layout_width="0dp"
@@ -173,13 +193,7 @@
             android:layout_weight="1"
             android:orientation="horizontal" >
 
-            <Button
-                android:id="@+id/btn_reminder_cancel"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_marginLeft="@dimen/top_margin_xlarge"
-                android:background="@color/grey"
-                android:text="@string/lbl_reminder_cancel" />
+
         </LinearLayout>
     </LinearLayout>
 

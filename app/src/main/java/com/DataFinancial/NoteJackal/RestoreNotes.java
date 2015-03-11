@@ -32,6 +32,11 @@ public class RestoreNotes extends ActionBarActivity {
     private Note note = new Note();
     private String lastFile;
     private TextView lblFileName;
+    private int group;
+    private String groupName;
+    private String sortCol;
+    private String sortName;
+    private String sortDir;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,6 +50,16 @@ public class RestoreNotes extends ActionBarActivity {
         actionBar.setIcon(R.drawable.note_yellow);
         actionBar.setTitle("Restore");
         actionBar.setDisplayShowTitleEnabled(true);
+
+
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            group = (extras.getInt("group"));
+            groupName = extras.getString("group_name");
+            sortCol = extras.getString("sort_col");
+            sortName = extras.getString("sort_name");
+            sortDir = extras.getString("sort_dir");
+        }
 
         restoreFile = (EditText) findViewById(R.id.txtRestoreFile);
         lblFileName = (TextView) findViewById(R.id.lblFileName);
@@ -64,6 +79,21 @@ public class RestoreNotes extends ActionBarActivity {
 
         addListenerRestoreButton();
         addListenerOnChkGoogleDrive();
+    }
+
+    @Override
+    public Intent getSupportParentActivityIntent() {
+
+        Intent i = new Intent(RestoreNotes.this, MainActivity.class);
+
+        i.putExtra("group", group);
+        i.putExtra("group_name", groupName);
+        i.putExtra("sort_col", sortCol);
+        i.putExtra("sort_name", sortName);
+        i.putExtra("sort_dir", sortDir);
+
+        return i;
+
     }
 
     public void addListenerOnChkGoogleDrive() {
@@ -125,6 +155,11 @@ public class RestoreNotes extends ActionBarActivity {
                             if (restoreFromLocalBackup(restoreFile.getText().toString(), null)) {
 
                                 Intent i = new Intent(RestoreNotes.this, MainActivity.class);
+                                i.putExtra("group", group);
+                                i.putExtra("group_name", groupName);
+                                i.putExtra("sort_col", sortCol);
+                                i.putExtra("sort_name", sortName);
+                                i.putExtra("sort_dir", sortDir);
                                 startActivity(i);
                             }
                         }

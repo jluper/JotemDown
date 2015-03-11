@@ -35,6 +35,11 @@ public class ExportNotes extends ActionBarActivity {
     private EditText exportFile;
     //public static final String ADDRESS = "address";
     private Note note = new Note();
+    private int group;
+    private String groupName;
+    private String sortCol;
+    private String sortName;
+    private String sortDir;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -56,6 +61,15 @@ public class ExportNotes extends ActionBarActivity {
         String file = prefs.getString(LAST_EXPORT_FILE, "JotemDownExport");
         String addr = prefs.getString(SendNote.LAST_SEND_ADDRESS, null);
 
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            group = (extras.getInt("group"));
+            groupName = extras.getString("group_name");
+            sortCol = extras.getString("sort_col");
+            sortName = extras.getString("sort_name");
+            sortDir = extras.getString("sort_dir");
+        }
+
         if (file != null) {
             exportFile.setText(file);
         }
@@ -68,6 +82,21 @@ public class ExportNotes extends ActionBarActivity {
         exportFile.setSelection(textLength, textLength);
 
         addListenerExportButton();
+
+    }
+
+    @Override
+    public Intent getSupportParentActivityIntent() {
+
+        Intent i = new Intent(ExportNotes.this, MainActivity.class);
+
+        i.putExtra("group", group);
+        i.putExtra("group_name", groupName);
+        i.putExtra("sort_col", sortCol);
+        i.putExtra("sort_name", sortName);
+        i.putExtra("sort_dir", sortDir);
+
+        return i;
 
     }
 

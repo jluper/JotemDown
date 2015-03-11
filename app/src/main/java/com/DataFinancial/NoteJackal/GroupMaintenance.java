@@ -1,5 +1,6 @@
 package com.DataFinancial.NoteJackal;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.text.InputFilter;
@@ -25,6 +26,11 @@ public class GroupMaintenance extends ActionBarActivity {
     NoteGroup currentGroup;
     List<NoteGroup> grps;
     GroupsAdapter grpAdapter;
+    private int group;
+    private String groupName;
+    private String sortCol;
+    private String sortName;
+    private String sortDir;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,12 +44,35 @@ public class GroupMaintenance extends ActionBarActivity {
         actionBar.setTitle(getResources().getString(R.string.title_groups));
         actionBar.setDisplayShowTitleEnabled(true);
 
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            group = (extras.getInt("group"));
+            groupName = extras.getString("group_name");
+            sortCol = extras.getString("sort_col");
+            sortName = extras.getString("sort_name");
+            sortDir = extras.getString("sort_dir");
+        }
+
         groupEditText = (EditText) findViewById(R.id.editview_group);
         groupEditText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(16)});
         groupList = (ListView) findViewById(R.id.group_list_maint);
         populategroupList();
     }
 
+    @Override
+    public Intent getSupportParentActivityIntent() {
+
+        Intent i = new Intent(GroupMaintenance.this, MainActivity.class);
+
+        i.putExtra("group", group);
+        i.putExtra("group_name", groupName);
+        i.putExtra("sort_col", sortCol);
+        i.putExtra("sort_name", sortName);
+        i.putExtra("sort_dir", sortDir);
+
+        return i;
+
+    }
 
     private void populategroupList() {
 

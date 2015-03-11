@@ -36,6 +36,11 @@ public class ImportNotes extends ActionBarActivity {
     protected List<Note> notes = new ArrayList<>();
     private EditText importFile;
     private AlertDialog confirmImport;
+    private int group;
+    private String groupName;
+    private String sortCol;
+    private String sortName;
+    private String sortDir;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,6 +54,15 @@ public class ImportNotes extends ActionBarActivity {
         actionBar.setIcon(R.drawable.note_yellow);
         actionBar.setTitle("Import Notes");
         actionBar.setDisplayShowTitleEnabled(true);
+
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            group = (extras.getInt("group"));
+            groupName = extras.getString("group_name");
+            sortCol = extras.getString("sort_col");
+            sortName = extras.getString("sort_name");
+            sortDir = extras.getString("sort_dir");
+        }
 
         importFile = (EditText) findViewById(R.id.txtImportFile);
 
@@ -67,6 +81,20 @@ public class ImportNotes extends ActionBarActivity {
         addListenerImportButton();
     }
 
+    @Override
+    public Intent getSupportParentActivityIntent() {
+
+        Intent i = new Intent(ImportNotes.this, MainActivity.class);
+
+        i.putExtra("group", group);
+        i.putExtra("group_name", groupName);
+        i.putExtra("sort_col", sortCol);
+        i.putExtra("sort_name", sortName);
+        i.putExtra("sort_dir", sortDir);
+
+        return i;
+
+    }
     @Override
     public void onResume() {
         super.onResume();  // Always call the superclass method first

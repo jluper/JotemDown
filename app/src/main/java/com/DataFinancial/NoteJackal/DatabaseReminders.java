@@ -19,6 +19,7 @@ public class DatabaseReminders extends SQLiteOpenHelper {
     private static final String COL_TIME = "REMTIME";
     private static final String COL_RECUR = "RECUR";
     private static final String COL_PHONE = "PHONE";
+    private static final String COL_VIBRATE = "VIBRATE";
     private final String TABLE_REMINDERS = "REMINDERS";
 
 
@@ -39,8 +40,8 @@ public class DatabaseReminders extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         String sqlRemindersTable = String
-                .format("create table if not exists %s (%s INTEGER PRIMARY KEY, %s INTEGER NOT NULL, %s STRING NOT NULL, %s STRING NOT NULL, %s STRING NOT NULL, %s STRING)",
-                        TABLE_REMINDERS, COL_ID, COL_NOTEID, COL_DATE, COL_TIME, COL_RECUR, COL_PHONE);
+                .format("create table if not exists %s (%s INTEGER PRIMARY KEY, %s INTEGER NOT NULL, %s STRING NOT NULL, %s STRING NOT NULL, %s STRING NOT NULL, %s STRING, %s STRING)",
+                        TABLE_REMINDERS, COL_ID, COL_NOTEID, COL_DATE, COL_TIME, COL_RECUR, COL_PHONE, COL_VIBRATE);
 
         db.execSQL(sqlRemindersTable);
     }
@@ -65,6 +66,7 @@ public class DatabaseReminders extends SQLiteOpenHelper {
         values.put(COL_TIME, reminder.getTime());
         values.put(COL_RECUR, reminder.getRecur());
         values.put(COL_PHONE, reminder.getPhone());
+        values.put(COL_VIBRATE, reminder.getVibrate());
 
         long row = db.insert(TABLE_REMINDERS, null, values);
 
@@ -78,7 +80,7 @@ public class DatabaseReminders extends SQLiteOpenHelper {
         List<Reminder> reminders = new ArrayList<Reminder>();
         SQLiteDatabase db = getReadableDatabase();
 
-        String sql = String.format("SELECT %s, %s, %s, %s, %s, %s FROM %s ORDER BY %s", COL_ID, COL_NOTEID, COL_DATE, COL_TIME, COL_RECUR, COL_PHONE, TABLE_REMINDERS, COL_NOTEID);
+        String sql = String.format("SELECT %s, %s, %s, %s, %s, %s, %s FROM %s ORDER BY %s", COL_ID, COL_NOTEID, COL_DATE, COL_TIME, COL_RECUR, COL_PHONE, COL_VIBRATE, TABLE_REMINDERS, COL_NOTEID);
 
         Cursor cursor = db.rawQuery(sql, null);
 
@@ -90,6 +92,7 @@ public class DatabaseReminders extends SQLiteOpenHelper {
             reminder.setTime(cursor.getString(3));
             reminder.setRecur(cursor.getString(4));
             reminder.setPhone(cursor.getString(5));
+            reminder.setVibrate(cursor.getString(6));
 
             reminders.add(reminder);
         }
@@ -111,7 +114,7 @@ public class DatabaseReminders extends SQLiteOpenHelper {
         String date = strTodayParts[0];
         String time = strTodayParts[1];
 
-        String sql = String.format("SELECT %s, %s, %s, %s, %s, %s FROM %s ORDER BY %s ASC", COL_ID, COL_NOTEID, COL_DATE, COL_TIME, COL_RECUR, COL_PHONE, TABLE_REMINDERS, COL_DATE);
+        String sql = String.format("SELECT %s, %s, %s, %s, %s, %s, %s FROM %s ORDER BY %s ASC", COL_ID, COL_NOTEID, COL_DATE, COL_TIME, COL_RECUR, COL_PHONE, COL_VIBRATE, TABLE_REMINDERS, COL_DATE);
 
         Cursor cursor = db.rawQuery(sql, null);
 
@@ -123,6 +126,7 @@ public class DatabaseReminders extends SQLiteOpenHelper {
             reminder.setTime(cursor.getString(3));
             reminder.setRecur(cursor.getString(4));
             reminder.setPhone(cursor.getString(5));
+            reminder.setVibrate(cursor.getString(6));
 
             reminders.add(reminder);
         }
@@ -134,7 +138,7 @@ public class DatabaseReminders extends SQLiteOpenHelper {
 
     public Reminder getReminder(int noteID) {
 
-        String sql = String.format("SELECT %s, %s, %s, %s, %s, %s FROM %s WHERE %s = %s ORDER BY %s", COL_ID, COL_NOTEID, COL_DATE, COL_TIME, COL_RECUR, COL_PHONE, TABLE_REMINDERS, COL_NOTEID, noteID, COL_NOTEID);
+        String sql = String.format("SELECT %s, %s, %s, %s, %s, %s, %s FROM %s WHERE %s = %s ORDER BY %s", COL_ID, COL_NOTEID, COL_DATE, COL_TIME, COL_RECUR, COL_PHONE, COL_VIBRATE, TABLE_REMINDERS, COL_NOTEID, noteID, COL_NOTEID);
 
         SQLiteDatabase db = getReadableDatabase();
         Reminder reminder = new Reminder();
@@ -149,6 +153,7 @@ public class DatabaseReminders extends SQLiteOpenHelper {
             reminder.setTime(cursor.getString(3));
             reminder.setRecur(cursor.getString(4));
             reminder.setPhone(cursor.getString(5));
+            reminder.setVibrate(cursor.getString(6));
         } else {
             return null;
         }
@@ -176,6 +181,7 @@ public class DatabaseReminders extends SQLiteOpenHelper {
         values.put(COL_TIME, reminder.getTime());
         values.put(COL_RECUR, reminder.getRecur());
         values.put(COL_PHONE, reminder.getPhone());
+        values.put(COL_VIBRATE, reminder.getVibrate());
 
         long rowId = -1;
         try {

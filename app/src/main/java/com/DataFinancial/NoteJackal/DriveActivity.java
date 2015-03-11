@@ -61,6 +61,11 @@ public class DriveActivity extends ActionBarActivity {
     private String uploadFilePath = null;
     private int selectedFilePosition = -1;
     private Button btnRestore;
+    private int group;
+    private String groupName;
+    private String sortCol;
+    private String sortName;
+    private String sortDir;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +86,11 @@ public class DriveActivity extends ActionBarActivity {
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
+//            group = (extras.getInt("group"));
+//            groupName = extras.getString("group_name");
+//            sortCol = extras.getString("sort_col");
+//            sortName = extras.getString("sort_name");
+//            sortDir = extras.getString("sort_dir");
             uploadFilePath = extras.getString("filepath");
             ListView files = (ListView) findViewById(R.id.lstFiles);
             files.setVisibility(View.INVISIBLE);
@@ -136,6 +146,7 @@ public class DriveActivity extends ActionBarActivity {
                 restoreFromLocalBackup(fileName, null);
 
                 Intent i = new Intent(DriveActivity.this, MainActivity.class);
+
                 startActivity(i);
             }
 

@@ -1,7 +1,9 @@
 package com.DataFinancial.NoteJackal;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.webkit.WebView;
@@ -13,6 +15,11 @@ public class WebviewActivity extends ActionBarActivity {
     private EditText field;
     private WebView browser;
     private String url;
+    private int group;
+    private String groupName;
+    private String sortCol;
+    private String sortName;
+    private String sortDir;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,11 +34,30 @@ public class WebviewActivity extends ActionBarActivity {
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
+            group = extras.getInt("group");
+            groupName = extras.getString("group_name");
+            sortCol = extras.getString("sort_col");
+            sortName = extras.getString("sort_name");
+            sortDir = extras.getString("sort_dir");
             url = extras.getString("url");
         }
         browser = (WebView) findViewById(R.id.webView1);
         browser.setWebViewClient(new PageBrowser());
         open(browser);
+    }
+
+    @Override
+    public Intent getSupportParentActivityIntent() {
+
+        Intent i = new Intent(WebviewActivity.this, MainActivity.class);
+
+        i.putExtra("group", group);
+        i.putExtra("group_name", groupName);
+        i.putExtra("sort_col", sortCol);
+        i.putExtra("sort_name", sortName);
+        i.putExtra("sort_dir", sortDir);
+        Log.d(MainActivity.DEBUGTAG, "Group: " + group + " group_name: " + groupName + " sort_col: " + sortCol);
+        return i;
     }
 
     @Override

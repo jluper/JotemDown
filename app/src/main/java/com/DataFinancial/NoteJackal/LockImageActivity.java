@@ -15,6 +15,7 @@ import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.WindowManager;
@@ -38,6 +39,11 @@ public class LockImageActivity extends ActionBarActivity implements PointCollect
     private DatabasePasspoints db = new DatabasePasspoints(this);
     private BitmapFactory.Options options;
     private Bitmap reusedBitmap;
+    private int group = ExportNotes.NO_GROUP;
+    private String groupName = "General";
+    private String sortCol = DatabaseNotes.COL_CREATE_DATE;
+    private String sortName = "Created";
+    private String sortDir = "DESC";
 
     public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
         // Raw height and width of image
@@ -66,8 +72,22 @@ public class LockImageActivity extends ActionBarActivity implements PointCollect
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            group = (extras.getInt("group"));
+            groupName = extras.getString("group_name");
+            sortCol = extras.getString("sort_col");
+            sortName = extras.getString("sort_name");
+            sortDir = extras.getString("sort_dir");
+        }
+
         if (!isPrivate()) {
             Intent i = new Intent(LockImageActivity.this, MainActivity.class);
+            i.putExtra("group", group);
+            i.putExtra("group_name", groupName);
+            i.putExtra("sort_col", sortCol);
+            i.putExtra("sort_name", sortName);
+            i.putExtra("sort_dir", sortDir);
             startActivity(i);
         }
 
@@ -301,9 +321,20 @@ public class LockImageActivity extends ActionBarActivity implements PointCollect
                 if (pwAuthentication) {
 
                     touchedPoints.clear();
+                    reusedBitmap = null;   // set the bitmap top null so gc will get soon as possible
+
+                    Bundle extras = getIntent().getExtras();
+                    Log.d(MainActivity.DEBUGTAG, "extras 1 = " + extras);
 
                     Intent i = new Intent(LockImageActivity.this, Password.class);
-                    reusedBitmap = null;   // set the bitmap top null so gc will get soon as possible
+                    if (extras != null) {
+                        i.putExtra("group", group);
+                        i.putExtra("group_name", groupName);
+                        i.putExtra("sort_col", sortCol);
+                        i.putExtra("sort_name", sortName);
+                        i.putExtra("sort_dir", sortDir);
+                    }
+
                     startActivity(i);
 
                     return;
@@ -312,7 +343,16 @@ public class LockImageActivity extends ActionBarActivity implements PointCollect
                 pointCollector.clear();
 
                 if (pass == true) {
+                    Bundle extras = getIntent().getExtras();
+                    Log.d(MainActivity.DEBUGTAG, "extras 2 = " + extras);
                     Intent i = new Intent(LockImageActivity.this, MainActivity.class);
+                    if (extras != null) {
+                        i.putExtra("group", group);
+                        i.putExtra("group_name", groupName);
+                        i.putExtra("sort_col", sortCol);
+                        i.putExtra("sort_name", sortName);
+                        i.putExtra("sort_dir", sortDir);
+                    }
                     reusedBitmap = null;   // set the bitmap top null so gc will get soon as possible
                     startActivity(i);
                 } else {
@@ -375,6 +415,11 @@ public class LockImageActivity extends ActionBarActivity implements PointCollect
             //don't require the user to re-enter the passpoints after just choosing new ones.
             Intent i = new Intent(LockImageActivity.this, MainActivity.class);
             reusedBitmap = null;   // set the bitmap top null so gc will get soon as possible
+            i.putExtra("group", group);
+            i.putExtra("group_name", groupName);
+            i.putExtra("sort_col", sortCol);
+            i.putExtra("sort_name", sortName);
+            i.putExtra("sort_dir", sortDir);
             startActivity(i);
         } else {
             verifyPasspoints(points);

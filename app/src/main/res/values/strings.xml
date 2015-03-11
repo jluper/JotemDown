@@ -120,6 +120,7 @@
     <string name="btn_export">Export</string>
     <string name="btn_calendar">Calendar</string>
     <string name="recur_daily">Resend daily</string>
+    <string name="vibrate">Vibrate</string>
     <string name="map_activity_title">Note Map</string>
     <string name="edit_note_activity_title">Edit</string>
     <string name="main_activity_title">Jot\'emDown</string>

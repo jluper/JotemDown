@@ -62,7 +62,7 @@
     </TextView>
 
     <LinearLayout
-        android:id="@+id/linearLayout2"
+        android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
@@ -100,7 +100,7 @@
     </TextView>
 
     <LinearLayout
-        android:id="@+id/linearLayout3"
+        android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
@@ -124,23 +124,37 @@
             android:scaleType="fitCenter"
             android:src="@drawable/contacts" />
     </LinearLayout>
-
+    <LinearLayout
+        android:id="@+id/linearLayout3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/top_margin_xsmall" >
     <CheckBox
         android:id="@+id/chk_recur_daily"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="left"
-        android:layout_marginTop="@dimen/top_margin_xsmall"
         android:button="@drawable/selector_recur_check"
         android:text="@string/recur_daily"
         android:textColor="@color/grey" >
     </CheckBox>
+    <CheckBox
+        android:id="@+id/chk_vibrate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="25dp"
+        android:layout_gravity="left"
+        android:button="@drawable/selector_recur_check"
+        android:text="@string/vibrate"
+        android:textColor="@color/grey" >
+    </CheckBox>
 
+</LinearLayout>
     <LinearLayout
-        android:id="@+id/linearLayout3"
+        android:id="@+id/linearLayout4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/top_margin_small" >
+        android:layout_marginTop="@dimen/top_margin_xsmall" >
 
         <Button
             android:id="@+id/btn_reminder_add"
