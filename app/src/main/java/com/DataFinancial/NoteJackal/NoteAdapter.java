@@ -133,7 +133,7 @@ public class NoteAdapter extends BaseAdapter implements ListAdapter {
 			noteIcon = context.getResources().getDrawable(R.drawable.notepad_pg);
 			break;
 		case 7:
-			noteIcon = context.getResources().getDrawable(R.drawable.notepad_igp);
+			noteIcon = context.getResources().getDrawable(R.drawable.notepad_ipg);
 			break;
 		case 8:
 			noteIcon = context.getResources().getDrawable(R.drawable.notepad_r);
@@ -154,10 +154,10 @@ public class NoteAdapter extends BaseAdapter implements ListAdapter {
             noteIcon = context.getResources().getDrawable(R.drawable.notepad_ipr);
             break;
         case 14:
-            noteIcon = context.getResources().getDrawable(R.drawable.notepad_gpr);
+            noteIcon = context.getResources().getDrawable(R.drawable.notepad_pgr);
             break;
         case 15:
-            noteIcon = context.getResources().getDrawable(R.drawable.notepad_igpr);
+            noteIcon = context.getResources().getDrawable(R.drawable.notepad_ipgr);
             break;
         case 16:
             noteIcon = context.getResources().getDrawable(R.drawable.notepad_q);

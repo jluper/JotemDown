@@ -79,7 +79,6 @@ public class MainActivity extends ActionBarActivity {
         if (savedInstanceState != null) {
             groupId = savedInstanceState.getInt("group");
             groupName = savedInstanceState.getString("group_name");
-
             sortCol = savedInstanceState.getString("sort_col");
             sortName = savedInstanceState.getString("sort_name");
             sortDir = savedInstanceState.getString("sort_dir");
@@ -111,7 +110,6 @@ public class MainActivity extends ActionBarActivity {
                 groupIdx = -1;
             }
             groupName = extras.getString("group_name");
-
             sortCol = extras.getString("sort_col");
             sortName = extras.getString("sort_name");
             sortDir = extras.getString("sort_dir");
@@ -125,6 +123,9 @@ public class MainActivity extends ActionBarActivity {
             lblGroup.setText(groupName);
 
         if (fromHelp != true) {
+            if (sortCol.equals(DatabaseNotes.COL_BODY)) {
+                sortCol = sortCol + " COLLATE NOCASE";
+            }
             loadNotes(searchText, sortCol, sortDir, groupId);
         } else {
             searchText = (String) getResources().getText(R.string.txt_help_search);

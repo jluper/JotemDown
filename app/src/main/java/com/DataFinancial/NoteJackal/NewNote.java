@@ -421,7 +421,7 @@ public class NewNote extends ActionBarActivity {
             i.putExtra("latitude", lat);
             i.putExtra("longitude", lon);
             i.putExtra("title", "Note: " + note.getEditDate());
-            i.putExtra("body", note.getBody());
+            i.putExtra("text", note.getBody());
             i.putExtra("group", note.getGroup());
             i.putExtra("image", note.getImage());
             i.putExtra("group_name",  ((TextView)(groupList.getAdapter().getView(groupList.getCheckedItemPosition(), null, groupList)).findViewById(R.id.group_row_text)).getText());
