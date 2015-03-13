@@ -205,7 +205,6 @@ public class MainActivity extends ActionBarActivity {
             public void onClick(View v) {
 
                 selectedRow = 0;
-                sortDir = "DESC";
 
                 lblSort = (TextView) findViewById(R.id.lbl_sort);
                 if (fromHelp == false) {
@@ -214,16 +213,19 @@ public class MainActivity extends ActionBarActivity {
                             sortCol = DatabaseNotes.COL_PRIORITY;
                             sortName = "Priority";
                             lblSort.setText(sortName);
+                            sortDir = "DESC";
                             break;
                         case DatabaseNotes.COL_EDIT_DATE:
                             sortCol = DatabaseNotes.COL_CREATE_DATE;
                             sortName = "Created";
                             lblSort.setText(sortName);
+                            sortDir = "DESC";
                             break;
                         case DatabaseNotes.COL_BODY:
                             sortCol = DatabaseNotes.COL_EDIT_DATE;
                             sortName = "Edited";
                             lblSort.setText(sortName);
+                            sortDir = "DESC";
                             break;
                         case DatabaseNotes.COL_PRIORITY:
                             sortCol = DatabaseNotes.COL_BODY;
@@ -235,7 +237,7 @@ public class MainActivity extends ActionBarActivity {
                             sortCol = DatabaseNotes.COL_CREATE_DATE;
                             sortName = "Created";
                             lblSort.setText(sortName);
-                            sortDir = "ASC";
+                            sortDir = "DESC";
                     }
                 } else {
                     fromHelp = false;
