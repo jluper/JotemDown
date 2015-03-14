@@ -404,14 +404,6 @@ public class ReminderActivity extends ActionBarActivity   implements OnClickList
             Toast.makeText(ReminderActivity.this,"Contact not selected.", Toast.LENGTH_LONG).show();
         }
     }
-
-      
-    
-
-
-    
-  
-	
 }
  
 

@@ -2,17 +2,21 @@ package com.DataFinancial.NoteJackal;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.provider.ContactsContract;
 import android.support.v7.app.ActionBarActivity;
 import android.telephony.SmsManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import java.io.File;
@@ -21,7 +25,7 @@ import java.util.List;
 /**
  * @author jluper
  */
-public class SendNote extends ActionBarActivity {
+public class SendNote extends ActionBarActivity  implements OnClickListener {
 
     public static final String LAST_SEND_ADDRESS = "LAST_ADDRESS";
     private EditText address;
@@ -31,6 +35,9 @@ public class SendNote extends ActionBarActivity {
     private String sortCol;
     private String sortName;
     private String sortDir;
+    ImageButton btnEmail,btnPhone;
+    static final int CONTACT_PICKER_EMAIL_RESULT = 1002;
+    static final int CONTACT_PICKER_PHONE_RESULT = 1003;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,6 +53,10 @@ public class SendNote extends ActionBarActivity {
         actionBar.setDisplayShowTitleEnabled(true);
 
         addListenerOnButton();
+        btnEmail = (ImageButton) findViewById(R.id.btn_email);
+        btnEmail.setOnClickListener(this);
+        btnPhone = (ImageButton) findViewById(R.id.btn_phone);
+        btnPhone.setOnClickListener(this);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -80,6 +91,93 @@ public class SendNote extends ActionBarActivity {
 
     }
 
+    @Override
+    public void onClick(View v) {
+
+        Intent contactPickerIntent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+        if (v == btnPhone) {
+            startActivityForResult(contactPickerIntent, CONTACT_PICKER_PHONE_RESULT);
+        }
+
+        if (v == btnEmail) {
+            startActivityForResult(contactPickerIntent, CONTACT_PICKER_EMAIL_RESULT);
+        }
+
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        Uri result;
+        String id;
+        Cursor cursor;
+        String type;
+
+        EditText txtAddr = (EditText) findViewById(R.id.txtAddress);
+
+        if (resultCode == RESULT_OK) {
+
+            switch (requestCode) {
+                case CONTACT_PICKER_PHONE_RESULT:
+                    result = data.getData();
+                    // get the contact id from the Uri
+                    id = result.getLastPathSegment();
+
+                    // query for everything phone
+                    cursor = getContentResolver().query(
+                            ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
+                            ContactsContract.CommonDataKinds.Phone.CONTACT_ID + "=?", new String[]{id}, null);
+
+                    String phoneNumber = "";
+                    String tmpPhone = "";
+                    int phoneType = -1;
+                    while (cursor.moveToNext()) {
+                        tmpPhone = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DATA));
+                        phoneType = cursor.getInt(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE));
+                        if (phoneType == ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE) {
+                            phoneNumber = tmpPhone;
+                            break;
+                        }
+                    }
+                    if (phoneNumber.isEmpty()) {
+                        Toast.makeText(SendNote.this,"No mobile phone found, please type number.", Toast.LENGTH_LONG).show();
+                    }
+
+                    txtAddr.setText(phoneNumber);
+                    break;
+                case CONTACT_PICKER_EMAIL_RESULT:
+
+                    result = data.getData();
+                    // get the contact id from the Uri
+                    id = result.getLastPathSegment();
+
+                    // query for everything email
+                    cursor = getContentResolver().query(
+                            ContactsContract.CommonDataKinds.Email.CONTENT_URI, null,
+                            ContactsContract.CommonDataKinds.Email.CONTACT_ID + "=?", new String[]{id}, null);
+
+                    String emailAddress = "";
+                    int emailType = -1;
+                    while (cursor.moveToNext()) {
+                        emailAddress = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
+                        emailType = cursor.getInt(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.TYPE));
+                        Log.d(MainActivity.DEBUGTAG, "emailAddress: " + emailAddress + " type: " + emailType);
+//                        if (emailType == ContactsContract.CommonDataKinds.Email.TYPE_HOME) {
+//                            break;
+//                        }
+                    }
+                    Log.d(MainActivity.DEBUGTAG, "emailAddress final: " + emailAddress);
+                    if (emailAddress.isEmpty()) {
+                        Toast.makeText(SendNote.this,"No email found, please type address.", Toast.LENGTH_LONG).show();
+                    }
+
+                    txtAddr.setText(emailAddress);
+                    break;
+            }
+
+        } else {
+            Toast.makeText(SendNote.this,"Contact not selected.", Toast.LENGTH_LONG).show();
+        }
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
