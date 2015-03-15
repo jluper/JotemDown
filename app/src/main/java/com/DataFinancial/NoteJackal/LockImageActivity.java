@@ -96,7 +96,7 @@ public class LockImageActivity extends ActionBarActivity implements PointCollect
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setIcon(R.drawable.note_yellow);
-        actionBar.setTitle("YANK...Yet Another Note Keeper");
+        actionBar.setTitle("Jot'emDown");
         actionBar.setDisplayShowTitleEnabled(true);
 
         addTouchListener();

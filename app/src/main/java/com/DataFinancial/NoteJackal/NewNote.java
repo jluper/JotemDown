@@ -574,6 +574,10 @@ public class NewNote extends ActionBarActivity {
                             db.deleteNote(note.getId());
                             dialog.cancel();
                             Intent i = new Intent(NewNote.this, MainActivity.class);
+                            i.putExtra("group_name", groupName);
+                            i.putExtra("sort_col", sortCol);
+                            i.putExtra("sort_name", sortName);
+                            i.putExtra("sort_dir", sortDir);
                             startActivity(i);
                         }
                     }

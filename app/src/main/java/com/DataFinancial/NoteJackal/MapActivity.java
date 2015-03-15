@@ -50,8 +50,7 @@ public class MapActivity extends ActionBarActivity {
 			
 			GoogleMap map;
 	
-			map = ((MapFragment) 
-			        getFragmentManager().findFragmentById(R.id.map)).getMap();
+			map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
 
 			if (map != null)
 				map.setMyLocationEnabled(true);
@@ -67,7 +66,7 @@ public class MapActivity extends ActionBarActivity {
 			Marker noteMarker = map.addMarker(new MarkerOptions()
 			                          .position(noteLoc)
 			                          .title(title)
-			                          .snippet(text));
+			                          .snippet(text.substring(0, text.length() > 80 ? 80 : text.length())));
 
 			CameraPosition cameraPosition = new CameraPosition.Builder()
 		    .target(noteLoc)
