@@ -415,12 +415,13 @@ public class NewNote extends ActionBarActivity {
 
             EditText v = (EditText) findViewById(R.id.note_text);
             //noteText.setText(note.getBody() +"\n" +  "latitude: " + lat + " longitude: " + lon);
+            Utils util = new Utils();
 
             Intent i = new Intent(NewNote.this, MapActivity.class);
             i.putExtra("edit", editFunction);
             i.putExtra("latitude", lat);
             i.putExtra("longitude", lon);
-            i.putExtra("title", "Note: " + note.getEditDate());
+            i.putExtra("title", "Note: " + util.convertDate(note.getEditDate(), "yy/MM/dd", "MM/dd/yy"));
             i.putExtra("text", note.getBody());
             i.putExtra("group", note.getGroup());
             i.putExtra("image", note.getImage());

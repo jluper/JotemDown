@@ -13,7 +13,6 @@ import android.os.PowerManager.WakeLock;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 import android.telephony.SmsManager;
-import android.util.Log;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -185,8 +184,8 @@ public class ReminderService extends Service {
 
         Note note = db.getNote(rem.getNoteId());
         NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(this).setSmallIcon(R.drawable.note_yellow).setContentTitle(getString(R.string.notification_title)).setContentText(note.getBody());
-        Log.d(MainActivity.DEBUGTAG, "vibrate in service = " + rem.getVibrate());
+                new NotificationCompat.Builder(this).setSmallIcon(R.drawable.note_yellow).setContentTitle(getString(R.string.notification_title)).setContentText(note.getBody().substring(0, note.getBody().length() > 158 ? 158 : note.getBody().length()));
+        //Log.d(MainActivity.DEBUGTAG, "vibrate in service = " + rem.getVibrate());
         if (rem.getVibrate().equals("true")) {
             mBuilder.setVibrate(new long[]{1000, 1000, 1000, 1000, 1000});
         }

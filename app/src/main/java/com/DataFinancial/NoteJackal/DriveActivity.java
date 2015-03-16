@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -77,21 +78,21 @@ public class DriveActivity extends ActionBarActivity {
         actionBar.setIcon(R.drawable.note_yellow);
         actionBar.setTitle("Google Drive");
         actionBar.setDisplayShowTitleEnabled(true);
-
         // Connect to Google Drive
         mCredential = GoogleAccountCredential.usingOAuth2(this, Arrays.asList(DriveScopes.DRIVE));
-
         btnRestore = (Button) findViewById(R.id.btnRestoreDrive);
         addListenerRestoreButton();
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-//            group = (extras.getInt("group"));
-//            groupName = extras.getString("group_name");
-//            sortCol = extras.getString("sort_col");
-//            sortName = extras.getString("sort_name");
-//            sortDir = extras.getString("sort_dir");
+            group = (extras.getInt("group"));
+            groupName = extras.getString("group_name");
+            sortCol = extras.getString("sort_col");
+            sortName = extras.getString("sort_name");
+            sortDir = extras.getString("sort_dir");
             uploadFilePath = extras.getString("filepath");
+        }
+        if (!(uploadFilePath == null)) {
             ListView files = (ListView) findViewById(R.id.lstFiles);
             files.setVisibility(View.INVISIBLE);
             btnRestore.setVisibility(View.INVISIBLE);
@@ -104,8 +105,7 @@ public class DriveActivity extends ActionBarActivity {
 
             OnItemClickListener mMessageClickedHandler = new OnItemClickListener() {
 
-                public void onItemClick(AdapterView parent, View v,
-                                        int position, long id) {
+                public void onItemClick(AdapterView parent, View v, int position, long id) {
 
                     btnRestore.setEnabled(true);
                     selectedFilePosition = position;
@@ -130,6 +130,19 @@ public class DriveActivity extends ActionBarActivity {
         imm.toggleSoftInput(InputMethodManager.HIDE_NOT_ALWAYS, 0);
     }
 
+    @Override
+    public Intent getSupportParentActivityIntent() {
+
+        Intent i = new Intent(DriveActivity.this, RestoreNotes.class);
+
+        i.putExtra("group", group);
+        i.putExtra("group_name", groupName);
+        i.putExtra("sort_col", sortCol);
+        i.putExtra("sort_name", sortName);
+        i.putExtra("sort_dir", sortDir);
+
+        return i;
+    }
     public void addListenerRestoreButton() {
 
         btnRestore = (Button) findViewById(R.id.btnRestoreDrive);
@@ -146,7 +159,11 @@ public class DriveActivity extends ActionBarActivity {
                 restoreFromLocalBackup(fileName, null);
 
                 Intent i = new Intent(DriveActivity.this, MainActivity.class);
-
+                i.putExtra("group", group);
+                i.putExtra("group_name", groupName);
+                i.putExtra("sort_col", sortCol);
+                i.putExtra("sort_name", sortName);
+                i.putExtra("sort_dir", sortDir);
                 startActivity(i);
             }
 
@@ -235,22 +252,22 @@ public class DriveActivity extends ActionBarActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-
+                Log.d(MainActivity.DEBUGTAG, "populateListView 1 ");
                 List<ParentReference> parents = new ArrayList<>();
                 mFileArray = new String[mResultList.size()];
-
                 int i = 0;
                 for (File tmp : mResultList) {
                     mFileArray[i] = tmp.getTitle();
                     parents = tmp.getParents();
+
                     i++;
                 }
-
-                mAdapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_activated_1,
-                        mFileArray);
+                mAdapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_activated_1, mFileArray);
 
                 mListView.setAdapter(mAdapter);
             }
+
+
         });
     }
 

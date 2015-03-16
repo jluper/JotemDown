@@ -16,6 +16,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -54,18 +55,17 @@ public class RestoreNotes extends ActionBarActivity {
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
+
             group = (extras.getInt("group"));
             groupName = extras.getString("group_name");
             sortCol = extras.getString("sort_col");
             sortName = extras.getString("sort_name");
             sortDir = extras.getString("sort_dir");
         }
-
         restoreFile = (EditText) findViewById(R.id.txtRestoreFile);
         lblFileName = (TextView) findViewById(R.id.lblFileName);
 
-        SharedPreferences prefs = getSharedPreferences(
-                LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
+        SharedPreferences prefs = getSharedPreferences(LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
         lastFile = prefs.getString(LAST_BACKUP_FILE, "NoteJackalBackup");
 
         if (lastFile != null) {
@@ -93,7 +93,6 @@ public class RestoreNotes extends ActionBarActivity {
         i.putExtra("sort_dir", sortDir);
 
         return i;
-
     }
 
     public void addListenerOnChkGoogleDrive() {
@@ -150,6 +149,12 @@ public class RestoreNotes extends ActionBarActivity {
 
                         if (chk.isChecked()) {
                             Intent i = new Intent(RestoreNotes.this, DriveActivity.class);
+
+                            i.putExtra("group", group);
+                            i.putExtra("group_name", groupName);
+                            i.putExtra("sort_col", sortCol);
+                            i.putExtra("sort_name", sortName);
+                            i.putExtra("sort_dir", sortDir);
                             startActivity(i);
                         } else {
                             if (restoreFromLocalBackup(restoreFile.getText().toString(), null)) {

@@ -83,20 +83,24 @@ public class MainActivity extends ActionBarActivity {
             sortName = savedInstanceState.getString("sort_name");
             sortDir = savedInstanceState.getString("sort_dir");
         }
-
+        Log.d(MainActivity.DEBUGTAG, "check 1...");
         noteList = (ListView) findViewById(R.id.note_list);
 
         addSearchButtonListener();
         addSortButtonListener();
         addGroupButtonListener();
+        Log.d(MainActivity.DEBUGTAG, "check 2...");
 
         db.createNotesTable();
         db.createGroupsTable();
         dbReminders.createRemindersTable();
+        Log.d(MainActivity.DEBUGTAG, "check 3...");
 
         searchText = null;
         Bundle extras = getIntent().getExtras();
-        Log.d(MainActivity.DEBUGTAG, "extras in main = " + extras);
+        //Log.d(MainActivity.DEBUGTAG, "extras in main = " + extras);
+        Log.d(MainActivity.DEBUGTAG, "check 4...");
+
         if (extras != null) {
 
             groupId = extras.getInt("group");
@@ -109,27 +113,34 @@ public class MainActivity extends ActionBarActivity {
                 }
                 groupIdx = -1;
             }
+            Log.d(MainActivity.DEBUGTAG, "check 5...");
+
             groupName = extras.getString("group_name");
             sortCol = extras.getString("sort_col");
             sortName = extras.getString("sort_name");
             sortDir = extras.getString("sort_dir");
             fromHelp = extras.getBoolean("help");
-
         }
             lblSort = (TextView) findViewById(R.id.lbl_sort);
             lblSort.setText(sortName);
 
             lblGroup = (TextView) findViewById(R.id.lbl_group);
             lblGroup.setText(groupName);
-
+        Log.d(MainActivity.DEBUGTAG, "check 6...");
+        Log.d(MainActivity.DEBUGTAG, "serchtext 1=" + searchText + " sortCol=" + sortCol + " SortDir=" + sortDir);
         if (fromHelp != true) {
             if (sortCol.equals(DatabaseNotes.COL_BODY)) {
                 sortCol = sortCol + " COLLATE NOCASE";
             }
+            Log.d(MainActivity.DEBUGTAG, "sercgtext 2=" + searchText + " sortCol=" + sortCol + " SortDir=" + sortDir);
             loadNotes(searchText, sortCol, sortDir, groupId);
+            Log.d(MainActivity.DEBUGTAG, "check 7...");
         } else {
             searchText = (String) getResources().getText(R.string.txt_help_search);
+            Log.d(MainActivity.DEBUGTAG, "check 8...");
+            Log.d(MainActivity.DEBUGTAG, "sercgtext 3=" + searchText + " sortCol=" + sortCol + " SortDir=" + sortDir);
             loadNotes(searchText, sortCol, sortDir, ExportNotes.NO_GROUP);
+
         }
     }
 
