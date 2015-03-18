@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -44,7 +43,7 @@ public class MainActivity extends ActionBarActivity {
      public static final String PASSPOINTS_SET = "RESET_PASSPOINTS";
     public static final int PHOTO_TAKEN_REQUEST = 2;
     public static final int EDIT_NOTE = 4;
-    public static final int ROOT = 1;
+    public static final int ROOT = 0;
     public static final int BROWSE_GALLERY_REQUEST = 3;
     private static int selectedRow = 0;
     protected List<Note> notes = new ArrayList<Note>();
@@ -58,7 +57,7 @@ public class MainActivity extends ActionBarActivity {
     private DatabaseReminders dbReminders = new DatabaseReminders(this);
     private boolean fromHelp = false;
     private ListView noteList;
-    private static int groupId = ROOT;
+    private static int groupId = ROOT+1;
     private static int groupIdx = ROOT;
     private String groupName = "General";
     private String searchText = null;
@@ -83,23 +82,18 @@ public class MainActivity extends ActionBarActivity {
             sortName = savedInstanceState.getString("sort_name");
             sortDir = savedInstanceState.getString("sort_dir");
         }
-        Log.d(MainActivity.DEBUGTAG, "check 1...");
         noteList = (ListView) findViewById(R.id.note_list);
 
         addSearchButtonListener();
         addSortButtonListener();
         addGroupButtonListener();
-        Log.d(MainActivity.DEBUGTAG, "check 2...");
 
         db.createNotesTable();
         db.createGroupsTable();
         dbReminders.createRemindersTable();
-        Log.d(MainActivity.DEBUGTAG, "check 3...");
 
         searchText = null;
         Bundle extras = getIntent().getExtras();
-        //Log.d(MainActivity.DEBUGTAG, "extras in main = " + extras);
-        Log.d(MainActivity.DEBUGTAG, "check 4...");
 
         if (extras != null) {
 
@@ -113,7 +107,6 @@ public class MainActivity extends ActionBarActivity {
                 }
                 groupIdx = -1;
             }
-            Log.d(MainActivity.DEBUGTAG, "check 5...");
 
             groupName = extras.getString("group_name");
             sortCol = extras.getString("sort_col");
@@ -126,19 +119,13 @@ public class MainActivity extends ActionBarActivity {
 
             lblGroup = (TextView) findViewById(R.id.lbl_group);
             lblGroup.setText(groupName);
-        Log.d(MainActivity.DEBUGTAG, "check 6...");
-        Log.d(MainActivity.DEBUGTAG, "serchtext 1=" + searchText + " sortCol=" + sortCol + " SortDir=" + sortDir);
         if (fromHelp != true) {
             if (sortCol.equals(DatabaseNotes.COL_BODY)) {
                 sortCol = sortCol + " COLLATE NOCASE";
             }
-            Log.d(MainActivity.DEBUGTAG, "sercgtext 2=" + searchText + " sortCol=" + sortCol + " SortDir=" + sortDir);
             loadNotes(searchText, sortCol, sortDir, groupId);
-            Log.d(MainActivity.DEBUGTAG, "check 7...");
         } else {
             searchText = (String) getResources().getText(R.string.txt_help_search);
-            Log.d(MainActivity.DEBUGTAG, "check 8...");
-            Log.d(MainActivity.DEBUGTAG, "sercgtext 3=" + searchText + " sortCol=" + sortCol + " SortDir=" + sortDir);
             loadNotes(searchText, sortCol, sortDir, ExportNotes.NO_GROUP);
 
         }
@@ -311,8 +298,6 @@ public class MainActivity extends ActionBarActivity {
         } else {
             noteList.setSelectionFromTop(0, 0);
         }
-
-
 
         noteList.setOnItemClickListener(new OnItemClickListener() {
 
@@ -661,7 +646,7 @@ public class MainActivity extends ActionBarActivity {
                     field.setAccessible(true);
                     field.setBoolean(menu, true);
                 } catch (IllegalAccessException | NoSuchFieldException e) {
-                    Log.d(MainActivity.DEBUGTAG, "onMenuOpened(" + featureId + ", " + menu + ")", e);
+                    //Log.d(MainActivity.DEBUGTAG, "onMenuOpened(" + featureId + ", " + menu + ")", e);
                 }
             }
         }

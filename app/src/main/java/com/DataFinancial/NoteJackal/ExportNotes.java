@@ -28,6 +28,7 @@ public class ExportNotes extends ActionBarActivity {
 
     public static final String DATABASE_NAME = "notes.db";
     private static final String LAST_EXPORT_FILE = "LAST_EXPORT_FILE";
+    public static final String LAST_EXPORT_ADDRESS = "LAST_EXPORT_ADDRESS";
     public static final int NO_GROUP = -1;
     protected List<Note> notes = new ArrayList<Note>();
     private EditText address;
@@ -59,7 +60,7 @@ public class ExportNotes extends ActionBarActivity {
 
         SharedPreferences prefs = getSharedPreferences(LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
         String file = prefs.getString(LAST_EXPORT_FILE, "JotemDownExport");
-        String addr = prefs.getString(SendNote.LAST_SEND_ADDRESS, null);
+        String addr = prefs.getString(LAST_EXPORT_ADDRESS, null);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -123,7 +124,7 @@ public class ExportNotes extends ActionBarActivity {
 
                 SharedPreferences prefs = getSharedPreferences(LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
                 SharedPreferences.Editor editor = prefs.edit();
-                editor.putString(SendNote.LAST_SEND_ADDRESS, address.getText().toString());
+                editor.putString(LAST_EXPORT_ADDRESS, address.getText().toString());
                 editor.putString(LAST_EXPORT_FILE, exportFile.getText().toString());
                 editor.apply();
 

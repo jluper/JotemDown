@@ -3,7 +3,6 @@ package com.DataFinancial.NoteJackal;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.webkit.WebView;
@@ -56,7 +55,6 @@ public class WebviewActivity extends ActionBarActivity {
         i.putExtra("sort_col", sortCol);
         i.putExtra("sort_name", sortName);
         i.putExtra("sort_dir", sortDir);
-        Log.d(MainActivity.DEBUGTAG, "Group: " + group + " group_name: " + groupName + " sort_col: " + sortCol);
         return i;
     }
 

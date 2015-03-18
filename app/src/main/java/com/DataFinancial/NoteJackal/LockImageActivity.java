@@ -15,7 +15,6 @@ import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.WindowManager;
@@ -148,7 +147,6 @@ public class LockImageActivity extends ActionBarActivity implements PointCollect
             options.inMutable = true;
 
             reusedBitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
-            //Log.d(MainActivity.DEBUGTAG, "reused bitmap2 = " + reusedBitmap);
             if (reusedBitmap != null) {
                 reusedBitmap = fixOrientation(reusedBitmap);
                 LockImageActivity.activityImageView.setImageBitmap(reusedBitmap);
@@ -326,7 +324,6 @@ public class LockImageActivity extends ActionBarActivity implements PointCollect
                     reusedBitmap = null;   // set the bitmap top null so gc will get soon as possible
 
                     Bundle extras = getIntent().getExtras();
-                    Log.d(MainActivity.DEBUGTAG, "extras 1 = " + extras);
 
                     Intent i = new Intent(LockImageActivity.this, Password.class);
                     if (extras != null) {
@@ -346,7 +343,6 @@ public class LockImageActivity extends ActionBarActivity implements PointCollect
 
                 if (pass == true) {
                     Bundle extras = getIntent().getExtras();
-                    Log.d(MainActivity.DEBUGTAG, "extras 2 = " + extras);
                     Intent i = new Intent(LockImageActivity.this, MainActivity.class);
                     if (extras != null) {
                         i.putExtra("group", group);
@@ -361,7 +357,6 @@ public class LockImageActivity extends ActionBarActivity implements PointCollect
                     touchedPoints.clear();
                     SharedPreferences prefs = getSharedPreferences(SHARED_PREF_FILE, MODE_PRIVATE);
                     Boolean passPointsSet = prefs.getBoolean(MainActivity.PASSPOINTS_SET, false);
-                    //Log.d(MainActivity.DEBUGTAG, "PassPointsEt = " + passPointsSet);
                     if (!passPointsSet) {
                         showSetPasspointsPrompt();
                     } else {

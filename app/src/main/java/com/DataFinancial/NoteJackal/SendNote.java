@@ -9,7 +9,6 @@ import android.os.Parcelable;
 import android.provider.ContactsContract;
 import android.support.v7.app.ActionBarActivity;
 import android.telephony.SmsManager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -160,12 +159,10 @@ public class SendNote extends ActionBarActivity  implements OnClickListener {
                     while (cursor.moveToNext()) {
                         emailAddress = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
                         emailType = cursor.getInt(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.TYPE));
-                        Log.d(MainActivity.DEBUGTAG, "emailAddress: " + emailAddress + " type: " + emailType);
 //                        if (emailType == ContactsContract.CommonDataKinds.Email.TYPE_HOME) {
 //                            break;
 //                        }
                     }
-                    Log.d(MainActivity.DEBUGTAG, "emailAddress final: " + emailAddress);
                     if (emailAddress.isEmpty()) {
                         Toast.makeText(SendNote.this,"No email found, please type address.", Toast.LENGTH_LONG).show();
                     }

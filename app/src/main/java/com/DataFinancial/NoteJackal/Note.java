@@ -30,7 +30,7 @@ public class Note {
         this.longitude = "";
         this.hasReminder = "false";
         this.image = "";
-        this.group = MainActivity.ROOT;;
+        this.group = MainActivity.ROOT+1;
     }
 
     public Note(String body) {

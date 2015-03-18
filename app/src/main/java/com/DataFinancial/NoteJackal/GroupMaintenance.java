@@ -88,7 +88,6 @@ public class GroupMaintenance extends ActionBarActivity {
             public void onItemClick(AdapterView<?> adapter, View view, int pos, long arg3) {
 
                 currentGroup = (NoteGroup) adapter.getItemAtPosition(pos);
-                //Log.d(MainActivity.DEBUGTAG, "pos = " + pos + " grp id = " + grp.getId() + " grp name = " + grp.getName());
                 groupList.setItemChecked(pos, true);
                 groupEditText.setText(currentGroup.getName());
             }

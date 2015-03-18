@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -252,7 +251,6 @@ public class DriveActivity extends ActionBarActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Log.d(MainActivity.DEBUGTAG, "populateListView 1 ");
                 List<ParentReference> parents = new ArrayList<>();
                 mFileArray = new String[mResultList.size()];
                 int i = 0;

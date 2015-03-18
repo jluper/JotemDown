@@ -14,7 +14,7 @@ import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
-import android.util.Log;
+import android.text.method.LinkMovementMethod;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.Menu;
@@ -102,6 +102,7 @@ public class NewNote extends ActionBarActivity {
 
                     if (note.getBody().substring(0, strHelp.length()).equals(strHelp)) {
                         help = true;
+                        noteText.setMovementMethod(LinkMovementMethod.getInstance());
                         noteText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
                         noteText.setText(Html.fromHtml(note.getBody()));
                         noteText.setFocusable(false);
@@ -118,7 +119,7 @@ public class NewNote extends ActionBarActivity {
             sortDir = extras.getString("sort_dir");
         }
 
-        populategroupList();
+        populateGroupList();
 
         List<NoteGroup> grps = db.getGroups(DatabaseNotes.COL_ID, "ASC");
         int grp = note.getGroup();
@@ -632,14 +633,13 @@ public class NewNote extends ActionBarActivity {
         }
     }
 
-    private void populategroupList() {
+    private void populateGroupList() {
 
-                List<NoteGroup> grps;
+        List<NoteGroup> grps;
+        grps = db.getGroups(DatabaseNotes.COL_ID, "ASC");
 
-                grps = db.getGroups(DatabaseNotes.COL_ID, "ASC");
-//        for (NoteGroup temp : grps) {
-//            Log.d(MainActivity.DEBUGTAG, "Group: " + temp.toString());
-//        }
+        for (NoteGroup temp : grps) {
+        }
                 GroupsAdapter grpAdapter = new GroupsAdapter(this, grps);
 
                 groupList.setAdapter(grpAdapter);
@@ -668,7 +668,7 @@ public class NewNote extends ActionBarActivity {
                     field.setAccessible(true);
                     field.setBoolean(menu, true);
                 } catch (IllegalAccessException | NoSuchFieldException e) {
-                    Log.d(MainActivity.DEBUGTAG, "onMenuOpened(" + featureId + ", " + menu + ")", e);
+                    //Log.d(MainActivity.DEBUGTAG, "onMenuOpened(" + featureId + ", " + menu + ")", e);
                 }
             }
         }

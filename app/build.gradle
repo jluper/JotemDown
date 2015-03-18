@@ -1,19 +1,28 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'MyAndroidKey'
+            keyPassword 'buster1739'
+            storeFile file('C:/Users/jluper/AndroidStudioProjects/keystores/android.jks')
+            storePassword 'buster1739'
+        }
+    }
     compileSdkVersion 21
     buildToolsVersion "21.1.0"
-
     defaultConfig {
         applicationId "com.DataFinancial.NoteJackal"
         minSdkVersion 14
         targetSdkVersion 21
     }
-
-	buildTypes {
+    buildTypes {
         release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            debuggable false
+            signingConfig signingConfigs.config
+            pseudoLocalesEnabled false
         }
     }
 }

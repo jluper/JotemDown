@@ -50,7 +50,6 @@ public class GroupsAdapter extends BaseAdapter implements ListAdapter {
 
         View row = convertView;
         PlaceHolder holder = null;
-
         //if we don't currently have a row View to reuse...
         if (row == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -65,18 +64,14 @@ public class GroupsAdapter extends BaseAdapter implements ListAdapter {
             // otherwise use an existing tag
             holder = (PlaceHolder) row.getTag();
         }
-
         //Get the data from the list of notes
         NoteGroup group  = groups.get(position);
-
         Integer  rowPosition = position;
         holder.groupIconView.setTag(rowPosition);
-
         Drawable groupIcon;
         groupIcon = context.getResources().getDrawable(R.drawable.folder);
         holder.groupIconView.setImageDrawable(groupIcon);
         holder.groupTextView.setText(group.getName());
-
         return row;
     }
 

@@ -167,7 +167,6 @@ public class ImportNotes extends ActionBarActivity {
                 file = new File(dir, importFile.getText().toString() + ".txt");
             }
 
-            //Log.d(MainActivity.DEBUGTAG, "file for import = " + file.toString());
             if (!file.exists() || !file.canRead()) {
                 ringProgressDialog.dismiss();
                 Toast.makeText(this, "File not found...", Toast.LENGTH_LONG).show();

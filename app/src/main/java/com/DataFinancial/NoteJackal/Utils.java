@@ -234,7 +234,6 @@ public class Utils {
                 targetedShareIntent.setPackage(packageName);
                 if (packageName.equals("com.lge.email") || packageName.equals("com.google.android.gm")) {
                     targetedShareIntents.add(targetedShareIntent);
-                    Log.d(MainActivity.DEBUGTAG, "intents = " + targetedShareIntent + " package name = " + packageName);
                 }
             }
         }

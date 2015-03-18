@@ -185,7 +185,6 @@ public class ReminderService extends Service {
         Note note = db.getNote(rem.getNoteId());
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this).setSmallIcon(R.drawable.note_yellow).setContentTitle(getString(R.string.notification_title)).setContentText(note.getBody().substring(0, note.getBody().length() > 158 ? 158 : note.getBody().length()));
-        //Log.d(MainActivity.DEBUGTAG, "vibrate in service = " + rem.getVibrate());
         if (rem.getVibrate().equals("true")) {
             mBuilder.setVibrate(new long[]{1000, 1000, 1000, 1000, 1000});
         }

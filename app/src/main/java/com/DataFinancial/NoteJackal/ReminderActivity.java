@@ -232,7 +232,6 @@ public class ReminderActivity extends ActionBarActivity   implements OnClickList
 				reminder.setTime(txtTime.getText().toString());
 				reminder.setRecur(chkRecurDaily.isChecked() ? "true" : "false");
                 reminder.setVibrate(chkVibrate.isChecked() ? "true" : "false");
-                Log.d(MainActivity.DEBUGTAG, "vibrate in actvity = " + reminder.getVibrate());
 				reminder.setPhone(txtPhone.getText().toString());
 				
 
