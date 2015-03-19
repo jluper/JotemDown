@@ -13,18 +13,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
+        android:minEms="4"
         android:text="@string/lbl_restore_file"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/grey" />
 
     <EditText
         android:id="@+id/txtImportFile"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_toRightOf="@+id/lblImportFile"
-        android:layout_weight="1"
         android:background="@drawable/rounded_corner"
         android:imeOptions="flagNoExtractUi"
         android:inputType="textNoSuggestions"

@@ -4,7 +4,7 @@
     android:divider="#000000"
     android:dividerHeight="2dp"
     app:showAsAction="always"
-    tools:context="com.DataFinancial.NoteJackal.MainActivity" >
+    tools:context="com.DataFinancial.JotemDown.MainActivity" >
     <item
         android:id="@+id/menu_privacy"
         android:orderInCategory="105"

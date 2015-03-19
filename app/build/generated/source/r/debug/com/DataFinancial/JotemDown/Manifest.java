@@ -5,10 +5,10 @@
  * should not be modified by hand.
  */
 
-package com.DataFinancial.NoteJackal;
+package com.DataFinancial.JotemDown;
 
 public final class Manifest {
     public static final class permission {
-        public static final String MAPS_RECEIVE="com.DataFinancial.NoteJackal.permission.MAPS_RECEIVE";
+        public static final String MAPS_RECEIVE="com.DataFinancial.JotemDown.permission.MAPS_RECEIVE";
     }
 }
