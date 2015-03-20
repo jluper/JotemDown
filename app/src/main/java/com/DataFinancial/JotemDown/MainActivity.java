@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -75,6 +76,7 @@ public class MainActivity extends ActionBarActivity {
         actionBar.setTitle(getResources().getString(R.string.main_activity_title));
         actionBar.setDisplayShowTitleEnabled(true);
 
+        Log.d(MainActivity.DEBUGTAG, "onCreate MainActivity");
         if (savedInstanceState != null) {
             groupId = savedInstanceState.getInt("group");
             groupName = savedInstanceState.getString("group_name");
@@ -156,14 +158,25 @@ public class MainActivity extends ActionBarActivity {
 
         return isPrivate;
     }
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
 
     @Override
     public void onResume() {
         super.onResume();
+        Log.d(MainActivity.DEBUGTAG, "onResume MainActivity");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(MainActivity.DEBUGTAG, "onStop MainActivity");
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(MainActivity.DEBUGTAG, "onDestroy MainActivity");
+
     }
 
     public void addSearchButtonListener() {
