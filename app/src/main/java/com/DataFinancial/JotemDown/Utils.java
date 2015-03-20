@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -238,5 +239,10 @@ public class Utils {
         }
 
         return targetedShareIntents;
+    }
+
+    static public void log(String msg) {
+
+        Log.d(MainActivity.DEBUGTAG, msg);
     }
 }

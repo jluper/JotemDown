@@ -106,6 +106,9 @@ public class ReminderService extends Service {
 
                         db.deleteReminder(remList.get(i - 1).getId());
 
+                        note.setHasReminder("false");
+                        dbNotes.updateNote(note);
+
                         if (remList.get(i - 1).getRecur().equals("true")) {
                             Utils utils = new Utils();
                             String newDate = utils.incrementDay(remList.get(i - 1).getDate());
@@ -124,6 +127,8 @@ public class ReminderService extends Service {
                             } catch (ParseException e) {
                                 //unable to parse reminder date, unhandled at present time
                             }
+                            note.setHasReminder("true");
+                            dbNotes.updateNote(note);
                         }
                         remList.remove(i - 1);
                     } else {

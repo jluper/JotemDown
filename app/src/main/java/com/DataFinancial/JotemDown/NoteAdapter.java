@@ -109,7 +109,6 @@ public class NoteAdapter extends BaseAdapter implements ListAdapter {
       
         Drawable noteIcon;
         int image_code = (note.getImage().isEmpty() ? 0 : 1) + (note.getLatitude().isEmpty() ? 0 : 1)*2 + note.getPriority()*4 + (hasReminder.equals("false") ? 0 : 1)*8 + (help ? 16 : 0);
-		//int image_code = note.getPriority() + (note.getLatitude().isEmpty() ? 0 : 1)*2 + (hasReminder.equals("false") ? 0 : 1)*4 + (note.getImage().isEmpty() ? 0 : 8) + (help ? 16 : 0);
 		switch(image_code) {
 		case 0:
 			noteIcon = context.getResources().getDrawable(R.drawable.notepad);
