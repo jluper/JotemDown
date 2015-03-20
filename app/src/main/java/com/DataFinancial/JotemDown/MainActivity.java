@@ -159,27 +159,7 @@ public class MainActivity extends ActionBarActivity {
         return isPrivate;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d(MainActivity.DEBUGTAG, "onResume MainActivity");
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.d(MainActivity.DEBUGTAG, "onStop MainActivity");
-
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.d(MainActivity.DEBUGTAG, "onDestroy MainActivity");
-
-    }
-
-    public void addSearchButtonListener() {
+      public void addSearchButtonListener() {
 
         searchButton = (ImageButton) findViewById(R.id.searchButton);
 

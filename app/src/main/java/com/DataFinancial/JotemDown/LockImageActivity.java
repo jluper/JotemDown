@@ -15,7 +15,6 @@ import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.WindowManager;
@@ -72,8 +71,6 @@ public class LockImageActivity extends ActionBarActivity implements PointCollect
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.d(MainActivity.DEBUGTAG, "onCreate LockImageActivity");
-
         Bundle extras = getIntent().getExtras();
         // crazy workaround after googling for hours
         // When the release app is installed the installer asks has a choice "Open"
@@ -85,7 +82,6 @@ public class LockImageActivity extends ActionBarActivity implements PointCollect
             finish();
             return;
         }
-
 
         if (extras != null) {
             group = (extras.getInt("group"));
@@ -177,27 +173,7 @@ public class LockImageActivity extends ActionBarActivity implements PointCollect
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d(MainActivity.DEBUGTAG, "onResume lockImageActivity");
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.d(MainActivity.DEBUGTAG, "onStop lockImageActivity");
-
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.d(MainActivity.DEBUGTAG, "onDestroy lockImageActivity");
-
-    }
-
-    private boolean doesDatabaseExist(Context context, String dbName) {
+     private boolean doesDatabaseExist(Context context, String dbName) {
         File dbFile = context.getDatabasePath(dbName);
         return dbFile.exists();
     }
