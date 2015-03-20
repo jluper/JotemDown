@@ -1,4 +1,4 @@
-package com.DataFinancial.NoteJackal;
+package com.DataFinancial.JotemDown;
 
 import android.content.Context;
 import android.content.Intent;
@@ -65,8 +65,8 @@ public class BackupNotes extends ActionBarActivity {
         backupFile = (EditText) findViewById(R.id.txtBackupFile);
         address = (EditText) findViewById(R.id.txtBackupAddress);
 
-        SharedPreferences prefs = getSharedPreferences(LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
-        String file = prefs.getString(LAST_BACKUP_FILE, "Jot'emDownBackup");
+        SharedPreferences prefs = getSharedPreferences(com.DataFinancial.JotemDown.LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
+        String file = prefs.getString(LAST_BACKUP_FILE, "JotemDownBackup");
         String addr = prefs.getString(BackupNotes.LAST_BACKUP_ADDRESS, null);
 
         if (file != null) {
@@ -88,7 +88,7 @@ public class BackupNotes extends ActionBarActivity {
     @Override
     public Intent getSupportParentActivityIntent() {
 
-        Intent i = new Intent(BackupNotes.this, MainActivity.class);
+        Intent i = new Intent(BackupNotes.this, com.DataFinancial.JotemDown.MainActivity.class);
 
         i.putExtra("group", group);
         i.putExtra("group_name", groupName);
@@ -125,7 +125,7 @@ public class BackupNotes extends ActionBarActivity {
                     makeDatabaseBackup();
 
                     String filePath = getBackupFileDir().getAbsolutePath() + "/" + backupFile.getText().toString() + ".db";
-                    Intent i = new Intent(BackupNotes.this, DriveActivity.class);
+                    Intent i = new Intent(BackupNotes.this, com.DataFinancial.JotemDown.DriveActivity.class);
                     i.putExtra("filepath", filePath);
                     startActivity(i);
 
@@ -133,7 +133,7 @@ public class BackupNotes extends ActionBarActivity {
                 }
 
                 SharedPreferences prefs = getSharedPreferences(
-                        LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
+                        com.DataFinancial.JotemDown.LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putString(BackupNotes.LAST_BACKUP_ADDRESS, address.getText().toString());
                 editor.putString(LAST_BACKUP_FILE, backupFile.getText().toString());
@@ -184,7 +184,7 @@ public class BackupNotes extends ActionBarActivity {
 
         Intent emailIntent = new Intent(Intent.ACTION_SEND);
 
-        if (Utils.isValidEmail(TO[0])) {
+        if (com.DataFinancial.JotemDown.Utils.isValidEmail(TO[0])) {
 
             String fileName = backupFile.getText().toString() + ".db";
             File file = new File(getBackupFileDir(), fileName);
@@ -198,14 +198,14 @@ public class BackupNotes extends ActionBarActivity {
 
             Uri uri = Uri.parse(file.toString());
 
-            Utils utils = new Utils();
+            com.DataFinancial.JotemDown.Utils utils = new com.DataFinancial.JotemDown.Utils();
             List<Intent> emailIntents = utils.filterIntents(this);
             for (Intent i : emailIntents) {
                 i.setData(Uri.parse("mailto:" + TO[0]));
                 i.setType("message/rfc822");
                 i.putExtra(Intent.EXTRA_STREAM, uri);
                 i.putExtra(Intent.EXTRA_EMAIL, TO);
-                i.putExtra(Intent.EXTRA_SUBJECT, "Jot'emDown backup");
+                i.putExtra(Intent.EXTRA_SUBJECT, "JotemDown backup");
                 i.putExtra(Intent.EXTRA_TEXT, "Backup file attached.");
             }
             Intent chooserIntent = Intent.createChooser(emailIntents.remove(0), "Select app to send...");

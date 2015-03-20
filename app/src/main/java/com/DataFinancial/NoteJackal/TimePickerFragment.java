@@ -1,4 +1,4 @@
-package com.DataFinancial.NoteJackal;
+package com.DataFinancial.JotemDown;
 
 import android.app.Dialog;
 import android.app.DialogFragment;

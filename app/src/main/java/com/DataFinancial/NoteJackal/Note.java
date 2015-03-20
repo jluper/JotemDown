@@ -1,4 +1,4 @@
-package com.DataFinancial.NoteJackal;
+package com.DataFinancial.JotemDown;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

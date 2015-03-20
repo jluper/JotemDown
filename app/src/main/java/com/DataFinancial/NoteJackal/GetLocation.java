@@ -1,4 +1,4 @@
-package com.DataFinancial.NoteJackal;
+package com.DataFinancial.JotemDown;
 
 import android.content.Context;
 import android.location.Location;

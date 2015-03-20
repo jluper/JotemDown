@@ -1,4 +1,4 @@
-package com.DataFinancial.NoteJackal;
+package com.DataFinancial.JotemDown;
 
 import android.accounts.AccountManager;
 import android.app.Activity;
@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -304,8 +305,7 @@ public class DriveActivity extends ActionBarActivity {
             case REQUEST_ACCOUNT_PICKER:
                 if (resultCode == RESULT_OK && data != null
                         && data.getExtras() != null) {
-                    String accountName = data
-                            .getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+                    String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
                     if (accountName != null) {
                         mCredential.setSelectedAccountName(accountName);
                         mService = getDriveService(mCredential);
@@ -323,8 +323,7 @@ public class DriveActivity extends ActionBarActivity {
                     // account already picked
                 } else {
 
-                    startActivityForResult(mCredential.newChooseAccountIntent(),
-                            REQUEST_ACCOUNT_PICKER);
+                    startActivityForResult(mCredential.newChooseAccountIntent(),REQUEST_ACCOUNT_PICKER);
                 }
                 break;
             case RESULT_STORE_FILE:
@@ -337,8 +336,7 @@ public class DriveActivity extends ActionBarActivity {
     }
 
     private Drive getDriveService(GoogleAccountCredential credential) {
-        return new Drive.Builder(AndroidHttp.newCompatibleTransport(),
-                new GsonFactory(), credential).build();
+        return new Drive.Builder(AndroidHttp.newCompatibleTransport(), new GsonFactory(), credential).build();
     }
 
     private void saveFileToDrive() {
@@ -351,21 +349,27 @@ public class DriveActivity extends ActionBarActivity {
             public void run() {
                 try {
                     mFileUri = Uri.fromFile(new java.io.File(uploadFilePath));
-
+                    Log.d(MainActivity.DEBUGTAG,"chk 1...");
                     ContentResolver cR = DriveActivity.this.getContentResolver();
+                    Log.d(MainActivity.DEBUGTAG,"chk 2...");
 
                     // File's binary content
                     java.io.File fileContent = new java.io.File(mFileUri.getPath());
                     FileContent mediaContent = new FileContent(cR.getType(mFileUri), fileContent);
+                    Log.d(MainActivity.DEBUGTAG,"chk 3...");
 
                     // File's meta data.
                     File body = new File();
                     body.setTitle(fileContent.getName());
                     body.setMimeType(cR.getType(mFileUri));
+                    Log.d(MainActivity.DEBUGTAG, "chk 4...");
 
                     com.google.api.services.drive.Drive.Files f1 = mService.files();
+                    Log.d(MainActivity.DEBUGTAG,"chk 5...");
+
                     com.google.api.services.drive.Drive.Files.Insert i1 = f1.insert(body, mediaContent);
                     File file = i1.execute();
+                    Log.d(MainActivity.DEBUGTAG,"chk 6...");
 
                     if (file != null) {
                         ringProgressDialog.dismiss();
@@ -377,6 +381,7 @@ public class DriveActivity extends ActionBarActivity {
                     startActivityForResult(e.getIntent(), REQUEST_AUTHORIZATION);
                 } catch (IOException e) {
                     showToast("Exception (4) getting file from Google Drive: " + e.toString());
+                    Log.d(MainActivity.DEBUGTAG,"Exception (4) getting file from Google Drive: " + e.toString());
                 }
 
                 ringProgressDialog.dismiss();

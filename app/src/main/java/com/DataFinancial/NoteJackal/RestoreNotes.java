@@ -1,4 +1,4 @@
-package com.DataFinancial.NoteJackal;
+package com.DataFinancial.JotemDown;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -65,8 +65,8 @@ public class RestoreNotes extends ActionBarActivity {
         restoreFile = (EditText) findViewById(R.id.txtRestoreFile);
         lblFileName = (TextView) findViewById(R.id.lblFileName);
 
-        SharedPreferences prefs = getSharedPreferences(LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
-        lastFile = prefs.getString(LAST_BACKUP_FILE, "NoteJackalBackup");
+        SharedPreferences prefs = getSharedPreferences(com.DataFinancial.JotemDown.LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
+        lastFile = prefs.getString(LAST_BACKUP_FILE, "JotemDownBackup");
 
         if (lastFile != null) {
             restoreFile.setText(lastFile);
@@ -84,7 +84,7 @@ public class RestoreNotes extends ActionBarActivity {
     @Override
     public Intent getSupportParentActivityIntent() {
 
-        Intent i = new Intent(RestoreNotes.this, MainActivity.class);
+        Intent i = new Intent(RestoreNotes.this, com.DataFinancial.JotemDown.MainActivity.class);
 
         i.putExtra("group", group);
         i.putExtra("group_name", groupName);
@@ -148,7 +148,7 @@ public class RestoreNotes extends ActionBarActivity {
                         CheckBox chk = (CheckBox) findViewById(R.id.chkGoogleDrive);
 
                         if (chk.isChecked()) {
-                            Intent i = new Intent(RestoreNotes.this, DriveActivity.class);
+                            Intent i = new Intent(RestoreNotes.this, com.DataFinancial.JotemDown.DriveActivity.class);
 
                             i.putExtra("group", group);
                             i.putExtra("group_name", groupName);
@@ -159,7 +159,7 @@ public class RestoreNotes extends ActionBarActivity {
                         } else {
                             if (restoreFromLocalBackup(restoreFile.getText().toString(), null)) {
 
-                                Intent i = new Intent(RestoreNotes.this, MainActivity.class);
+                                Intent i = new Intent(RestoreNotes.this, com.DataFinancial.JotemDown.MainActivity.class);
                                 i.putExtra("group", group);
                                 i.putExtra("group_name", groupName);
                                 i.putExtra("sort_col", sortCol);
@@ -209,7 +209,7 @@ public class RestoreNotes extends ActionBarActivity {
             if (dbName != null) {
                 destinationFile = new File(dbName);
             } else {
-                destinationFile = getDatabasePath(BackupNotes.DATABASE_NAME);
+                destinationFile = getDatabasePath(com.DataFinancial.JotemDown.BackupNotes.DATABASE_NAME);
             }
 
             if (!sourceFile.exists() || !sourceFile.canRead()) {
@@ -218,7 +218,7 @@ public class RestoreNotes extends ActionBarActivity {
                 return false;
             }
 
-            Utils util = new Utils();
+            com.DataFinancial.JotemDown.Utils util = new com.DataFinancial.JotemDown.Utils();
             sourceFile.setWritable(true);
             try {
                 util.copyFile(sourceFile, destinationFile);
@@ -227,7 +227,7 @@ public class RestoreNotes extends ActionBarActivity {
             }
 
             SharedPreferences prefs = getSharedPreferences(
-                    LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
+                    com.DataFinancial.JotemDown.LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
             SharedPreferences.Editor editor = prefs.edit();
             editor.putString(LAST_BACKUP_FILE, restoreFile.getText().toString());
             editor.commit();

@@ -1,4 +1,4 @@
-package com.DataFinancial.NoteJackal;
+package com.DataFinancial.JotemDown;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -269,7 +269,7 @@ public class SendNote extends ActionBarActivity  implements OnClickListener {
 
                             SmsManager smsManager = SmsManager.getDefault();
                             try {
-                                smsManager.sendTextMessage(TO[0], null, "Note from NoteJackal...\n" + msg, null, null);
+                                smsManager.sendTextMessage(TO[0], null, "Note from Jot'emDown...\n" + msg, null, null);
                                 Toast.makeText(SendNote.this, "Text sent...", Toast.LENGTH_LONG).show();
 
                                 Intent i = new Intent(SendNote.this, MainActivity.class);

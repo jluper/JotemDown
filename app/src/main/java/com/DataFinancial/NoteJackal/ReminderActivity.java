@@ -1,4 +1,4 @@
-package com.DataFinancial.NoteJackal;
+package com.DataFinancial.JotemDown;
 
 
 import android.app.AlarmManager;
@@ -17,7 +17,6 @@ import android.os.SystemClock;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.provider.ContactsContract.Contacts;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -51,8 +50,8 @@ public class ReminderActivity extends ActionBarActivity   implements OnClickList
     private AlertDialog confirmDelete; 
     static private PendingIntent pendingIntent;
     static final int CONTACT_PICKER_RESULT = 1001;
-    static final String REMINDER_INTENT = "com.DataFinancial.NoteJackal.reminder";
-	public static final String SHARED_PREF_FILE = "NoteJackalSharedPreferences";	
+    static final String REMINDER_INTENT = "com.DataFinancial.JotemDown.reminder";
+	public static final String SHARED_PREF_FILE = "JotemDownSharedPreferences";
 	public static final String LAST_REMINDER_PHONE = "LAST_REMINDER_PHONE";	
 	static private int pendingIntentRequestCode = 0;
 	public mReceiver reminderReceiver;

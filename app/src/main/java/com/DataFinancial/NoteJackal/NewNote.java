@@ -1,4 +1,4 @@
-package com.DataFinancial.NoteJackal;
+package com.DataFinancial.JotemDown;
 
 //import android.R;
 
@@ -38,8 +38,8 @@ import java.util.List;
 
 public class NewNote extends ActionBarActivity {
 
-    private DatabaseNotes db = new DatabaseNotes(this);
-    private DatabaseReminders dbReminders = new DatabaseReminders(this);
+    private com.DataFinancial.JotemDown.DatabaseNotes db = new com.DataFinancial.JotemDown.DatabaseNotes(this);
+    private com.DataFinancial.JotemDown.DatabaseReminders dbReminders = new com.DataFinancial.JotemDown.DatabaseReminders(this);
     private boolean editFunction = false;
     private Note note = new Note();
     private Menu optionsMenu;
@@ -121,21 +121,21 @@ public class NewNote extends ActionBarActivity {
 
         populateGroupList();
 
-        List<NoteGroup> grps = db.getGroups(DatabaseNotes.COL_ID, "ASC");
+        List<com.DataFinancial.JotemDown.NoteGroup> grps = db.getGroups(com.DataFinancial.JotemDown.DatabaseNotes.COL_ID, "ASC");
         int grp = note.getGroup();
         for (int i = 0; i < grps.size(); i++) {
             if (grps.get(i).getId() == note.getGroup()) {
                 groupList.setItemChecked(i, true);
                 break;
             }
-            groupList.setItemChecked(MainActivity.ROOT, true);
+            groupList.setItemChecked(com.DataFinancial.JotemDown.MainActivity.ROOT, true);
         }
 
         TextView lblPriority = (TextView) findViewById(R.id.lbl_priority);
         TextView lblCreateDate = (TextView) findViewById(R.id.lbl_create_date);
         TextView lblGeocode = (TextView) findViewById(R.id.lbl_geocoded);
         TextView lblImage = (TextView) findViewById(R.id.lbl_note_image);
-        lblCreateDate.setText(Utils.convertDate(note.getCreateDate(), "yy/MM/dd", "MM/dd/yy"));
+        lblCreateDate.setText(com.DataFinancial.JotemDown.Utils.convertDate(note.getCreateDate(), "yy/MM/dd", "MM/dd/yy"));
         lblPriority.setText(note.getPriority() == 0 ? "" : "Priority");
 
         if (!note.getLatitude().isEmpty()) {
@@ -150,7 +150,7 @@ public class NewNote extends ActionBarActivity {
         int textLength = editText.getText().length();
         editText.setSelection(textLength, textLength);
 
-        Reminder reminder = new Reminder();
+        com.DataFinancial.JotemDown.Reminder reminder = new com.DataFinancial.JotemDown.Reminder();
         reminder = dbReminders.getReminder(note.getId());
         if (reminder != null) {
             TextView txtReminder = (TextView) findViewById(R.id.lbl_note_reminder);
@@ -177,7 +177,7 @@ public class NewNote extends ActionBarActivity {
 
         for (int i = 0; i < lines.length; i++) {
 
-            if (Utils.isValidPhone(lines[i])) {
+            if (com.DataFinancial.JotemDown.Utils.isValidPhone(lines[i])) {
                 phoneContact = lines[i];
                 return lines[i];
             }
@@ -195,7 +195,7 @@ public class NewNote extends ActionBarActivity {
 
         for (int i = 0; i < lines.length; i++) {
 
-            if (Utils.isValidEmail(lines[i])) {
+            if (com.DataFinancial.JotemDown.Utils.isValidEmail(lines[i])) {
                 emailContact = lines[i];
                 return lines[i];
             }
@@ -213,7 +213,7 @@ public class NewNote extends ActionBarActivity {
 
         for (int i = 0; i < lines.length; i++) {
 
-            if (Utils.isValidURL(lines[i])) {
+            if (com.DataFinancial.JotemDown.Utils.isValidURL(lines[i])) {
                 urlContact = lines[i];
                 return lines[i];
             }
@@ -232,7 +232,7 @@ public class NewNote extends ActionBarActivity {
     public Intent getSupportParentActivityIntent() {
         super.onResume(); // Always call the superclass method first
 
-        Intent i = new Intent(NewNote.this, MainActivity.class);
+        Intent i = new Intent(NewNote.this, com.DataFinancial.JotemDown.MainActivity.class);
 
         i.putExtra("group_name",  ((TextView)(groupList.getAdapter().getView(groupList.getCheckedItemPosition(), null, groupList)).findViewById(R.id.group_row_text)).getText());
         i.putExtra("sort_col", sortCol);
@@ -326,7 +326,7 @@ public class NewNote extends ActionBarActivity {
 
         if (id == R.id.menu_send_note) {
 
-            Intent i = new Intent(NewNote.this, SendNote.class);
+            Intent i = new Intent(NewNote.this, com.DataFinancial.JotemDown.SendNote.class);
             i.putExtra("id", note.getId());
             i.putExtra("priority", Integer.toString(note.getPriority()));
             i.putExtra("createDate", note.getCreateDate());
@@ -361,7 +361,7 @@ public class NewNote extends ActionBarActivity {
 
         if (id == R.id.menu_reminder) {
 
-            Intent i = new Intent(NewNote.this, ReminderActivity.class);
+            Intent i = new Intent(NewNote.this, com.DataFinancial.JotemDown.ReminderActivity.class);
             i.putExtra("id", note.getId());
             i.putExtra("group", note.getGroup());
             i.putExtra("group_name",  ((TextView)(groupList.getAdapter().getView(groupList.getCheckedItemPosition(), null, groupList)).findViewById(R.id.group_row_text)).getText());
@@ -375,7 +375,7 @@ public class NewNote extends ActionBarActivity {
 
         if (id == R.id.menu_geotag) {
 
-            GetLocation geoTagger = new GetLocation(this);
+            com.DataFinancial.JotemDown.GetLocation geoTagger = new com.DataFinancial.JotemDown.GetLocation(this);
             Location loc = geoTagger.getLocation();
 
             if (loc != null) {
@@ -416,9 +416,9 @@ public class NewNote extends ActionBarActivity {
 
             EditText v = (EditText) findViewById(R.id.note_text);
             //noteText.setText(note.getBody() +"\n" +  "latitude: " + lat + " longitude: " + lon);
-            Utils util = new Utils();
+            com.DataFinancial.JotemDown.Utils util = new com.DataFinancial.JotemDown.Utils();
 
-            Intent i = new Intent(NewNote.this, MapActivity.class);
+            Intent i = new Intent(NewNote.this, com.DataFinancial.JotemDown.MapActivity.class);
             i.putExtra("edit", editFunction);
             i.putExtra("latitude", lat);
             i.putExtra("longitude", lon);
@@ -447,7 +447,7 @@ public class NewNote extends ActionBarActivity {
             String[] CC;
 
             TO[0] = emailContact;
-            Utils utils = new Utils();
+            com.DataFinancial.JotemDown.Utils utils = new com.DataFinancial.JotemDown.Utils();
             List<Intent> emailIntents = utils.filterIntents(NewNote.this);
             for (Intent i : emailIntents) {
                 //Intent emailIntent = new Intent(Intent.ACTION_SEND);
@@ -468,7 +468,7 @@ public class NewNote extends ActionBarActivity {
 
         if (id == R.id.menu_goto_webpage) {
 
-            Intent i = new Intent(NewNote.this, WebviewActivity.class);
+            Intent i = new Intent(NewNote.this, com.DataFinancial.JotemDown.WebviewActivity.class);
             i.putExtra("group", note.getGroup());
             i.putExtra("group_name", groupName);
             i.putExtra("sort_col", sortCol);
@@ -484,7 +484,7 @@ public class NewNote extends ActionBarActivity {
             if (note.getImage().isEmpty()) {
                 browseGallery();
             } else {
-                Intent i = new Intent(NewNote.this, NoteImageActivity.class);
+                Intent i = new Intent(NewNote.this, com.DataFinancial.JotemDown.NoteImageActivity.class);
                 i.putExtra("edit", editFunction);
                 i.putExtra("id", note.getId());
                 i.putExtra("priority", note.getPriority());
@@ -523,7 +523,7 @@ public class NewNote extends ActionBarActivity {
 
         long noteId = -1;
 
-        Intent i = new Intent(NewNote.this, MainActivity.class);
+        Intent i = new Intent(NewNote.this, com.DataFinancial.JotemDown.MainActivity.class);
         try {
 
             i.putExtra("group", note.getGroup());
@@ -575,7 +575,8 @@ public class NewNote extends ActionBarActivity {
                         } else {
                             db.deleteNote(note.getId());
                             dialog.cancel();
-                            Intent i = new Intent(NewNote.this, MainActivity.class);
+                            Intent i = new Intent(NewNote.this, com.DataFinancial.JotemDown.MainActivity.class);
+                            i.putExtra("group", note.getGroup());    i.putExtra("group", note.getGroup());
                             i.putExtra("group_name", groupName);
                             i.putExtra("sort_col", sortCol);
                             i.putExtra("sort_name", sortName);
@@ -600,13 +601,13 @@ public class NewNote extends ActionBarActivity {
     private void browseGallery() {
         Intent i = new Intent(Intent.ACTION_PICK,
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(i, MainActivity.BROWSE_GALLERY_REQUEST);
+        startActivityForResult(i, com.DataFinancial.JotemDown.MainActivity.BROWSE_GALLERY_REQUEST);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
 
-        if (requestCode == MainActivity.BROWSE_GALLERY_REQUEST) {
+        if (requestCode == com.DataFinancial.JotemDown.MainActivity.BROWSE_GALLERY_REQUEST) {
             if (intent != null) {
                 String[] columns = {MediaStore.Images.Media.DATA};
                 Uri imageUri = intent.getData();
@@ -635,12 +636,12 @@ public class NewNote extends ActionBarActivity {
 
     private void populateGroupList() {
 
-        List<NoteGroup> grps;
-        grps = db.getGroups(DatabaseNotes.COL_ID, "ASC");
+        List<com.DataFinancial.JotemDown.NoteGroup> grps;
+        grps = db.getGroups(com.DataFinancial.JotemDown.DatabaseNotes.COL_ID, "ASC");
 
-        for (NoteGroup temp : grps) {
+        for (com.DataFinancial.JotemDown.NoteGroup temp : grps) {
         }
-                GroupsAdapter grpAdapter = new GroupsAdapter(this, grps);
+                com.DataFinancial.JotemDown.GroupsAdapter grpAdapter = new com.DataFinancial.JotemDown.GroupsAdapter(this, grps);
 
                 groupList.setAdapter(grpAdapter);
 
@@ -650,7 +651,7 @@ public class NewNote extends ActionBarActivity {
             public void onItemClick(AdapterView<?> adapter, View view, int pos, long arg3) {
 
                 selectedGroupRow = pos;
-                NoteGroup grp = (NoteGroup) adapter.getItemAtPosition(pos);
+                com.DataFinancial.JotemDown.NoteGroup grp = (com.DataFinancial.JotemDown.NoteGroup) adapter.getItemAtPosition(pos);
                 note.setGroup(grp.getId());
                 groupList.setItemChecked(pos, true);
             }
