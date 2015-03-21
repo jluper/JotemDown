@@ -67,7 +67,7 @@ public class ImportNotes extends ActionBarActivity {
         importFile = (EditText) findViewById(R.id.txtImportFile);
 
         SharedPreferences prefs = getSharedPreferences(LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
-        String file = prefs.getString(LAST_IMPORT_FILE, "jedimportfile.txt");
+        String file = prefs.getString(LAST_IMPORT_FILE, "");
 
         if (file != null) {
             importFile.setText(file);

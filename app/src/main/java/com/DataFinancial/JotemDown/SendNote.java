@@ -217,7 +217,7 @@ public class SendNote extends ActionBarActivity  implements OnClickListener {
             public void onClick(View v) {
 
                 Utils utils = new Utils();
-                String[] TO = {"jluper@triad.rr.com"};
+                String[] TO = {"jotemdown.notes@gmail.com"};
                 ;
                 String[] CC;
 

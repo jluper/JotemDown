@@ -34,7 +34,7 @@
             android:hint="@string/reminder_date_hint"
             android:imeOptions="flagNoExtractUi"
             android:inputType="number|textPassword"
-            android:minEms="12"
+            android:minEms="10"
             android:paddingBottom="5dp"
             android:paddingLeft="5dp"
             android:paddingTop="5dp" >
@@ -90,7 +90,7 @@
             android:hint="@string/reminder_time_hint"
             android:imeOptions="flagNoExtractUi"
             android:inputType="number|textPassword"
-            android:minEms="12"
+            android:minEms="10"
             android:paddingBottom="5dp"
             android:paddingLeft="5dp"
             android:paddingTop="5dp" >
@@ -160,7 +160,7 @@
             android:hint="@string/reminder_phone_hint"
             android:imeOptions="flagNoExtractUi"
             android:inputType="phone"
-            android:minEms="12"
+            android:minEms="10"
             android:paddingBottom="5dp"
             android:paddingLeft="5dp"
             android:paddingTop="5dp" >

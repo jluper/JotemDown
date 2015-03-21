@@ -171,6 +171,8 @@ public class BackupNotes extends ActionBarActivity {
 
                     address.setText("");
                     address.setEnabled(false);
+                } else {
+                    address.setEnabled(true);
                 }
             }
         });
