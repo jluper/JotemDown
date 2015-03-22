@@ -410,8 +410,7 @@ public class NewNote extends ActionBarActivity {
                 lat = Double.parseDouble(note.getLatitude());
                 lon = Double.parseDouble(note.getLongitude());
             } else {
-                Toast.makeText(NewNote.this,
-                        "Unable to show map, location unavailable...", Toast.LENGTH_LONG).show();
+                Toast.makeText(NewNote.this, "Unable to show map, location unavailable...", Toast.LENGTH_LONG).show();
             }
 
             EditText v = (EditText) findViewById(R.id.note_text);

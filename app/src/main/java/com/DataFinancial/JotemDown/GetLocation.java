@@ -5,6 +5,8 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.Toast;
 
 //import android.location.Criteria;
 //import android.widget.TextView;
@@ -38,16 +40,23 @@ public class GetLocation implements LocationListener {
 	};
 
 	public Location getLocation() {
+        Log.d(MainActivity.DEBUGTAG, "check 1");
 		locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
 		if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            Log.d(MainActivity.DEBUGTAG, "check 2");
 			provider = LocationManager.GPS_PROVIDER;
 		} else if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+            Log.d(MainActivity.DEBUGTAG, "check 3");
 			provider = LocationManager.NETWORK_PROVIDER;
 		} else {
-			// FAIL
-		}
+            Log.d(MainActivity.DEBUGTAG, "check 4");
+            Toast.makeText(mContext, "No location provider enabled.", Toast.LENGTH_LONG).show();
+            return null;
+        }
 		locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, this,	null);
+        Log.d(MainActivity.DEBUGTAG, "check 5");
 		return locationManager.getLastKnownLocation(provider);
+
 	}
 
 	// try this by doing GetLocation.getLocation().getLongitude();

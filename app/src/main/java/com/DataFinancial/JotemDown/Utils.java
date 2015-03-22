@@ -232,7 +232,10 @@ public class Utils {
                 Intent targetedShareIntent = new Intent(android.content.Intent.ACTION_SEND);
                 targetedShareIntent.setType("message/rfc822");
                 targetedShareIntent.setPackage(packageName);
-                if (packageName.equals("com.lge.email") || packageName.equals("com.google.android.gm")) {
+
+                //Log.d(MainActivity.DEBUGTAG, "packagename = " + packageName );
+
+                if (packageName.equals("com.lge.email") || packageName.equals("com.google.android.gm") || packageName.contains("mail")) {
                     targetedShareIntents.add(targetedShareIntent);
                 }
             }
