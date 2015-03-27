@@ -98,7 +98,14 @@ public class DriveActivity extends ActionBarActivity {
             btnRestore.setVisibility(View.INVISIBLE);
             TextView lblSelectFile = (TextView) findViewById(R.id.lblSelectFile);
             lblSelectFile.setVisibility(View.INVISIBLE);
-            startActivityForResult(mCredential.newChooseAccountIntent(), REQUEST_ACCOUNT_PICKER);
+            Log.d(MainActivity.DEBUGTAG, "check 2 ");
+
+
+            try {
+                startActivityForResult(mCredential.newChooseAccountIntent(), REQUEST_ACCOUNT_PICKER);
+            } catch (Exception e) {
+                Toast.makeText(DriveActivity.this, "Exception accessing Google Drive account. " + e.getMessage(), Toast.LENGTH_LONG).show();
+            }
         } else {
             mContext = getApplicationContext();
             mListView = (ListView) findViewById(R.id.lstFiles);
@@ -117,7 +124,6 @@ public class DriveActivity extends ActionBarActivity {
 
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.toggleSoftInput(InputMethodManager.HIDE_NOT_ALWAYS, 0);
-
             startActivityForResult(mCredential.newChooseAccountIntent(), REQUEST_ACCOUNT_PICKER);
         }
     }
