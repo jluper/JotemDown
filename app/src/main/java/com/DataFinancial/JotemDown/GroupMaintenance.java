@@ -54,7 +54,7 @@ public class GroupMaintenance extends ActionBarActivity {
         }
 
         groupEditText = (EditText) findViewById(R.id.editview_group);
-        groupEditText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(16)});
+        groupEditText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(21)});
         groupList = (ListView) findViewById(R.id.group_list_maint);
         populategroupList();
     }

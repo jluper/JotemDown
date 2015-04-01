@@ -54,6 +54,7 @@ public class BackupNotes extends ActionBarActivity {
         actionBar.setTitle("Backup");
         actionBar.setDisplayShowTitleEnabled(true);
 
+        Log.d(MainActivity.DEBUGTAG, "backup chk 1");
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             group = (extras.getInt("group"));
@@ -183,7 +184,7 @@ public class BackupNotes extends ActionBarActivity {
 
     private void sendDatabaseBackup() {
 
-        String[] TO = {"jluper@triad.rr.com"};
+        String[] TO = {"jotemdown.notes@gmail.com"};
 
         TO[0] = address.getText().toString();
 

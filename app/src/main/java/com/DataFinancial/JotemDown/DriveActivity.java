@@ -149,6 +149,7 @@ public class DriveActivity extends ActionBarActivity {
 
         return i;
     }
+
     public void addListenerRestoreButton() {
 
         btnRestore = (Button) findViewById(R.id.btnRestoreDrive);
@@ -205,6 +206,8 @@ public class DriveActivity extends ActionBarActivity {
                         startActivityForResult(e.getIntent(), REQUEST_AUTHORIZATION);
                     } catch (IOException e) {
                         showToast("Exception (3) getting file list from Google Drive: " + e.toString());
+                        //Log.d(MainActivity.DEBUGTAG,"Exception (4) getting file list from Google Drive: " + e.toString());
+
                         if (request != null) {
                             request.setPageToken(null);
                         }
@@ -387,7 +390,7 @@ public class DriveActivity extends ActionBarActivity {
                     startActivityForResult(e.getIntent(), REQUEST_AUTHORIZATION);
                 } catch (IOException e) {
                     showToast("Exception (4) getting file from Google Drive: " + e.toString());
-                    Log.d(MainActivity.DEBUGTAG,"Exception (4) getting file from Google Drive: " + e.toString());
+                    //Log.d(MainActivity.DEBUGTAG,"Exception (4) getting file from Google Drive: " + e.toString());
                 }
 
                 ringProgressDialog.dismiss();
@@ -403,6 +406,7 @@ public class DriveActivity extends ActionBarActivity {
             @Override
             public void run() {
                 Toast.makeText(getApplicationContext(), toast, Toast.LENGTH_SHORT).show();
+                Log.d(MainActivity.DEBUGTAG,toast);
             }
         });
     }
