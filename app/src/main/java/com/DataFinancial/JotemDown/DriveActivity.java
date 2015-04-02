@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -98,8 +97,6 @@ public class DriveActivity extends ActionBarActivity {
             btnRestore.setVisibility(View.INVISIBLE);
             TextView lblSelectFile = (TextView) findViewById(R.id.lblSelectFile);
             lblSelectFile.setVisibility(View.INVISIBLE);
-            Log.d(MainActivity.DEBUGTAG, "check 2 ");
-
 
             try {
                 startActivityForResult(mCredential.newChooseAccountIntent(), REQUEST_ACCOUNT_PICKER);
@@ -127,6 +124,7 @@ public class DriveActivity extends ActionBarActivity {
             startActivityForResult(mCredential.newChooseAccountIntent(), REQUEST_ACCOUNT_PICKER);
         }
     }
+
 
     @Override
     public void onResume() {
@@ -274,8 +272,6 @@ public class DriveActivity extends ActionBarActivity {
 
                 mListView.setAdapter(mAdapter);
             }
-
-
         });
     }
 
@@ -358,27 +354,21 @@ public class DriveActivity extends ActionBarActivity {
             public void run() {
                 try {
                     mFileUri = Uri.fromFile(new java.io.File(uploadFilePath));
-                    Log.d(MainActivity.DEBUGTAG,"chk 1...");
                     ContentResolver cR = DriveActivity.this.getContentResolver();
-                    Log.d(MainActivity.DEBUGTAG,"chk 2...");
 
                     // File's binary content
                     java.io.File fileContent = new java.io.File(mFileUri.getPath());
                     FileContent mediaContent = new FileContent(cR.getType(mFileUri), fileContent);
-                    Log.d(MainActivity.DEBUGTAG,"chk 3...");
 
                     // File's meta data.
                     File body = new File();
                     body.setTitle(fileContent.getName());
                     body.setMimeType(cR.getType(mFileUri));
-                    Log.d(MainActivity.DEBUGTAG, "chk 4...");
 
                     com.google.api.services.drive.Drive.Files f1 = mService.files();
-                    Log.d(MainActivity.DEBUGTAG,"chk 5...");
 
                     com.google.api.services.drive.Drive.Files.Insert i1 = f1.insert(body, mediaContent);
                     File file = i1.execute();
-                    Log.d(MainActivity.DEBUGTAG,"chk 6...");
 
                     if (file != null) {
                         ringProgressDialog.dismiss();
@@ -390,7 +380,6 @@ public class DriveActivity extends ActionBarActivity {
                     startActivityForResult(e.getIntent(), REQUEST_AUTHORIZATION);
                 } catch (IOException e) {
                     showToast("Exception (4) getting file from Google Drive: " + e.toString());
-                    //Log.d(MainActivity.DEBUGTAG,"Exception (4) getting file from Google Drive: " + e.toString());
                 }
 
                 ringProgressDialog.dismiss();
@@ -406,7 +395,6 @@ public class DriveActivity extends ActionBarActivity {
             @Override
             public void run() {
                 Toast.makeText(getApplicationContext(), toast, Toast.LENGTH_SHORT).show();
-                Log.d(MainActivity.DEBUGTAG,toast);
             }
         });
     }
@@ -438,7 +426,7 @@ public class DriveActivity extends ActionBarActivity {
         }
 
         if (!sourceFile.exists() || !sourceFile.canRead()) {
-            Toast.makeText(this, "File not found.", Toast.LENGTH_LONG).show();
+            showToast("File not found.");
 
             return false;
         }
@@ -448,7 +436,7 @@ public class DriveActivity extends ActionBarActivity {
         try {
             util.copyFile(sourceFile, destinationFile);
         } catch (IOException e) {
-            Toast.makeText(DriveActivity.this, "Exception (4) restoring notes from Google Drive: " + e.toString(), Toast.LENGTH_LONG).show();
+            showToast("Exception (4) restoring notes from Google Drive: " + e.toString());
         }
 
         return true;

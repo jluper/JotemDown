@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -54,7 +53,6 @@ public class BackupNotes extends ActionBarActivity {
         actionBar.setTitle("Backup");
         actionBar.setDisplayShowTitleEnabled(true);
 
-        Log.d(MainActivity.DEBUGTAG, "backup chk 1");
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             group = (extras.getInt("group"));
@@ -127,9 +125,7 @@ public class BackupNotes extends ActionBarActivity {
                     makeDatabaseBackup();
 
                     String filePath = getBackupFileDir().getAbsolutePath() + "/" + backupFile.getText().toString() + ".db";
-                    Log.d(MainActivity.DEBUGTAG, "check 1 ");
                     Intent i = new Intent(BackupNotes.this, com.DataFinancial.JotemDown.DriveActivity.class);
-                    Log.d(MainActivity.DEBUGTAG, "check 2 ");
                     i.putExtra("filepath", filePath);
                     startActivity(i);
 

@@ -112,8 +112,6 @@ public class ReminderService extends Service {
                         if (remList.get(i - 1).getRecur().equals("true")) {
                             Utils utils = new Utils();
                             String newDate = utils.incrementDay(remList.get(i - 1).getDate());
-                            //String newTime = utils.incrementMinute(remList.get(i-1).getTime(), 2);
-                            //remList.get(i-1).setTime(newTime);
                             remList.get(i - 1).setDate(newDate);
                             String dateTime = remList.get(i - 1).getDate() + " " + remList.get(i - 1).getTime();
 
