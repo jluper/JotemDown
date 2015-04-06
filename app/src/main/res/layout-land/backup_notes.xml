@@ -27,13 +27,14 @@
                 android:minEms="4"
                 android:text="@string/lbl_backup_file"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/grey" />
+                android:textColor="@color/grey"
+                android:layout_weight="0.00" />
 
             <EditText
                 android:id="@+id/txtBackupFile"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
+                android:layout_marginLeft="5dp"
                 android:layout_marginRight="10dp"
                 android:layout_weight="1"
                 android:background="@drawable/rounded_corner"
@@ -63,22 +64,32 @@
                 android:text="@string/lbl_export_address"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@color/grey" />
-
             <EditText
                 android:id="@+id/txtBackupAddress"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="0dp"
                 android:layout_weight="1"
                 android:background="@drawable/rounded_corner"
                 android:imeOptions="flagNoExtractUi"
                 android:inputType="textEmailAddress"
-                android:minEms="15"
+                android:minEms="12"
                 android:paddingBottom="5dp"
                 android:paddingLeft="5dp"
                 android:paddingTop="5dp" >
             </EditText>
+            <ImageButton
+                android:id="@+id/btn_email"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_gravity="bottom"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="5dp"
+                android:background="@android:color/transparent"
+                android:scaleType="fitCenter"
+                android:src="@drawable/sym_action_email" />
+
         </LinearLayout>
 
         <CheckBox
@@ -92,6 +103,7 @@
             android:checked="false"
             android:text="@string/chk_google_drive"
             android:textColor="@color/grey" />
+
     </LinearLayout>
 
     <Button

@@ -19,10 +19,11 @@
 
     <EditText
         android:id="@+id/txtBackupFile"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
+        android:minEms="13"
+        android:layout_gravity="left"
         android:background="@drawable/rounded_corner"
         android:inputType="textNoSuggestions"
         android:paddingBottom="5dp"
@@ -31,6 +32,7 @@
 
         <requestFocus />
     </EditText>
+
 
     <TextView
         android:id="@+id/lblBackupAddress"
@@ -43,18 +45,35 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/grey" />
 
-    <EditText
-        android:id="@+id/txtBackupAddress"
+    <LinearLayout
+        android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+    <EditText
+        android:id="@+id/txtBackupAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
+        android:layout_marginRight="5dp"
         android:background="@drawable/rounded_corner"
         android:inputType="textEmailAddress"
+        android:minEms="13"
         android:paddingBottom="5dp"
         android:paddingLeft="5dp"
         android:paddingTop="5dp" >
     </EditText>
+    <ImageButton
+        android:id="@+id/btn_email"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="15dp"
+        android:background="@android:color/transparent"
+        android:scaleType="fitCenter"
+        android:src="@drawable/sym_action_email" />
+    </LinearLayout>
 
     <CheckBox
         android:id="@+id/chkGoogleDrive"

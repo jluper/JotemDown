@@ -76,7 +76,6 @@ public class DatabaseNotes extends SQLiteOpenHelper {
 
         db.execSQL(sqlNotesTable);
 
-
         if (isNotesTableEmpty()) {
             InputStream in;
             try {
@@ -477,16 +476,30 @@ public class DatabaseNotes extends SQLiteOpenHelper {
         return empty;
     }
 
-
     public boolean importNotesFromAssets(InputStream in) {
 
         String line;
         List<Note> notes = new ArrayList<>();
         try {
+
             SimpleDateFormat dateFormat = new SimpleDateFormat("yy/MM/dd");
             Date curr_date = new Date();
 
             String today = dateFormat.format(curr_date);
+
+            //add first help for version name and date of installation etc.
+            Note verNote = new Note();
+            verNote.setId(1);
+            verNote.setPriority(0);
+            verNote.setCreateDate(today);
+            verNote.setEditDate(today);
+
+            String versionName = this.context.getPackageManager().getPackageInfo(this.context.getPackageName(), 0).versionName;
+            int versionCode = this.context.getPackageManager().getPackageInfo(this.context.getPackageName(), 0).versionCode;
+
+            verNote.setBody("HELP: &nbsp <strong>Version Information</strong> <br> Version Name: " + versionName + " <br> Version Code: " + versionCode);
+            //addNote(verNote);
+            notes.add(verNote);
 
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
             while ((line = br.readLine()) != null && !line.isEmpty()) {
@@ -505,6 +518,7 @@ public class DatabaseNotes extends SQLiteOpenHelper {
             }
 
         } catch (Exception e) {
+            //Log.d(MainActivity.DEBUGTAG, "Exception adding Help: " + e.getMessage());
             return false;
         }
 

@@ -168,7 +168,7 @@ public class NoteAdapter extends BaseAdapter implements ListAdapter {
 
 		holder.noteIconView.setImageDrawable(noteIcon);
 		holder.dateView.setText(dateHeader);
-	
+
 		if (!help) {
 			holder.titleView.setText(title);
 		} else {

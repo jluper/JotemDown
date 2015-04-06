@@ -3,10 +3,12 @@ package com.DataFinancial.JotemDown;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
+import android.provider.ContactsContract;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,6 +18,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import java.io.File;
@@ -26,7 +29,7 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BackupNotes extends ActionBarActivity {
+public class BackupNotes extends ActionBarActivity  implements OnClickListener {
 
     public static final String DATABASE_NAME = "notes.db";
     private static final String LAST_BACKUP_FILE = "LAST_BACKUP_FILE";
@@ -39,6 +42,9 @@ public class BackupNotes extends ActionBarActivity {
     private String sortCol;
     private String sortName;
     private String sortDir;
+    ImageButton btnEmail,btnPhone;
+    static final int CONTACT_PICKER_EMAIL_RESULT = 1002;
+    static final int CONTACT_PICKER_PHONE_RESULT = 1003;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -64,6 +70,8 @@ public class BackupNotes extends ActionBarActivity {
 
         backupFile = (EditText) findViewById(R.id.txtBackupFile);
         address = (EditText) findViewById(R.id.txtBackupAddress);
+        btnEmail = (ImageButton) findViewById(R.id.btn_email);
+        btnEmail.setOnClickListener(this);
 
         SharedPreferences prefs = getSharedPreferences(com.DataFinancial.JotemDown.LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
         String file = prefs.getString(LAST_BACKUP_FILE, "JotemDownBackup");
@@ -97,8 +105,8 @@ public class BackupNotes extends ActionBarActivity {
         i.putExtra("sort_dir", sortDir);
 
         return i;
-
     }
+
     @Override
     public void onResume() {
         super.onResume(); // Always call the superclass method first
@@ -107,6 +115,90 @@ public class BackupNotes extends ActionBarActivity {
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
     }
 
+    @Override
+    public void onClick(View v) {
+
+        Intent contactPickerIntent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+        if (v == btnPhone) {
+            startActivityForResult(contactPickerIntent, CONTACT_PICKER_PHONE_RESULT);
+        }
+
+        if (v == btnEmail) {
+            startActivityForResult(contactPickerIntent, CONTACT_PICKER_EMAIL_RESULT);
+        }
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        Uri result;
+        String id;
+        Cursor cursor;
+        String type;
+
+        EditText txtAddr = (EditText) findViewById(R.id.txtBackupAddress);
+
+        if (resultCode == RESULT_OK) {
+
+            switch (requestCode) {
+                case CONTACT_PICKER_PHONE_RESULT:
+                    result = data.getData();
+                    // get the contact id from the Uri
+                    id = result.getLastPathSegment();
+
+                    // query for everything phone
+                    cursor = getContentResolver().query(
+                            ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
+                            ContactsContract.CommonDataKinds.Phone.CONTACT_ID + "=?", new String[]{id}, null);
+
+                    String phoneNumber = "";
+                    String tmpPhone = "";
+                    int phoneType = -1;
+                    while (cursor.moveToNext()) {
+                        tmpPhone = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DATA));
+                        phoneType = cursor.getInt(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE));
+                        if (phoneType == ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE) {
+                            phoneNumber = tmpPhone;
+                            break;
+                        }
+                    }
+                    if (phoneNumber.isEmpty()) {
+                        Toast.makeText(BackupNotes.this,"No mobile phone found, please type number.", Toast.LENGTH_LONG).show();
+                    }
+
+                    txtAddr.setText(phoneNumber);
+                    break;
+                case CONTACT_PICKER_EMAIL_RESULT:
+
+                    result = data.getData();
+                    // get the contact id from the Uri
+                    id = result.getLastPathSegment();
+
+                    // query for everything email
+                    cursor = getContentResolver().query(
+                            ContactsContract.CommonDataKinds.Email.CONTENT_URI, null,
+                            ContactsContract.CommonDataKinds.Email.CONTACT_ID + "=?", new String[]{id}, null);
+
+                    String emailAddress = "";
+                    int emailType = -1;
+                    while (cursor.moveToNext()) {
+                        emailAddress = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
+                        emailType = cursor.getInt(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.TYPE));
+//                        if (emailType == ContactsContract.CommonDataKinds.Email.TYPE_HOME) {
+//                            break;
+//                        }
+                    }
+                    if (emailAddress.isEmpty()) {
+                        Toast.makeText(BackupNotes.this,"No email found, please type address.", Toast.LENGTH_LONG).show();
+                    }
+
+                    txtAddr.setText(emailAddress);
+                    break;
+            }
+
+        } else {
+            Toast.makeText(BackupNotes.this,"Contact not selected.", Toast.LENGTH_LONG).show();
+        }
+    }
     public void addListenerBackupButton() {
 
         Button btnBackup = (Button) findViewById(R.id.btnBackup);

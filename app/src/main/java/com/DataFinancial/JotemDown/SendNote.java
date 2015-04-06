@@ -101,7 +101,6 @@ public class SendNote extends ActionBarActivity  implements OnClickListener {
         if (v == btnEmail) {
             startActivityForResult(contactPickerIntent, CONTACT_PICKER_EMAIL_RESULT);
         }
-
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

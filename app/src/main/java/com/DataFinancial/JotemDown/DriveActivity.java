@@ -196,8 +196,13 @@ public class DriveActivity extends ActionBarActivity {
                         com.google.api.services.drive.model.FileList fileList = new com.google.api.services.drive.model.FileList();
                         fileList.clear();
                         fileList = request.execute();
-
                         mResultList.addAll(fileList.getItems());
+
+//                        for (File f: mResultList) {
+//
+//                            Log.d(MainActivity.DEBUGTAG, "file = " + f.getTitle());
+//
+//                        }
 
                         request.setPageToken(fileList.getNextPageToken());
                     } catch (UserRecoverableAuthIOException e) {
@@ -210,8 +215,7 @@ public class DriveActivity extends ActionBarActivity {
                             request.setPageToken(null);
                         }
                     }
-                } while (request.getPageToken() != null
-                        && request.getPageToken().length() > 0);
+                } while (request.getPageToken() != null && request.getPageToken().length() > 0);
 
                 populateListView();
                 ringProgressDialog.dismiss();
