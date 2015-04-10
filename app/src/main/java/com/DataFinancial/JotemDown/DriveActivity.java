@@ -24,6 +24,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.drive.DriveApi;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
@@ -42,6 +44,17 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+//import com.google.android.gms.common.api.Status;
+//import com.google.android.gms.drive.Drive;
+//import com.google.android.gms.drive.DriveApi.DriveIdResult;
+//import com.google.android.gms.drive.DriveApi.MetadataBufferResult;
+//import com.google.android.gms.drive.DriveFolder;
+//
+//import com.google.android.gms.drive.Drive;
+
+//import com.google.android.gms.common.GooglePlayServicesUtil;
+//import com.google.android.gms.drive.Drive;
 
 //import java.io.File;
 
@@ -66,6 +79,8 @@ public class DriveActivity extends ActionBarActivity {
     private String sortCol;
     private String sortName;
     private String sortDir;
+    private GoogleApiClient googleApiClient;
+    private DriveApi driveApi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +96,11 @@ public class DriveActivity extends ActionBarActivity {
         mCredential = GoogleAccountCredential.usingOAuth2(this, Arrays.asList(DriveScopes.DRIVE));
         btnRestore = (Button) findViewById(R.id.btnRestoreDrive);
         addListenerRestoreButton();
+
+        googleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(com.google.android.gms.drive.Drive.API)
+                .addScope(com.google.android.gms.drive.Drive.SCOPE_FILE)
+                .build();
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -124,7 +144,6 @@ public class DriveActivity extends ActionBarActivity {
             startActivityForResult(mCredential.newChooseAccountIntent(), REQUEST_ACCOUNT_PICKER);
         }
     }
-
 
     @Override
     public void onResume() {
@@ -186,22 +205,23 @@ public class DriveActivity extends ActionBarActivity {
                 mResultList = new ArrayList<>();
                 mResultList.clear();
                 com.google.api.services.drive.Drive.Files f1 = mService.files();
+
                 com.google.api.services.drive.Drive.Files.List request = null;
 
                 do {
                     try {
                         request = f1.list();
 
-                        request.setQ("title contains '.db' and trashed = false");
+                        request.setQ("title contains '.db' and title contains '_JED' and trashed = false");
                         com.google.api.services.drive.model.FileList fileList = new com.google.api.services.drive.model.FileList();
+
                         fileList.clear();
                         fileList = request.execute();
+
                         mResultList.addAll(fileList.getItems());
 
 //                        for (File f: mResultList) {
-//
 //                            Log.d(MainActivity.DEBUGTAG, "file = " + f.getTitle());
-//
 //                        }
 
                         request.setPageToken(fileList.getNextPageToken());
@@ -209,8 +229,6 @@ public class DriveActivity extends ActionBarActivity {
                         startActivityForResult(e.getIntent(), REQUEST_AUTHORIZATION);
                     } catch (IOException e) {
                         showToast("Exception (3) getting file list from Google Drive: " + e.toString());
-                        //Log.d(MainActivity.DEBUGTAG,"Exception (4) getting file list from Google Drive: " + e.toString());
-
                         if (request != null) {
                             request.setPageToken(null);
                         }
@@ -281,7 +299,7 @@ public class DriveActivity extends ActionBarActivity {
 
     private void storeFile(java.io.File file, InputStream iStream) {
         try {
-            final OutputStream oStream = new FileOutputStream(file);
+            final OutputStream oStream = new FileOutputStream(file, false);
             try {
                 try {
                     final byte[] buffer = new byte[1024];
@@ -294,10 +312,10 @@ public class DriveActivity extends ActionBarActivity {
                     oStream.close();
                 }
             } catch (Exception e) {
-                showToast("Exception (1) saving file from Google Drive: " + e.toString());
+                showToast("Exception (1) saving file to Google Drive: " + e.toString());
             }
         } catch (IOException e) {
-            showToast("Exception (2) saving file from Google Drive: " + e.toString());
+            showToast("Exception (2) saving file to Google Drive: " + e.toString());
         }
     }
 
@@ -348,6 +366,7 @@ public class DriveActivity extends ActionBarActivity {
         return new Drive.Builder(AndroidHttp.newCompatibleTransport(), new GsonFactory(), credential).build();
     }
 
+
     private void saveFileToDrive() {
 
         final ProgressDialog ringProgressDialog = ProgressDialog.show(DriveActivity.this, "Please wait ...", "Creating backup on Google Drive...", true);
@@ -356,34 +375,64 @@ public class DriveActivity extends ActionBarActivity {
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
+
+                mResultList = new ArrayList<>();
+                mResultList.clear();
+                com.google.api.services.drive.Drive.Files f1 = mService.files();
+                com.google.api.services.drive.Drive.Files.List request = null;
+                ContentResolver cR = DriveActivity.this.getContentResolver();
+                mFileUri = Uri.fromFile(new java.io.File(uploadFilePath));
+                java.io.File fileContent = new java.io.File(mFileUri.getPath());
+                FileContent mediaContent = new FileContent(cR.getType(mFileUri), fileContent);
+
                 try {
-                    mFileUri = Uri.fromFile(new java.io.File(uploadFilePath));
-                    ContentResolver cR = DriveActivity.this.getContentResolver();
+                    request = f1.list();
 
-                    // File's binary content
-                    java.io.File fileContent = new java.io.File(mFileUri.getPath());
-                    FileContent mediaContent = new FileContent(cR.getType(mFileUri), fileContent);
+                    request.setQ("title = '" +  fileContent.getName() + "'"  + "and trashed = false");
+                    com.google.api.services.drive.model.FileList fileList = new com.google.api.services.drive.model.FileList();
 
-                    // File's meta data.
-                    File body = new File();
-                    body.setTitle(fileContent.getName());
-                    body.setMimeType(cR.getType(mFileUri));
+                    fileList.clear();
+                    fileList = request.execute();
+                    mResultList.clear();
+                    mResultList.addAll(fileList.getItems());
 
-                    com.google.api.services.drive.Drive.Files f1 = mService.files();
+                    File savedFile;
+                    // check if file already exists
+                    // if so, then update it rather than create new one
+                    if (mResultList.size() > 0) {
+                        File file = mResultList.get(0);
 
-                    com.google.api.services.drive.Drive.Files.Insert i1 = f1.insert(body, mediaContent);
-                    File file = i1.execute();
+                        //backup file already exists so update it
+                        file.setTitle(file.getTitle());
+                        file.setDescription(file.getDescription());
+                        file.setMimeType(file.getMimeType());
 
-                    if (file != null) {
-                        ringProgressDialog.dismiss();
-                        showToast("File uploaded to Google Drive: " + file.getTitle());
+                        savedFile = mService.files().update(file.getId(), file, mediaContent).execute();
+
+                    } else {
+                        //backup file doesn't exists so create it
+                        mFileUri = Uri.fromFile(new java.io.File(uploadFilePath));
+
+                        File body = new File();
+                        body.setTitle(fileContent.getName());
+                        body.setMimeType(cR.getType(mFileUri));
+
+                        savedFile = mService.files().insert(body, mediaContent).execute();
+                    }
+                    ringProgressDialog.dismiss();
+
+                    if (savedFile != null) {
+                        showToast("File uploaded to Google Drive: " + savedFile.getTitle());
                         Intent i = new Intent(DriveActivity.this, MainActivity.class);
                         startActivity(i);
+                    } else {
+                        showToast("Unable to save file to Google Drive");
                     }
+
                 } catch (UserRecoverableAuthIOException e) {
                     startActivityForResult(e.getIntent(), REQUEST_AUTHORIZATION);
                 } catch (IOException e) {
-                    showToast("Exception (4) getting file from Google Drive: " + e.toString());
+                    showToast("Exception (3) getting file list from Google Drive: " + e.getMessage());
                 }
 
                 ringProgressDialog.dismiss();
@@ -392,6 +441,7 @@ public class DriveActivity extends ActionBarActivity {
 
         t.start();
     }
+
 
 
     public void showToast(final String toast) {
@@ -406,8 +456,7 @@ public class DriveActivity extends ActionBarActivity {
     public String getPathFromUri(Uri uri) {
 
         String[] projection = {MediaStore.Images.Media.DATA};
-        Cursor cursor = getContentResolver().query(uri, projection, null, null,
-                null);
+        Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
         int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
         cursor.moveToFirst();
 

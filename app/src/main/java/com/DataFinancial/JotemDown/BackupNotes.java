@@ -216,16 +216,13 @@ public class BackupNotes extends ActionBarActivity  implements OnClickListener {
                 } else {
                     makeDatabaseBackup();
 
-                    String filePath = getBackupFileDir().getAbsolutePath() + "/" + backupFile.getText().toString() + ".db";
+                    String filePath = getBackupFileDir().getAbsolutePath() + "/" + Utils.customizeFilename(backupFile.getText().toString() + ".db" );
                     Intent i = new Intent(BackupNotes.this, com.DataFinancial.JotemDown.DriveActivity.class);
                     i.putExtra("filepath", filePath);
                     startActivity(i);
-
-                    //store on Google Drive
                 }
 
-                SharedPreferences prefs = getSharedPreferences(
-                        com.DataFinancial.JotemDown.LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
+                SharedPreferences prefs = getSharedPreferences(com.DataFinancial.JotemDown.LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putString(BackupNotes.LAST_BACKUP_ADDRESS, address.getText().toString());
                 editor.putString(LAST_BACKUP_FILE, backupFile.getText().toString());
@@ -341,7 +338,7 @@ public class BackupNotes extends ActionBarActivity  implements OnClickListener {
 
         File currentDB = getDatabasePath(DATABASE_NAME);
 
-        String fileName = backupFile.getText().toString() + ".db";
+        String fileName = Utils.customizeFilename(backupFile.getText().toString() + ".db");
 
         File backupDB = new File(backupDir, fileName);
 

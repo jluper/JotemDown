@@ -248,4 +248,15 @@ public class Utils {
 
         Log.d(MainActivity.DEBUGTAG, msg);
     }
+
+    static public String customizeFilename(String fileName) {
+
+        String[] nameParts = fileName.split("\\.");
+
+        SimpleDateFormat df = new SimpleDateFormat("MMddyyHHmm");
+        Date today = new Date();
+        String strToday = df.format(today);
+
+        return nameParts[0] + "_" + strToday + "_JED." + nameParts[1];  //appends date and time
+    }
 }
