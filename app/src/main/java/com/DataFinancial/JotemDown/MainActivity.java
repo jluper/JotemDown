@@ -424,6 +424,8 @@ public class MainActivity extends ActionBarActivity {
                 this.invalidateOptionsMenu();
                 break;
             case R.id.menu_backup:
+//                Utils util = new Utils();
+//                util.backupNotes("notes_JED.db", "dummy", this);
                 i = new Intent(MainActivity.this, BackupNotes.class);
                 i.putExtra("group", groupId);
                 i.putExtra("group_name", groupName);
@@ -480,6 +482,11 @@ public class MainActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+//    static private PendingIntent pendingIntent;
+//    static private int pendingIntentRequestCode = 0;
+
+
 
     private void ReplaceLockImage() {
 

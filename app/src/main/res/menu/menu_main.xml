@@ -41,7 +41,7 @@
     </item>
     <item
         android:id="@+id/menu_data"
-        android:orderInCategory="1111"
+        android:orderInCategory="120"
         app:showAsAction="never"
         android:title="@string/menu_data">
         <menu>
@@ -69,13 +69,7 @@
                 app:showAsAction="ifRoom"/>
         </menu>
     </item>
-  <!--  <item
-        android:id="@+id/menu_overflow"
-        android:icon="@drawable/ic_action_overflow"
-        android:orderInCategory="11111"
-        android:showAsAction="always">
-     <menu>
--->
+
      <item
         android:id="@+id/menu_new"
         android:orderInCategory="101"
@@ -100,6 +94,7 @@
         android:icon="@drawable/ic_action_help"
         android:title="@string/menu_help"
         app:showAsAction="ifRoom"/>
+
   <!--  </menu>
     </item>-->
 

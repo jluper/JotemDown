@@ -45,6 +45,7 @@ public class BackupNotes extends ActionBarActivity  implements OnClickListener {
     ImageButton btnEmail,btnPhone;
     static final int CONTACT_PICKER_EMAIL_RESULT = 1002;
     static final int CONTACT_PICKER_PHONE_RESULT = 1003;
+    Utils utils;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -68,6 +69,7 @@ public class BackupNotes extends ActionBarActivity  implements OnClickListener {
             sortDir = extras.getString("sort_dir");
         }
 
+        utils = new Utils();
         backupFile = (EditText) findViewById(R.id.txtBackupFile);
         address = (EditText) findViewById(R.id.txtBackupAddress);
         btnEmail = (ImageButton) findViewById(R.id.btn_email);
@@ -216,7 +218,7 @@ public class BackupNotes extends ActionBarActivity  implements OnClickListener {
                 } else {
                     makeDatabaseBackup();
 
-                    String filePath = getBackupFileDir().getAbsolutePath() + "/" + Utils.customizeFilename(backupFile.getText().toString() + ".db" );
+                    String filePath = utils.getBackupFileDir(v.getContext()).getAbsolutePath() + "/" + Utils.customizeFilename(backupFile.getText().toString() + ".db", false );
                     Intent i = new Intent(BackupNotes.this, com.DataFinancial.JotemDown.DriveActivity.class);
                     i.putExtra("filepath", filePath);
                     startActivity(i);
@@ -244,6 +246,22 @@ public class BackupNotes extends ActionBarActivity  implements OnClickListener {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
+        int id = item.getItemId();
+
+        Intent i;
+
+        switch (id) {
+            case R.id.menu_schedule_backups:
+                i = new Intent(BackupNotes.this, ScheduleBackups.class);
+                i.putExtra("group_name", groupName);
+                i.putExtra("sort_col", sortCol);
+                i.putExtra("sort_name", sortName);
+                i.putExtra("sort_dir", sortDir);
+                startActivity(i);
+                break;
+            default:
+                break;
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -278,7 +296,7 @@ public class BackupNotes extends ActionBarActivity  implements OnClickListener {
         if (com.DataFinancial.JotemDown.Utils.isValidEmail(TO[0])) {
 
             String fileName = backupFile.getText().toString() + ".db";
-            File file = new File(getBackupFileDir(), fileName);
+            File file = new File(utils.getBackupFileDir(this), fileName);
 
             if (!file.exists() || !file.canRead()) {
                 Toast.makeText(this,
@@ -311,22 +329,11 @@ public class BackupNotes extends ActionBarActivity  implements OnClickListener {
         }
     }
 
-    private File getBackupFileDir() {
-
-        File backupDir;
-        if (checkExternalMedia()) {
-            backupDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-        } else {
-            backupDir = getFilesDir();
-        }
-
-        return backupDir;
-    }
 
     private void makeDatabaseBackup() {
 
         File backupDir;
-        if (checkExternalMedia()) {
+        if (utils.checkExternalMedia()) {
             backupDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
             // Environment.getExternalStorageDirectory();
         } else {
@@ -338,7 +345,7 @@ public class BackupNotes extends ActionBarActivity  implements OnClickListener {
 
         File currentDB = getDatabasePath(DATABASE_NAME);
 
-        String fileName = Utils.customizeFilename(backupFile.getText().toString() + ".db");
+        String fileName = Utils.customizeFilename(backupFile.getText().toString() + ".db", false);
 
         File backupDB = new File(backupDir, fileName);
 
@@ -352,25 +359,4 @@ public class BackupNotes extends ActionBarActivity  implements OnClickListener {
             Toast.makeText(this, "Exception creating notes backup: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
-
-    private boolean checkExternalMedia() {
-        boolean mExternalStorageAvailable;
-        boolean mExternalStorageWriteable;
-        String state = Environment.getExternalStorageState();
-
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            // Can read and write the media
-            mExternalStorageAvailable = mExternalStorageWriteable = true;
-        } else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
-            // Can only read the media
-            mExternalStorageAvailable = true;
-            mExternalStorageWriteable = false;
-        } else {
-            // Can't read or write
-            mExternalStorageAvailable = mExternalStorageWriteable = false;
-        }
-
-        return mExternalStorageAvailable & mExternalStorageWriteable;
-    }
-
 }

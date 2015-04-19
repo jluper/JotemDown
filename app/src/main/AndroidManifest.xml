@@ -19,6 +19,7 @@
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
@@ -99,6 +100,12 @@
             android:windowSoftInputMode="stateAlwaysVisible" >
         </activity>
         <activity
+            android:name="com.DataFinancial.JotemDown.ScheduleBackups"
+            android:label="@string/app_name"
+            android:parentActivityName="com.DataFinancial.JotemDown.MainActivity"
+            android:windowSoftInputMode="stateAlwaysVisible" >
+        </activity>
+        <activity
             android:name="com.DataFinancial.JotemDown.RestoreNotes"
             android:label="@string/app_name"
             android:parentActivityName="com.DataFinancial.JotemDown.MainActivity"
@@ -154,6 +161,8 @@
         <service android:name="com.DataFinancial.JotemDown.ReminderService" />
 
         <receiver android:name="com.DataFinancial.JotemDown.ReminderAlarmReceiver" />
+        <receiver android:name="com.DataFinancial.JotemDown.BackupAlarmReceiver" />
+
         <receiver android:name="com.DataFinancial.JotemDown.ReminderActivity$mReceiver" >
             <intent-filter>
                 <action android:name="com.DataFinancial.NoteJackal.reminder" >
