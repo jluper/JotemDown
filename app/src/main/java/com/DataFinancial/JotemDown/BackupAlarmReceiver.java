@@ -28,7 +28,7 @@ public class BackupAlarmReceiver extends BroadcastReceiver {
 
 
         SharedPreferences prefs = ctx.getSharedPreferences(LockImageActivity.SHARED_PREF_FILE, Context.MODE_PRIVATE);
-        String destination = prefs.getString(ScheduleBackups.BACKUP_LOCATION, null));
+        String destination = prefs.getString(ScheduleBackups.BACKUP_LOCATION, null);
 
         if (destination != null) {
             util.backupNotes("notes_JED.db", destination, ctx);

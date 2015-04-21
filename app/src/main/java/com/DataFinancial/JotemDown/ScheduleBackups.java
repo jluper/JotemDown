@@ -43,6 +43,7 @@ public class ScheduleBackups extends ActionBarActivity  implements OnClickListen
     private EditText timeOfDay;
     private EditText frequency;
     private Button btnSubmit;
+    private Button btnCancel;
     private String groupName;
     private String sortCol;
     private String sortName;
@@ -50,14 +51,13 @@ public class ScheduleBackups extends ActionBarActivity  implements OnClickListen
     private GoogleAccountCredential mCredential;
     // Variable for storing current date and time
     private int mYear, mMonth, mDay, mHour, mMinute;
+    Utils utils;
 
     ImageButton btnEmail,btnClock,btnDrive;
     static final int CONTACT_PICKER_EMAIL_RESULT = 1002;
     static final int CONTACT_PICKER_PHONE_RESULT = 1003;
     static final int REQUEST_AUTHORIZATION = 2;
     static final int REQUEST_ACCOUNT_PICKER = 1;
-
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -70,11 +70,12 @@ public class ScheduleBackups extends ActionBarActivity  implements OnClickListen
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setIcon(R.drawable.note_yellow);
-        actionBar.setTitle("Schedule Backups");
+        actionBar.setTitle("Schedule Backup");
         actionBar.setDisplayShowTitleEnabled(true);
 
         Log.d(MainActivity.DEBUGTAG, "check 0.005");
 
+        utils = new Utils();
 
         btnClock = (ImageButton) findViewById(R.id.btn_backup_time);
         btnClock.setOnClickListener(this);
@@ -93,10 +94,13 @@ public class ScheduleBackups extends ActionBarActivity  implements OnClickListen
 
         btnSubmit = (Button) findViewById(R.id.btn_backup_schedule);
         btnSubmit.setOnClickListener(this);
-Log.d(MainActivity.DEBUGTAG, "check1.3");
 
-        addListenerOnButton();
+        btnCancel = (Button) findViewById(R.id.btn_backup_cancel);
+        btnCancel.setOnClickListener(this);
+        Log.d(MainActivity.DEBUGTAG, "check1.3");
 
+        addListenerOnSubmitButton();
+        addListenerOnCancelButton();
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -267,29 +271,91 @@ Log.d(MainActivity.DEBUGTAG, "check1.3");
     }
 
 
-    public void addListenerOnButton() {
+    public void addListenerOnSubmitButton() {
 
         btnSubmit = (Button) findViewById(R.id.btn_backup_schedule);
-
         btnSubmit.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
 
-                // Validate inputs *********************************************************
 
-                SharedPreferences prefs = getSharedPreferences(LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putString(BACKUP_LOCATION, location.getText().toString());
-                editor.putString(BACKUP_TIME, timeOfDay.getText().toString());
-                editor.putString(BACKUP_FREQUENCY, frequency.getText().toString());
-                editor.apply();
+                    // Validate inputs *********************************************************
+                    if (!utils.isValidTimeHHMM(timeOfDay.getText().toString())) {
+                        Toast.makeText(ScheduleBackups.this, "Invalid backup time.", Toast.LENGTH_LONG).show();
+                        return;
+                    }
 
-                //Utils utils = new Utils();
-                Calendar calendar = Calendar.getInstance();
-                calendar.add(Calendar.MINUTE, 10);
+                    if (Integer.parseInt(frequency.getText().toString()) < 1) {
+                        Toast.makeText(ScheduleBackups.this, "Invalid backup frequency.", Toast.LENGTH_LONG).show();
+                        return;
+                    }
 
-                scheduleBackup(ScheduleBackups.this, calendar.getTime(), Integer.parseInt(frequency.getText().toString()));
+                    SharedPreferences prefs = getSharedPreferences(LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putString(BACKUP_LOCATION, location.getText().toString());
+                    editor.putString(BACKUP_TIME, timeOfDay.getText().toString());
+                    editor.putString(BACKUP_FREQUENCY, frequency.getText().toString());
+                    editor.apply();
+
+                    String[] timeParts = timeOfDay.getText().toString().split(":");
+                    int hr = Integer.parseInt(timeParts[0]);
+                    int min = Integer.parseInt(timeParts[1]);
+
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTimeInMillis(System.currentTimeMillis());
+                    calendar.set(Calendar.HOUR_OF_DAY, hr);
+                    calendar.set(Calendar.MINUTE, min);
+
+                    scheduleBackup(ScheduleBackups.this, calendar, Integer.parseInt(frequency.getText().toString()));
+
+                    Toast.makeText(ScheduleBackups.this, "Backup scheduled.", Toast.LENGTH_LONG).show();
+                    Intent i;
+                    i = new Intent(ScheduleBackups.this, MainActivity.class);
+                    i.putExtra("group_name", groupName);
+                    i.putExtra("sort_col", sortCol);
+                    i.putExtra("sort_name", sortName);
+                    i.putExtra("sort_dir", sortDir);
+                    startActivity(i);
+            }
+        });
+    }
+
+    public void addListenerOnCancelButton() {
+
+        btnCancel = (Button) findViewById(R.id.btn_backup_cancel);
+        btnCancel.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                if (v.getId() ==  R.id.btn_backup_cancel) {
+                    pendingIntentRequestCode = 99;
+                    Intent alarmIntent = new Intent(ScheduleBackups.this, BackupAlarmReceiver.class);
+                    pendingIntent = PendingIntent.getBroadcast(ScheduleBackups.this, pendingIntentRequestCode, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    Log.d(MainActivity.DEBUGTAG, "pendingIntent = " + pendingIntent.toString());
+                    AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+                    // If the alarm has been set, cancel it since rescheduling here
+                    if (am!= null) {
+                        am.cancel(pendingIntent);
+
+                        SharedPreferences prefs = getSharedPreferences(LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
+                        SharedPreferences.Editor editor = prefs.edit();
+                        editor.putString(BACKUP_LOCATION, "");
+                        editor.putString(BACKUP_TIME, "");
+                        editor.putString(BACKUP_FREQUENCY, "");
+                        editor.apply();
+
+                        Toast.makeText(ScheduleBackups.this, "Scheduled backup canceled.", Toast.LENGTH_LONG).show();
+                        Intent i;
+                        i = new Intent(ScheduleBackups.this, MainActivity.class);
+                        i.putExtra("group_name", groupName);
+                        i.putExtra("sort_col", sortCol);
+                        i.putExtra("sort_name", sortName);
+                        i.putExtra("sort_dir", sortDir);
+                        startActivity(i);
+                    }
+                }
             }
         });
     }
@@ -297,13 +363,14 @@ Log.d(MainActivity.DEBUGTAG, "check1.3");
     static private PendingIntent pendingIntent;
     static private int pendingIntentRequestCode = 0;
 
-    private void scheduleBackup(Context context, java.util.Date startTime, int freq) {
+    private void scheduleBackup(Context context, Calendar calendar, int freq) {
 
-        Log.d(MainActivity.DEBUGTAG, "dateTime = " + startTime.toString());
+        //Log.d(MainActivity.DEBUGTAG, "dateTime = " + startTime.toString());
 
-        pendingIntentRequestCode++;
+
+        pendingIntentRequestCode = 99;;
         Intent alarmIntent = new Intent(context, BackupAlarmReceiver.class);
-        pendingIntent = PendingIntent.getBroadcast(context, pendingIntentRequestCode, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        pendingIntent = PendingIntent.getBroadcast(context, pendingIntentRequestCode, alarmIntent, PendingIntent.FLAG_CANCEL_CURRENT);
         Log.d(MainActivity.DEBUGTAG, "pendingIntent = " + pendingIntent.toString());
         AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
@@ -312,7 +379,7 @@ Log.d(MainActivity.DEBUGTAG, "check1.3");
             am.cancel(pendingIntent);
         }
 
-        Calendar calendar = Calendar.getInstance();
+        //Calendar calendar = Calendar.getInstance();
 //        Log.d(MainActivity.DEBUGTAG, "getTime = " + calendar.getTime().toString());
 //        calendar.setTime(dateTime);
 //
@@ -327,17 +394,25 @@ Log.d(MainActivity.DEBUGTAG, "check1.3");
 //        }
 
         // Set the alarm to start at approximately 2:00 p.m.
-        calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
+        //calendar = Calendar.getInstance();
+        //calendar.setTimeInMillis(System.currentTimeMillis());
+        //calendar.setTime
 //        calendar.set(Calendar.HOUR_OF_DAY, 14);
 //        calendar.set(Calendar.YEAR, 2014);
 //        calendar.set(Calendar.MONTH, 4);
 //        calendar.set(Calendar.MINUTE, 33);
 
+           Log.d(MainActivity.DEBUGTAG, "cur time in ms = " + System.currentTimeMillis());
+        Log.d(MainActivity.DEBUGTAG, "cal time in ms = " + calendar.getTimeInMillis());
+        Log.d(MainActivity.DEBUGTAG, "diff in min = " + (calendar.getTimeInMillis() - System.currentTimeMillis()) / 1000 / 60);
+
 
         // With setInexactRepeating(), you have to use one of the AlarmManager interval
         // constants--in this case, AlarmManager.INTERVAL_DAY.
-        am.setInexactRepeating(am.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_FIFTEEN_MINUTES*freq, pendingIntent);
+        Log.d(MainActivity.DEBUGTAG, "interval = " + AlarmManager.INTERVAL_FIFTEEN_MINUTES);
+        Log.d(MainActivity.DEBUGTAG, "freq = " + freq);
+
+        am.setInexactRepeating(am.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_FIFTEEN_MINUTES * freq, pendingIntent);
     }
 
 }

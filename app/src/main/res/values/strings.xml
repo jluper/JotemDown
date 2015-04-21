@@ -108,10 +108,12 @@
     <string name="lbl_reminder_update">Update</string>
     <string name="lbl_reminder_add">Add</string>
     <string name="lbl_reminder_cancel">Delete</string>
+    <string name="lbl_backup_cancel">Cancel</string>
     <string name="reminder_recurrence">Recurrence</string>
     <string name="lbl_backup_location">Location</string>
     <string name="lbl_backup_time">Time of day</string>
-    <string name="lbl_backup_freq">Frequency (days)</string>
+    <string name="lbl_backup_freq">Frequency (hrs)</string>
+    <string name="backup_freq_hint">Hours...</string>
     <string name="lbl_backup_submit">Submit</string>
     <string name="lbl_backup_loc_hint">Email or Google acccount</string>
     <string name="password_hint_new">New password...</string>

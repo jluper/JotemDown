@@ -66,6 +66,28 @@ public class Utils {
         return (newDateFormat.format(oldDate));
     }
 
+    static public boolean isValidTimeHHMM(String time) {
+
+
+        String[] timeParts = time.toString().split(":");
+        if (timeParts.length != 2) {
+            return false;
+        }
+
+        int hr = Integer.parseInt(timeParts[0]);
+        int min = Integer.parseInt(timeParts[1]);
+
+        if (hr < 0 || hr > 23) {
+            return false;
+        }
+
+        if (min < 0 || min > 59) {
+            return false;
+        }
+
+        return  true;
+    }
+
     static public boolean isValidPhone(String target) {
 
         // the check in the return statement was considering a string of digits as valid. ex: "12345"
@@ -314,14 +336,17 @@ public class Utils {
         mCredential = GoogleAccountCredential.usingOAuth2(ct, Arrays.asList(DriveScopes.DRIVE));
 
         Account acct = getAccount(context);
-        Log.d(MainActivity.DEBUGTAG, "account = " + acct.type);
+        Log.d(MainActivity.DEBUGTAG, "acct.type= " + acct.type);
+        Log.d(MainActivity.DEBUGTAG, "acct.name= " + acct.name);
+        Log.d(MainActivity.DEBUGTAG, "destination = " + destination);
+
         //getToken(acct, context);
 
-        mCredential.setSelectedAccountName(acct.name);
+        //mCredential.setSelectedAccountName(acct.name);
+        mCredential.setSelectedAccountName(destination);   //in this case a Google account name
+
         mService = getDriveService(mCredential);
         Log.d(MainActivity.DEBUGTAG, "creds = " + mCredential.toString());
-
-        Log.d(MainActivity.DEBUGTAG, "acct name = " + acct.name);
         Log.d(MainActivity.DEBUGTAG, "service = " + mService.toString());
 
 

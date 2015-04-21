@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/rounded_corner"
-            android:inputType="text"
+            android:inputType="textEmailAddress"
             android:minEms="10"
             android:hint="@string/lbl_backup_loc_hint"
             android:paddingBottom="5dp"
@@ -88,8 +88,7 @@
             android:minEms="6"
             android:background="@drawable/rounded_corner"
             android:digits="0123456789:"
-            android:inputType="number|textPassword" >
-
+            android:inputType="textEmailAddress" >
             <requestFocus />
         </EditText>
 
@@ -121,15 +120,33 @@
         android:layout_height="wrap_content"
         android:background="@drawable/rounded_corner"
         android:minEms="6"
+        android:hint="@string/backup_freq_hint"
         android:layout_gravity="left"
         android:digits="0123456789"
         android:inputType="number|textPassword" >
     </EditText>
 
-    <Button
-        android:id="@+id/btn_backup_schedule"
-        style="@style/fancy_button"
-        android:layout_gravity="center"
-        android:layout_marginTop="@dimen/top_margin_xlarge"
-        android:text="@string/lbl_backup_submit" />
+    <LinearLayout
+        android:id="@+id/linearLayout4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/top_margin_xlarge" >
+
+        <Button
+            android:id="@+id/btn_backup_schedule"
+            style="@style/fancy_button"
+            android:layout_width="0dp"
+            android:layout_marginRight="5dp"
+            android:layout_weight="1"
+            android:text="@string/lbl_backup_submit" />
+
+        <Button
+            android:id="@+id/btn_backup_cancel"
+            style="@style/fancy_button"
+            android:layout_width="0dp"
+            android:layout_marginLeft="5dp"
+            android:layout_weight="1"
+            android:text="@string/lbl_backup_cancel" />
+    </LinearLayout>
+
 </LinearLayout>
