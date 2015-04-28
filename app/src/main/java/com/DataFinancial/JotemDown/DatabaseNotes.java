@@ -518,7 +518,6 @@ public class DatabaseNotes extends SQLiteOpenHelper {
             }
 
         } catch (Exception e) {
-            //Log.d(MainActivity.DEBUGTAG, "Exception adding Help: " + e.getMessage());
             return false;
         }
 

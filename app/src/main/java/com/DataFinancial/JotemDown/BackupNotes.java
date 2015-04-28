@@ -210,6 +210,9 @@ public class BackupNotes extends ActionBarActivity  implements OnClickListener {
             @Override
             public void onClick(View v) {
 
+               // EmailBackup emailBackup = new EmailBackup();
+               //emailBackup.sendEmailBackup(BackupNotes.this,"jluper@triad.rr.com", "test backup email", "Test body of email backup");
+
                 CheckBox chk = (CheckBox) findViewById(R.id.chkGoogleDrive);
 
                 if (!chk.isChecked()) {

@@ -3,7 +3,6 @@ package com.DataFinancial.JotemDown;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.widget.Toast;
 
@@ -50,7 +49,6 @@ public class MapActivity extends ActionBarActivity {
 		if (latitude != 0.0 && longitude != 0.0) {
 			
 			GoogleMap map;
-            Log.d(MainActivity.DEBUGTAG, "chk1");
 
             map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
 

@@ -24,7 +24,6 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.drive.DriveApi;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
@@ -35,7 +34,6 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.ParentReference;
-
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,18 +42,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-//import com.google.android.gms.common.api.Status;
-//import com.google.android.gms.drive.Drive;
-//import com.google.android.gms.drive.DriveApi.DriveIdResult;
-//import com.google.android.gms.drive.DriveApi.MetadataBufferResult;
-//import com.google.android.gms.drive.DriveFolder;
-//
-//import com.google.android.gms.drive.Drive;
-
-//import com.google.android.gms.common.GooglePlayServicesUtil;
-//import com.google.android.gms.drive.Drive;
-
-//import java.io.File;
 
 public class DriveActivity extends ActionBarActivity {
     static final int REQUEST_ACCOUNT_PICKER = 1;
@@ -231,6 +217,7 @@ public class DriveActivity extends ActionBarActivity {
                         startActivityForResult(e.getIntent(), REQUEST_AUTHORIZATION);
                     } catch (IOException e) {
                         showToast("Exception (3) getting file list from Google Drive: " + e.toString());
+                        utils.backupNotify(DriveActivity.this, "Exception backing up your notes to Google Drive: " + e.getMessage());
                         if (request != null) {
                             request.setPageToken(null);
                         }
@@ -335,7 +322,6 @@ public class DriveActivity extends ActionBarActivity {
                 if (resultCode == RESULT_OK && data != null
                         && data.getExtras() != null) {
                     String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-                    Log.d(MainActivity.DEBUGTAG, "acct name = " + accountName);
 
                     if (accountName != null) {
                         mCredential.setSelectedAccountName(accountName);
@@ -377,8 +363,6 @@ public class DriveActivity extends ActionBarActivity {
         final ProgressDialog ringProgressDialog = ProgressDialog.show(DriveActivity.this, "Please wait ...", "Creating backup on Google Drive...", true);
         ringProgressDialog.setCancelable(true);
 
-        Log.d(MainActivity.DEBUGTAG, "service = " + mService.toString());
-
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -388,7 +372,6 @@ public class DriveActivity extends ActionBarActivity {
                 com.google.api.services.drive.Drive.Files f1 = mService.files();
                 com.google.api.services.drive.Drive.Files.List request = null;
                 ContentResolver cR = DriveActivity.this.getContentResolver();
-                Log.d(MainActivity.DEBUGTAG, "filePath = " + uploadFilePath);
 
                 mFileUri = Uri.fromFile(new java.io.File(uploadFilePath));
                 java.io.File fileContent = new java.io.File(mFileUri.getPath());
@@ -410,33 +393,23 @@ public class DriveActivity extends ActionBarActivity {
                     // if so, then update it rather than create new one
                     if (mResultList.size() > 0) {
                         File file = mResultList.get(0);
-                        Log.d(MainActivity.DEBUGTAG, "file = " + file.toString());
 
                         //backup file already exists so update it
                         file.setTitle(file.getTitle());
                         file.setDescription(file.getDescription());
                         file.setMimeType(file.getMimeType());
 
-                        Log.d(MainActivity.DEBUGTAG, "file id = " + file.getId());
-                        Log.d(MainActivity.DEBUGTAG, "file title= " + file.getTitle());
-                        Log.d(MainActivity.DEBUGTAG, "check16");
-                        Log.d(MainActivity.DEBUGTAG, "id = " + file.getId());
-
                         savedFile = mService.files().update(file.getId(), file, mediaContent).execute();
-                        Log.d(MainActivity.DEBUGTAG, "savedFile = " + savedFile);
 
                     } else {
                         //backup file doesn't exists so create it
                         mFileUri = Uri.fromFile(new java.io.File(uploadFilePath));
-                        Log.d(MainActivity.DEBUGTAG, "mFileUri = " + mFileUri.toString());
 
                         File body = new File();
                         body.setTitle(fileContent.getName());
                         body.setMimeType(cR.getType(mFileUri));
 
                         savedFile = mService.files().insert(body, mediaContent).execute();
-                        Log.d(MainActivity.DEBUGTAG, "savedFile = " + savedFile);
-
                     }
                     ringProgressDialog.dismiss();
 

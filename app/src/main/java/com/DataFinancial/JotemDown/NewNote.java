@@ -124,8 +124,9 @@ public class NewNote extends ActionBarActivity {
         List<com.DataFinancial.JotemDown.NoteGroup> grps = db.getGroups(com.DataFinancial.JotemDown.DatabaseNotes.COL_ID, "ASC");
         int grp = note.getGroup();
         for (int i = 0; i < grps.size(); i++) {
-            if (grps.get(i).getId() == note.getGroup()) {
-                groupList.setItemChecked(i, true);
+            //if (grps.get(i).getId() == note.getGroup()) {
+            if (grps.get(i).getId() == groupId) {
+                    groupList.setItemChecked(i, true);
                 break;
             }
             groupList.setItemChecked(com.DataFinancial.JotemDown.MainActivity.ROOT, true);
@@ -668,7 +669,6 @@ public class NewNote extends ActionBarActivity {
                     field.setAccessible(true);
                     field.setBoolean(menu, true);
                 } catch (IllegalAccessException | NoSuchFieldException e) {
-                    //Log.d(MainActivity.DEBUGTAG, "onMenuOpened(" + featureId + ", " + menu + ")", e);
                 }
             }
         }

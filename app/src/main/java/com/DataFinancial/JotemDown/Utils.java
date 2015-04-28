@@ -4,6 +4,9 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -40,6 +43,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 //import java.io.File;
 
@@ -280,8 +284,6 @@ public class Utils {
                 targetedShareIntent.setType("message/rfc822");
                 targetedShareIntent.setPackage(packageName);
 
-                //Log.d(MainActivity.DEBUGTAG, "packagename = " + packageName );
-
                 if (packageName.equals("com.lge.email") || packageName.equals("com.google.android.gm") || packageName.contains("mail")) {
                     targetedShareIntents.add(targetedShareIntent);
                 }
@@ -293,7 +295,7 @@ public class Utils {
 
     static public void log(String msg) {
 
-        Log.d(MainActivity.DEBUGTAG, msg);
+        //Log.d(MainActivity.DEBUGTAG, msg);
     }
 
     static public String customizeFilename(String fileName, boolean addDate) {
@@ -327,7 +329,7 @@ public class Utils {
     private static boolean gotToken = false;
     Object tokenLockObject = new Object ();
 
-    public void backupNotes(String file, String destination, Context context) {
+    public void backupNotesToGoogleDrive(String file, String destination, Context context) {
 
         makeLocalDatabaseBackup(file, context);
 
@@ -416,53 +418,63 @@ public class Utils {
                             file.setDescription(file.getDescription());
                             file.setMimeType(file.getMimeType());
 
-                            Log.d(MainActivity.DEBUGTAG, "file id = " + file.getId());
-                            Log.d(MainActivity.DEBUGTAG, "file title= " + file.getTitle());
-                            Log.d(MainActivity.DEBUGTAG, "check16");
-
-                            Log.d(MainActivity.DEBUGTAG, "id = " + file.getId());
-
                             savedFile = mService.files().update(file.getId(), file, mediaContent).execute();
-                            Log.d(MainActivity.DEBUGTAG, "savedFile = " + savedFile);
-
-
                         } else {
                             //backup file doesn't exists so create it
                             mFileUri = Uri.fromFile(new java.io.File(filePath));
-                            Log.d(MainActivity.DEBUGTAG, "mFileUri = " + mFileUri.toString());
 
-//                            com.google.api.services.drive.model.File body = new com.google.api.services.drive.model.File();
                             File body = new File();
 
                             body.setTitle(fileContent.getName());
                             body.setMimeType(cR.getType(mFileUri));
-                            Log.d(MainActivity.DEBUGTAG, "check18");
 
                             savedFile = mService.files().insert(body, mediaContent).execute();
-                            Log.d(MainActivity.DEBUGTAG, "savedFile = " + savedFile);
-
                         }
 
                         if (savedFile != null) {
-                            //send notification
-                        } else {
-                            //send notification
+                            backupNotify(ct, "Your notes have been backed up to Google Drive.");
                         }
+//                        } else {
+//                            backupNotify(ct, "Your notes could not be backed up to Google Drive.")
+//                        }
 
                     } catch (UserRecoverableAuthIOException e) {
-                        Log.d(MainActivity.DEBUGTAG, "AuthException: " + e.getMessage());
-
-                        //send notification
+                        backupNotify(ct, "Exception backing up your notes to Google Drive: " + e.toString());
                     } catch (IOException e) {
-                        Log.d(MainActivity.DEBUGTAG, "IOException: " + e.getMessage());
-
-                        //send notification
+                        backupNotify(ct, "Exception backing up your notes to Google Drive: " + e.toString());
                     }
-                //}
             }
         });
 
         t.start();
+    }
+
+    void backupNotify(Context ctx, String msg) {
+
+        Random rn = new Random();
+        int id = rn.nextInt(10) + 1;
+
+        Notification.Builder mBuilder = new Notification.Builder(ctx).setSmallIcon(R.drawable.note_yellow).setContentTitle("Jot'emDown Backup").setStyle(new Notification.BigTextStyle().bigText(msg));
+        //NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(ctx).setSmallIcon(R.drawable.note_yellow).setContentTitle("Jot'emDown Backup").setContentText(msg);
+
+        //mBuilder.setVibrate(new long[]{1000, 1000, 1000, 1000, 1000});
+
+        Intent resultIntent = new Intent(ctx, MainActivity.class);
+
+        // Because clicking the notification opens a new ("special") activity, there's
+        // no need to create an artificial back stack.
+        PendingIntent resultPendingIntent = PendingIntent.getActivity(ctx, id, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        mBuilder.setContentIntent(resultPendingIntent);
+
+        // Sets an ID for the notification
+        int mNotificationId = id;
+
+        // Gets an instance of the NotificationManager service
+        NotificationManager mNotifyMgr = (NotificationManager) ctx.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        // Builds the notification and issues it.
+        mNotifyMgr.notify(mNotificationId, mBuilder.build());
     }
 
     public Drive getDriveService(GoogleAccountCredential credential) {
@@ -538,7 +550,6 @@ public class Utils {
 
         for(Account account: list)
         {
-            //Log.d(MainActivity.DEBUGTAG, "account.type: " + account.type + "account.name: " + account.name);
             if(account.type.equalsIgnoreCase("com.google"))
             {
                 return account;
@@ -553,9 +564,6 @@ public class Utils {
     synchronized String getToken(Account account, Context context) {
 
         AccountManager manager = AccountManager.get(context);
-        Log.d(MainActivity.DEBUGTAG, "accountManager = " + manager.toString());
-        Log.d(MainActivity.DEBUGTAG, "account = " + account.type);
-
 
         manager.invalidateAuthToken("com.google", null);
         String AUTH_TOKEN_TYPE = "oauth2:https://www.googleapis.com/auth/drive"; //"oauth2:" + DriveScopes.DRIVE;
@@ -566,19 +574,18 @@ public class Utils {
                     // a token is available.
 
                     String token1= future.getResult().getString(AccountManager.KEY_AUTHTOKEN);
-                    Log.d(MainActivity.DEBUGTAG, "token = " + token1);
                     synchronized (tokenLockObject) {
                         gotToken = true;
                         tokenLockObject.notifyAll();
                     }
 
                 } catch (Exception e) {
-                    Log.d(MainActivity.DEBUGTAG, "Exception in getToken = " + e.getMessage() );
                 }
             }
         }, null);
 
         return null;
     }
+
 
 }

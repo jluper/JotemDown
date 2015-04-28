@@ -12,7 +12,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -37,7 +36,7 @@ public class ScheduleBackups extends ActionBarActivity  implements OnClickListen
     public static final String BACKUP_LOCATION = "BACKUP_LOCATION";
     public static final String BACKUP_TIME = "BACKUP_TIME";
     public static final String BACKUP_FREQUENCY = "BACKUP_FREQ";
-
+    public static final String BACKUP_DESTINATION = "BACKUP_DEST";
 
     private EditText location;
     private EditText timeOfDay;
@@ -48,6 +47,7 @@ public class ScheduleBackups extends ActionBarActivity  implements OnClickListen
     private String sortCol;
     private String sortName;
     private String sortDir;
+    private String destination = "";
     private GoogleAccountCredential mCredential;
     // Variable for storing current date and time
     private int mYear, mMonth, mDay, mHour, mMinute;
@@ -64,7 +64,6 @@ public class ScheduleBackups extends ActionBarActivity  implements OnClickListen
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.schedule_backups);
-        Log.d(MainActivity.DEBUGTAG, "check0");
 
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -73,31 +72,25 @@ public class ScheduleBackups extends ActionBarActivity  implements OnClickListen
         actionBar.setTitle("Schedule Backup");
         actionBar.setDisplayShowTitleEnabled(true);
 
-        Log.d(MainActivity.DEBUGTAG, "check 0.005");
+        ((EditText)findViewById(R.id.txt_location)).setEnabled(false);
 
         utils = new Utils();
 
         btnClock = (ImageButton) findViewById(R.id.btn_backup_time);
         btnClock.setOnClickListener(this);
-        Log.d(MainActivity.DEBUGTAG, "check1.1");
-
 
         btnEmail = (ImageButton) findViewById(R.id.btn_backup_email);
-        Log.d(MainActivity.DEBUGTAG, "check 0.15");
 
         btnEmail.setOnClickListener(this);
-        Log.d(MainActivity.DEBUGTAG, "check1");
 
         btnDrive = (ImageButton) findViewById(R.id.btn_backup_drive);
         btnDrive.setOnClickListener(this);
-        Log.d(MainActivity.DEBUGTAG, "check1.2");
 
         btnSubmit = (Button) findViewById(R.id.btn_backup_schedule);
         btnSubmit.setOnClickListener(this);
 
         btnCancel = (Button) findViewById(R.id.btn_backup_cancel);
         btnCancel.setOnClickListener(this);
-        Log.d(MainActivity.DEBUGTAG, "check1.3");
 
         addListenerOnSubmitButton();
         addListenerOnCancelButton();
@@ -109,21 +102,18 @@ public class ScheduleBackups extends ActionBarActivity  implements OnClickListen
             sortName = extras.getString("sort_name");
             sortDir = extras.getString("sort_dir");
         }
-        Log.d(MainActivity.DEBUGTAG, "check2");
 
         mCredential = GoogleAccountCredential.usingOAuth2(this, Arrays.asList(DriveScopes.DRIVE));
-        Log.d(MainActivity.DEBUGTAG, "check3");
 
         location = (EditText) findViewById(R.id.txt_location);
         timeOfDay = (EditText) findViewById(R.id.txt_backup_time);
         frequency = (EditText) findViewById(R.id.txt_backup_freq);
-        Log.d(MainActivity.DEBUGTAG, "check4");
 
         SharedPreferences prefs = getSharedPreferences(LockImageActivity.SHARED_PREF_FILE, MODE_PRIVATE);
         String loc = prefs.getString(BACKUP_LOCATION, null);
         String tod = prefs.getString(BACKUP_TIME, null);
         String frq = prefs.getString(BACKUP_FREQUENCY, null);
-        Log.d(MainActivity.DEBUGTAG, "check5");
+        destination = prefs.getString(BACKUP_DESTINATION, "");
 
         if (loc != null) {
             location.setText(prefs.getString(BACKUP_LOCATION, null));
@@ -134,8 +124,6 @@ public class ScheduleBackups extends ActionBarActivity  implements OnClickListen
         if (frq != null) {
             frequency.setText(prefs.getString(BACKUP_FREQUENCY, null));
         }
-        Log.d(MainActivity.DEBUGTAG, "check6");
-
     }
 
 
@@ -220,15 +208,16 @@ public class ScheduleBackups extends ActionBarActivity  implements OnClickListen
                         Toast.makeText(ScheduleBackups.this,"No email found, please type address.", Toast.LENGTH_LONG).show();
                     }
 
-                    txtAddr.setText(emailAddress);
+                    location.setText(emailAddress);
+                    destination = "emailRecipient";
                     break;
                 case REQUEST_ACCOUNT_PICKER:
                     if (resultCode == RESULT_OK && data != null && data.getExtras() != null) {
                         String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-                        Log.d(MainActivity.DEBUGTAG, "acct name = " + accountName);
 
                         if (accountName != null) {
                             location.setText(accountName);
+                            destination = "googleDrive";
                         } else {
                             Toast.makeText(ScheduleBackups.this,"No account selected, please type account name.", Toast.LENGTH_LONG).show();
                         }
@@ -286,7 +275,12 @@ public class ScheduleBackups extends ActionBarActivity  implements OnClickListen
                         return;
                     }
 
-                    if (Integer.parseInt(frequency.getText().toString()) < 1) {
+                    if (!frequency.getText().toString().isEmpty()) {
+                        if (Integer.parseInt(frequency.getText().toString()) < 1) {
+                            Toast.makeText(ScheduleBackups.this, "Invalid backup frequency.", Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                    } else {
                         Toast.makeText(ScheduleBackups.this, "Invalid backup frequency.", Toast.LENGTH_LONG).show();
                         return;
                     }
@@ -296,6 +290,7 @@ public class ScheduleBackups extends ActionBarActivity  implements OnClickListen
                     editor.putString(BACKUP_LOCATION, location.getText().toString());
                     editor.putString(BACKUP_TIME, timeOfDay.getText().toString());
                     editor.putString(BACKUP_FREQUENCY, frequency.getText().toString());
+                    editor.putString(BACKUP_DESTINATION, destination);
                     editor.apply();
 
                     String[] timeParts = timeOfDay.getText().toString().split(":");
@@ -332,7 +327,6 @@ public class ScheduleBackups extends ActionBarActivity  implements OnClickListen
                     pendingIntentRequestCode = 99;
                     Intent alarmIntent = new Intent(ScheduleBackups.this, BackupAlarmReceiver.class);
                     pendingIntent = PendingIntent.getBroadcast(ScheduleBackups.this, pendingIntentRequestCode, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-                    Log.d(MainActivity.DEBUGTAG, "pendingIntent = " + pendingIntent.toString());
                     AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
                     // If the alarm has been set, cancel it since rescheduling here
@@ -365,52 +359,15 @@ public class ScheduleBackups extends ActionBarActivity  implements OnClickListen
 
     private void scheduleBackup(Context context, Calendar calendar, int freq) {
 
-        //Log.d(MainActivity.DEBUGTAG, "dateTime = " + startTime.toString());
-
-
         pendingIntentRequestCode = 99;;
         Intent alarmIntent = new Intent(context, BackupAlarmReceiver.class);
         pendingIntent = PendingIntent.getBroadcast(context, pendingIntentRequestCode, alarmIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-        Log.d(MainActivity.DEBUGTAG, "pendingIntent = " + pendingIntent.toString());
         AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
         // If the alarm has been set, cancel it since rescheduling here
         if (am!= null) {
             am.cancel(pendingIntent);
         }
-
-        //Calendar calendar = Calendar.getInstance();
-//        Log.d(MainActivity.DEBUGTAG, "getTime = " + calendar.getTime().toString());
-//        calendar.setTime(dateTime);
-//
-//        long diff = calendar.getTimeInMillis() - System.currentTimeMillis();
-//        Log.d(MainActivity.DEBUGTAG, "diff = " + diff);
-//
-//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-//            Log.d(MainActivity.DEBUGTAG, "call alarmManager");
-//            am.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + diff, pendingIntent);
-//        } else {
-//            am.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-//        }
-
-        // Set the alarm to start at approximately 2:00 p.m.
-        //calendar = Calendar.getInstance();
-        //calendar.setTimeInMillis(System.currentTimeMillis());
-        //calendar.setTime
-//        calendar.set(Calendar.HOUR_OF_DAY, 14);
-//        calendar.set(Calendar.YEAR, 2014);
-//        calendar.set(Calendar.MONTH, 4);
-//        calendar.set(Calendar.MINUTE, 33);
-
-           Log.d(MainActivity.DEBUGTAG, "cur time in ms = " + System.currentTimeMillis());
-        Log.d(MainActivity.DEBUGTAG, "cal time in ms = " + calendar.getTimeInMillis());
-        Log.d(MainActivity.DEBUGTAG, "diff in min = " + (calendar.getTimeInMillis() - System.currentTimeMillis()) / 1000 / 60);
-
-
-        // With setInexactRepeating(), you have to use one of the AlarmManager interval
-        // constants--in this case, AlarmManager.INTERVAL_DAY.
-        Log.d(MainActivity.DEBUGTAG, "interval = " + AlarmManager.INTERVAL_FIFTEEN_MINUTES);
-        Log.d(MainActivity.DEBUGTAG, "freq = " + freq);
 
         am.setInexactRepeating(am.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_FIFTEEN_MINUTES * freq, pendingIntent);
     }

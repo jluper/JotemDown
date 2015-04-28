@@ -378,7 +378,7 @@ public class MainActivity extends ActionBarActivity {
                 i = new Intent(MainActivity.this, NewNote.class);
                 Note note = new Note();
                 i.putExtra("edit", "false");
-
+                i.putExtra("group", groupId);
                 i.putExtra("group_name", groupName);
                 i.putExtra("sort_col", sortCol);
                 i.putExtra("sort_name", sortName);
@@ -644,7 +644,6 @@ public class MainActivity extends ActionBarActivity {
                     field.setAccessible(true);
                     field.setBoolean(menu, true);
                 } catch (IllegalAccessException | NoSuchFieldException e) {
-                    //Log.d(MainActivity.DEBUGTAG, "onMenuOpened(" + featureId + ", " + menu + ")", e);
                 }
             }
         }

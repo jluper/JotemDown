@@ -5,7 +5,6 @@ import android.app.ActivityManager.RunningServiceInfo;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 public class ReminderAlarmReceiver extends BroadcastReceiver {
 
@@ -13,7 +12,6 @@ public class ReminderAlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d(MainActivity.DEBUGTAG, "reminder Alarm received");
 
         ctx = context;
 
