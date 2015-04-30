@@ -203,16 +203,23 @@ public class DriveActivity extends ActionBarActivity {
                         request.setQ("title contains '.db' and title contains '_JED' and trashed = false");
                         com.google.api.services.drive.model.FileList fileList = new com.google.api.services.drive.model.FileList();
 
-                        fileList.clear();
-                        fileList = request.execute();
+                        for (int i = 0; i<5; i++) {
 
-                        mResultList.addAll(fileList.getItems());
+                            fileList.clear();
+                            fileList = request.execute();
 
-//                        for (File f: mResultList) {
-//                            Log.d(MainActivity.DEBUGTAG, "file = " + f.getTitle());
-//                        }
+                            mResultList.addAll(fileList.getItems());
+                            Log.d(MainActivity.DEBUGTAG, "fileList size = " + fileList.size());
+                            Log.d(MainActivity.DEBUGTAG, "mresultList size = " + mResultList.size());
 
-                        request.setPageToken(fileList.getNextPageToken());
+                            if (mResultList.size() > 0) break;
+
+                            for (File f: mResultList) {
+                                Log.d(MainActivity.DEBUGTAG, "file = " + f.getTitle());
+                            }
+
+                            request.setPageToken(fileList.getNextPageToken());
+                        }
                     } catch (UserRecoverableAuthIOException e) {
                         startActivityForResult(e.getIntent(), REQUEST_AUTHORIZATION);
                     } catch (IOException e) {
