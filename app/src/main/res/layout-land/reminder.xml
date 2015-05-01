@@ -135,7 +135,7 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/top_margin_xsmall"
+        android:layout_marginTop="8dp"
         android:focusable="true"
         android:focusableInTouchMode="true"
         android:gravity="start"
@@ -192,8 +192,6 @@
             android:layout_marginRight="@dimen/top_margin_small"
             android:layout_weight="1"
             android:orientation="horizontal" >
-
-
         </LinearLayout>
     </LinearLayout>
 

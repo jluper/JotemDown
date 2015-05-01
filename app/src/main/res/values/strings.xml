@@ -114,6 +114,7 @@
     <string name="lbl_backup_time">Time of day</string>
     <string name="lbl_backup_freq">Frequency (hrs)</string>
     <string name="backup_freq_hint">Hours...</string>
+    <string name="backup_time_hint">HH:MM...</string>
     <string name="lbl_backup_submit">Submit</string>
     <string name="lbl_backup_loc_hint">Email or Google acccount</string>
     <string name="password_hint_new">New password...</string>

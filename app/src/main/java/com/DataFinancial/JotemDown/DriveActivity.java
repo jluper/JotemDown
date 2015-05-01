@@ -202,8 +202,10 @@ public class DriveActivity extends ActionBarActivity {
 
                         request.setQ("title contains '.db' and title contains '_JED' and trashed = false");
                         com.google.api.services.drive.model.FileList fileList = new com.google.api.services.drive.model.FileList();
-
-                        for (int i = 0; i<5; i++) {
+                        // want to retry because, for an unknown reason the first call to get the file list often returns 0 items
+                        // even though there are files extant. Ususllay on the second or thord try from the GUI they are retrieved.
+                        // This is a gross attempt to help that situation.
+                        for (int i = 0; i<3; i++) {
 
                             fileList.clear();
                             fileList = request.execute();
