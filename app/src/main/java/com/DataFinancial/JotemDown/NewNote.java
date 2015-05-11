@@ -15,6 +15,7 @@ import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.Menu;
@@ -113,6 +114,7 @@ public class NewNote extends ActionBarActivity {
                 }
             }
             groupId = extras.getInt("group");
+            note.setGroup(groupId);
             groupName = (extras.getString("group_name"));
             sortCol = extras.getString("sort_col");
             sortName = extras.getString("sort_name");
@@ -122,7 +124,7 @@ public class NewNote extends ActionBarActivity {
         populateGroupList();
 
         List<com.DataFinancial.JotemDown.NoteGroup> grps = db.getGroups(com.DataFinancial.JotemDown.DatabaseNotes.COL_ID, "ASC");
-        int grp = note.getGroup();
+        //int grp = note.getGroup();
         for (int i = 0; i < grps.size(); i++) {
             //if (grps.get(i).getId() == note.getGroup()) {
             if (grps.get(i).getId() == groupId) {
@@ -537,6 +539,8 @@ public class NewNote extends ActionBarActivity {
                 Toast.makeText(NewNote.this, "Note edited...",
                         Toast.LENGTH_SHORT).show();
             } else {
+                Log.d(MainActivity.DEBUGTAG, "note group = " + groupName);
+
                 noteId = db.addNote(note);
                 Toast.makeText(NewNote.this, "Note added...", Toast.LENGTH_SHORT).show();
             }

@@ -93,6 +93,7 @@ public class NoteAdapter extends BaseAdapter implements ListAdapter {
 					title = s[0] + "\n" + s[1] + "...";
 				}
 			}
+            title = "<strong>" + title + "</strong>";
 		} else {
 			title = note.getBody().substring(0,note.getBody().indexOf('/')-1);
 		}
@@ -170,7 +171,7 @@ public class NoteAdapter extends BaseAdapter implements ListAdapter {
 		holder.dateView.setText(dateHeader);
 
 		if (!help) {
-			holder.titleView.setText(title);
+			holder.titleView.setText(Html.fromHtml(title));
 		} else {
 			holder.titleView.setText(Html.fromHtml(title));
 		}

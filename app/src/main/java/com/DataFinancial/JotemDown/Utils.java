@@ -92,6 +92,24 @@ public class Utils {
         return  true;
     }
 
+    static public boolean isFuture(String reminderDate) {
+
+        Date remDate;
+        Date now;
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy hh:mm");
+        try {
+            remDate = sdf.parse(reminderDate);
+            now = new Date();
+            if (now.after(remDate)) {
+                return false;
+            }
+        } catch (ParseException e) {
+            return false;
+        }
+
+        return true;
+    }
+
     static public boolean isValidPhone(String target) {
 
         // the check in the return statement was considering a string of digits as valid. ex: "12345"

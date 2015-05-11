@@ -217,11 +217,15 @@ public class ReminderActivity extends ActionBarActivity   implements OnClickList
 					 Toast.makeText(ReminderActivity.this,"Invalid date...", Toast.LENGTH_LONG).show();		
 					 return;
 				}
-				
+
 				if (!utils.isValidTime(reminderTime)) {
 					 Toast.makeText(ReminderActivity.this,"Invalid time...", Toast.LENGTH_LONG).show();		
 					 return;
 				}
+                if (!Utils.isFuture(reminderDate + " " + reminderTime)) {
+                    Toast.makeText(ReminderActivity.this,"Date in the past...", Toast.LENGTH_LONG).show();
+                    return;
+                }
 
 				reminder.setNoteId(noteId);
 		
