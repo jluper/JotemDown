@@ -256,6 +256,7 @@ public class BackupNotes extends ActionBarActivity  implements OnClickListener {
         switch (id) {
             case R.id.menu_schedule_backups:
                 i = new Intent(BackupNotes.this, ScheduleBackups.class);
+                i.putExtra("group", group);
                 i.putExtra("group_name", groupName);
                 i.putExtra("sort_col", sortCol);
                 i.putExtra("sort_name", sortName);

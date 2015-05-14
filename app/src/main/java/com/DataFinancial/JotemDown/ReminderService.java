@@ -6,6 +6,8 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
@@ -190,6 +192,8 @@ public class ReminderService extends Service {
                 new NotificationCompat.Builder(this).setSmallIcon(R.drawable.note_yellow).setContentTitle(getString(R.string.notification_title)).setContentText(note.getBody().substring(0, note.getBody().length() > 158 ? 158 : note.getBody().length()));
         if (rem.getVibrate().equals("true")) {
             mBuilder.setVibrate(new long[]{1000, 1000, 1000, 1000, 1000});
+            Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            mBuilder.setSound(alarmSound);
         }
 
         Intent resultIntent = new Intent(this, MainActivity.class);

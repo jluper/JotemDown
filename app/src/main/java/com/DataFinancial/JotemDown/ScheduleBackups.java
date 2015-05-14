@@ -43,6 +43,7 @@ public class ScheduleBackups extends ActionBarActivity  implements OnClickListen
     private EditText frequency;
     private Button btnSubmit;
     private Button btnCancel;
+    private int group;
     private String groupName;
     private String sortCol;
     private String sortName;
@@ -97,11 +98,13 @@ public class ScheduleBackups extends ActionBarActivity  implements OnClickListen
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
+            group = extras.getInt("group");
             groupName = extras.getString("group_name");
             sortCol = extras.getString("sort_col");
             sortName = extras.getString("sort_name");
             sortDir = extras.getString("sort_dir");
         }
+
 
         mCredential = GoogleAccountCredential.usingOAuth2(this, Arrays.asList(DriveScopes.DRIVE));
 
@@ -240,7 +243,7 @@ public class ScheduleBackups extends ActionBarActivity  implements OnClickListen
     public Intent getSupportParentActivityIntent() {
 
         Intent i = new Intent(ScheduleBackups.this, MainActivity.class);
-
+        i.putExtra("group", group);
         i.putExtra("group_name", groupName);
         i.putExtra("sort_col", sortCol);
         i.putExtra("sort_name", sortName);
