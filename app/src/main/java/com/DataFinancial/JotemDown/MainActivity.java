@@ -2,6 +2,7 @@ package com.DataFinancial.JotemDown;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -9,14 +10,17 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -64,6 +68,16 @@ public class MainActivity extends ActionBarActivity {
     private String sortCol = DatabaseNotes.COL_CREATE_DATE;
     private String sortDir = "DESC";
     private String sortName = "Created";
+    private AlertDialog confirmDelete;
+
+    private static final int SWIPE_MIN_DISTANCE = 120;
+    private static final int SWIPE_MAX_OFF_PATH = 250;
+    private static final int SWIPE_THRESHOLD_VELOCITY = 200;
+
+    //private GestureDetector gestureDetector;
+    private GestureDetectorCompat gestureDetector;
+
+    View.OnTouchListener gestureListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +89,70 @@ public class MainActivity extends ActionBarActivity {
         actionBar.setTitle(getResources().getString(R.string.main_activity_title));
         actionBar.setDisplayShowTitleEnabled(true);
 
+        noteList = (ListView) findViewById(R.id.note_list);
+//----------------------------------------------------------------------------------------------
+        GestureDetector.OnGestureListener ogl = new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                if (Math.abs(velocityX) > Math.abs(velocityY)) {
+                    //Log.d(DEBUGTAG, "onFling " + noteList.pointToPosition((int) e1.getX(), (int) e1.getY()));
+                    selectedRow = noteList.pointToPosition((int) e1.getX(), (int) e1.getY());
+                    Log.d(DEBUGTAG, "onFling row = " + selectedRow);
+                    buildConfirmDeleteDialog("Confirm Delete Note");
+                    confirmDelete.show();
+                    return true;
+                }
+                return false;
+            }
+        };
+
+        final GestureDetector detector = new GestureDetector(this, ogl);
+        View.OnTouchListener otl = new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return detector.onTouchEvent(event);
+            }
+        };
+
+        noteList.setOnTouchListener(otl);
+        AdapterView.OnItemClickListener oicl = new  AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+                Log.d(DEBUGTAG, "onItemClick " + position);
+
+                selectedRow = position;
+
+                Note note = (Note) adapter.getItemAtPosition(position);
+
+                Intent i = new Intent(MainActivity.this, NewNote.class);
+                i.putExtra("edit", true);
+                i.putExtra("id", note.getId());
+                i.putExtra("priority", note.getPriority());
+                i.putExtra("createDate", note.getCreateDate());
+                i.putExtra("editDate", note.getEditDate());
+                i.putExtra("body", note.getBody());
+                i.putExtra("latitude", note.getLatitude());
+                i.putExtra("longitude", note.getLongitude());
+                i.putExtra("hasReminder", note.getHasReminder());
+                i.putExtra("image", note.getImage());
+                if (fromHelp == false) {
+                    i.putExtra("group", note.getGroup());
+                } else {
+                    i.putExtra("group", groupId);
+                }
+                i.putExtra("group_name", groupName);
+                i.putExtra("sort_col", sortCol);
+                i.putExtra("sort_name", sortName);
+                i.putExtra("sort_dir", sortDir);
+                startActivityForResult(i, EDIT_NOTE);
+
+            }
+        };
+
+        noteList.setOnItemClickListener(oicl);
+        //setContentView(noteList);
+
+//----------------------------------------------------------------------------------------------
         if (savedInstanceState != null) {
             groupId = savedInstanceState.getInt("group");
             groupName = savedInstanceState.getString("group_name");
@@ -82,7 +160,7 @@ public class MainActivity extends ActionBarActivity {
             sortName = savedInstanceState.getString("sort_name");
             sortDir = savedInstanceState.getString("sort_dir");
         }
-        noteList = (ListView) findViewById(R.id.note_list);
+        //noteList = (ListView) findViewById(R.id.note_list);
 
         addSearchButtonListener();
         addSortButtonListener();
@@ -127,9 +205,43 @@ public class MainActivity extends ActionBarActivity {
         } else {
             searchText = (String) getResources().getText(R.string.txt_help_search);
             loadNotes(searchText, sortCol, sortDir, ExportNotes.NO_GROUP);
-
         }
     }
+
+
+    public void buildConfirmDeleteDialog(String title) {
+
+        final String dialogTitle = title;
+        AlertDialog.Builder dlgBuilder = new AlertDialog.Builder(this);
+        dlgBuilder.setTitle(title);
+        dlgBuilder.setIcon(R.drawable.btn_check_buttonless_on);
+        dlgBuilder.setMessage(R.string.dialog_delete_item);
+        dlgBuilder.setCancelable(true);
+
+        dlgBuilder.setPositiveButton(R.string.dialog_positive,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                        Note note = (Note)noteList.getItemAtPosition(selectedRow);
+                        db.deleteNote(note.getId());
+                        loadNotes(null, sortCol, sortDir, groupId);
+                        //Log.d(DEBUGTAG, "dialog row = " + selectedRow);
+
+                        //dialog.cancel();
+                    }
+                });
+
+        dlgBuilder.setNegativeButton(R.string.dialog_negative,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                        dialog.cancel();
+                    }
+                });
+
+        confirmDelete = dlgBuilder.create();
+    }
+
 
     @Override
     protected void onSaveInstanceState(Bundle state) {
@@ -141,7 +253,6 @@ public class MainActivity extends ActionBarActivity {
         state.putString("sort_name", sortName);
         state.putString("sort_dir", sortDir);
     }
-
 
     private boolean doesDatabaseExist(Context context, String dbName) {
         File dbFile = context.getDatabasePath(dbName);
@@ -290,38 +401,38 @@ public class MainActivity extends ActionBarActivity {
             noteList.setSelectionFromTop(0, 0);
         }
 
-        noteList.setOnItemClickListener(new OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> adapter, View arg1, int pos, long arg3) {
-
-                selectedRow = pos;
-
-                Note note = (Note) adapter.getItemAtPosition(pos);
-
-                Intent i = new Intent(MainActivity.this, NewNote.class);
-                i.putExtra("edit", true);
-                i.putExtra("id", note.getId());
-                i.putExtra("priority", note.getPriority());
-                i.putExtra("createDate", note.getCreateDate());
-                i.putExtra("editDate", note.getEditDate());
-                i.putExtra("body", note.getBody());
-                i.putExtra("latitude", note.getLatitude());
-                i.putExtra("longitude", note.getLongitude());
-                i.putExtra("hasReminder", note.getHasReminder());
-                i.putExtra("image", note.getImage());
-                if (fromHelp == false) {
-                    i.putExtra("group", note.getGroup());
-                } else {
-                    i.putExtra("group", groupId);
-                }
-                i.putExtra("group_name", groupName);
-                i.putExtra("sort_col", sortCol);
-                i.putExtra("sort_name", sortName);
-                i.putExtra("sort_dir", sortDir);
-                startActivityForResult(i, EDIT_NOTE);
-            }
-        });
+//        noteList.setOnItemClickListener(new OnItemClickListener() {
+//
+//            @Override
+//            public void onItemClick(AdapterView<?> adapter, View arg1, int pos, long arg3) {
+//
+//                selectedRow = pos;
+//
+//                Note note = (Note) adapter.getItemAtPosition(pos);
+//
+//                Intent i = new Intent(MainActivity.this, NewNote.class);
+//                i.putExtra("edit", true);
+//                i.putExtra("id", note.getId());
+//                i.putExtra("priority", note.getPriority());
+//                i.putExtra("createDate", note.getCreateDate());
+//                i.putExtra("editDate", note.getEditDate());
+//                i.putExtra("body", note.getBody());
+//                i.putExtra("latitude", note.getLatitude());
+//                i.putExtra("longitude", note.getLongitude());
+//                i.putExtra("hasReminder", note.getHasReminder());
+//                i.putExtra("image", note.getImage());
+//                if (fromHelp == false) {
+//                    i.putExtra("group", note.getGroup());
+//                } else {
+//                    i.putExtra("group", groupId);
+//                }
+//                i.putExtra("group_name", groupName);
+//                i.putExtra("sort_col", sortCol);
+//                i.putExtra("sort_name", sortName);
+//                i.putExtra("sort_dir", sortDir);
+//                startActivityForResult(i, EDIT_NOTE);
+//            }
+//        });
     }
 
     private void loadSavedFile() {
