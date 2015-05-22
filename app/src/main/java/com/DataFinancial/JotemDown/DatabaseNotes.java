@@ -448,6 +448,32 @@ public class DatabaseNotes extends SQLiteOpenHelper {
         return note;
     }
 
+    public Note getNote(String str) {
+
+        db = this.getWritableDatabase();
+
+        String query = "select * from " + TABLE_NOTES + " where " + COL_BODY + " Like ('%" + str + "%')";
+        Cursor cursor = db.rawQuery(query, null);
+
+        Note note = new Note();
+        if (cursor != null) {
+            cursor.moveToFirst();
+
+            note.setId(cursor.getInt(0));
+            note.setPriority(cursor.getInt(1));
+            note.setBody(cursor.getString(2));
+            note.setCreateDate(cursor.getString(3));
+            note.setEditDate(cursor.getString(4));
+            note.setLatitude(cursor.getString(5));
+            note.setLongitude(cursor.getString(6));
+            note.setHasReminder(cursor.getString(7));
+            note.setImage(cursor.getString(8));
+            note.setGroup(cursor.getInt(9));
+        }
+
+        return note;
+    }
+
     public boolean isNotesTableEmpty() {
 
         db = this.getWritableDatabase();

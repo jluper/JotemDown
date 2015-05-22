@@ -111,7 +111,8 @@ public class ReminderActivity extends ActionBarActivity   implements OnClickList
 				txtDate.setText(Utils.convertDate(reminder.getDate(), "yy/MM/dd", "MM/dd/yy"));
 				txtTime.setText(reminder.getTime());
 				chkRecurDaily.setChecked(reminder.getRecur().equals("true") ? true : false);
-				txtPhone.setText(reminder.getPhone());
+                chkVibrate.setChecked(reminder.getVibrate().equals("true") ? true : false);
+                txtPhone.setText(reminder.getPhone());
 				btnAdd.setText(R.string.lbl_reminder_update);
 				reminderId = reminder.getId();
 				update = true;

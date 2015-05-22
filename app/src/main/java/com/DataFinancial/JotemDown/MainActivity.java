@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -90,18 +91,21 @@ public class MainActivity extends ActionBarActivity {
         actionBar.setDisplayShowTitleEnabled(true);
 
         noteList = (ListView) findViewById(R.id.note_list);
+
 //----------------------------------------------------------------------------------------------
+        //code added for detecting fling for deleting note
+
         GestureDetector.OnGestureListener ogl = new GestureDetector.SimpleOnGestureListener() {
             @Override
             public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
                 if (Math.abs(velocityX) > Math.abs(velocityY)) {
-                    //Log.d(DEBUGTAG, "onFling " + noteList.pointToPosition((int) e1.getX(), (int) e1.getY()));
+                    //Log.d(DEBUGTAG, "onFling  = true" + noteList.pointToPosition((int) e1.getX(), (int) e1.getY()));
                     selectedRow = noteList.pointToPosition((int) e1.getX(), (int) e1.getY());
-                    Log.d(DEBUGTAG, "onFling row = " + selectedRow);
                     buildConfirmDeleteDialog("Confirm Delete Note");
                     confirmDelete.show();
                     return true;
                 }
+                Log.d(DEBUGTAG, "onFling = false");
                 return false;
             }
         };
@@ -110,15 +114,16 @@ public class MainActivity extends ActionBarActivity {
         View.OnTouchListener otl = new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                //Log.d(DEBUGTAG, "onTouch");
                 return detector.onTouchEvent(event);
             }
         };
 
-        noteList.setOnTouchListener(otl);
+       noteList.setOnTouchListener(otl);
         AdapterView.OnItemClickListener oicl = new  AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
-                Log.d(DEBUGTAG, "onItemClick " + position);
+                //Log.d(DEBUGTAG, "onItemClick " + position);
 
                 selectedRow = position;
 
@@ -153,6 +158,7 @@ public class MainActivity extends ActionBarActivity {
         //setContentView(noteList);
 
 //----------------------------------------------------------------------------------------------
+
         if (savedInstanceState != null) {
             groupId = savedInstanceState.getInt("group");
             groupName = savedInstanceState.getString("group_name");
@@ -225,9 +231,6 @@ public class MainActivity extends ActionBarActivity {
                         Note note = (Note)noteList.getItemAtPosition(selectedRow);
                         db.deleteNote(note.getId());
                         loadNotes(null, sortCol, sortDir, groupId);
-                        //Log.d(DEBUGTAG, "dialog row = " + selectedRow);
-
-                        //dialog.cancel();
                     }
                 });
 
@@ -401,6 +404,7 @@ public class MainActivity extends ActionBarActivity {
             noteList.setSelectionFromTop(0, 0);
         }
 
+// removed when implemented fling detection
 //        noteList.setOnItemClickListener(new OnItemClickListener() {
 //
 //            @Override
@@ -583,6 +587,21 @@ public class MainActivity extends ActionBarActivity {
                 startActivity(i);
                 break;
             case R.id.menu_help_main:
+
+                //update version Help note with current version
+                String versionName = null;
+                int versionCode = 0;
+                try {
+                    versionName = this.getPackageManager().getPackageInfo(this.getPackageName(), 0).versionName;
+                    versionCode = this.getPackageManager().getPackageInfo(this.getPackageName(), 0).versionCode;
+                } catch (PackageManager.NameNotFoundException e) {
+                    //e.printStackTrace();
+                }
+
+                Note verNote = db.getNote("Version Information");
+                verNote.setBody("HELP: &nbsp <strong>Version Information</strong> <br> Version Name: " + versionName + " <br> Version Code: " + versionCode);
+                db.updateNote(verNote);
+
                 String searchText = this.getResources().getString(R.string.txt_help_search);
                 loadNotes(searchText, DatabaseNotes.COL_ID, "ASC", ExportNotes.NO_GROUP);
                 fromHelp = true;
