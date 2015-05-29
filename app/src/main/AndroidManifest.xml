@@ -24,9 +24,9 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
-    <permission
+ <!--   <permission
         android:name="com.DataFinancial.JotemDown.permission.MAPS_RECEIVE"
-        android:protectionLevel="signature" />
+        android:protectionLevel="signature" />-->
 
     <uses-permission android:name="com.DataFinancial.JotemDown.permission.MAPS_RECEIVE" />
 

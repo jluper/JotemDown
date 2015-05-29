@@ -96,9 +96,11 @@ public class MainActivity extends ActionBarActivity {
         //code added for detecting fling for deleting note
 
         GestureDetector.OnGestureListener ogl = new GestureDetector.SimpleOnGestureListener() {
+            private static final int SWIPE_MIN_DISTANCE = 400;
             @Override
             public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-                if (Math.abs(velocityX) > Math.abs(velocityY)) {
+                int dx = (int) (e2.getX() - e1.getX());
+                if (Math.abs(dx) > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > Math.abs(velocityY)) {
                     //Log.d(DEBUGTAG, "onFling  = true" + noteList.pointToPosition((int) e1.getX(), (int) e1.getY()));
                     selectedRow = noteList.pointToPosition((int) e1.getX(), (int) e1.getY());
                     buildConfirmDeleteDialog("Confirm Delete Note");
