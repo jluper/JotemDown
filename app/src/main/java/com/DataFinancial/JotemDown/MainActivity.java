@@ -13,7 +13,6 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -107,7 +106,7 @@ public class MainActivity extends ActionBarActivity {
                     confirmDelete.show();
                     return true;
                 }
-                Log.d(DEBUGTAG, "onFling = false");
+                //Log.d(DEBUGTAG, "onFling = false");
                 return false;
             }
         };

@@ -371,9 +371,7 @@ public class ScheduleBackups extends ActionBarActivity  implements OnClickListen
         if (am!= null) {
             am.cancel(pendingIntent);
         }
-
         am.setInexactRepeating(am.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_HOUR * freq, pendingIntent);
     }
-
 }
 

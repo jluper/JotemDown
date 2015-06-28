@@ -209,7 +209,7 @@ public class LockImageActivity extends ActionBarActivity implements PointCollect
         });
 
         builder.setTitle("Set Passpoints");
-        builder.setMessage("Touch 3 points on the image to set the passpoint sequence. You must then click the same points to access your notes in the future.");
+        builder.setMessage("Touch 3 points on the image to set the passpoint sequence. You must then click the same points to access your notes in the future. \nIf you forget the sequence just touch the same point 3 times for password access. The default is 'password' but change it for security.");
 
         AlertDialog dlg = builder.create();
 
