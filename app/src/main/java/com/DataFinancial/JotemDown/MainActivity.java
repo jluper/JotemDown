@@ -161,6 +161,8 @@ public class MainActivity extends ActionBarActivity {
 //----------------------------------------------------------------------------------------------
 
         if (savedInstanceState != null) {
+            //Log.d(MainActivity.DEBUGTAG, "saveInstanceState group = " + savedInstanceState.getInt("group"));
+
             groupId = savedInstanceState.getInt("group");
             groupName = savedInstanceState.getString("group_name");
             sortCol = savedInstanceState.getString("sort_col");
@@ -183,6 +185,7 @@ public class MainActivity extends ActionBarActivity {
         if (extras != null) {
 
             groupId = extras.getInt("group");
+            //Log.d(MainActivity.DEBUGTAG, "groupId in extras = " + groupId);
 
             List<NoteGroup> grps = db.getGroups(DatabaseNotes.COL_NAME, "ASC");
             for (int i = 0; i < grps.size(); i++) {
@@ -198,6 +201,8 @@ public class MainActivity extends ActionBarActivity {
             sortName = extras.getString("sort_name");
             sortDir = extras.getString("sort_dir");
             fromHelp = extras.getBoolean("help");
+            extras = null;
+            getIntent().replaceExtras(extras);
         }
             lblSort = (TextView) findViewById(R.id.lbl_sort);
             lblSort.setText(sortName);
@@ -369,12 +374,16 @@ public class MainActivity extends ActionBarActivity {
                 grps = db.getGroups(DatabaseNotes.COL_NAME, "ASC");
 
 //                for (int i = 0; i < grps.size(); i++) {
-//                    Log.d(MainActivity.DEBUGTAG, "grp: " + grps.get(i).getId() + ", " + grps.get(i).getName());
+//                    Log.d(MainActivity.DEBUGTAG, "grp idx = " + i + " groupId = " + grps.get(i).getId() + " group name = , " + grps.get(i).getName());
 //                }
 
                 if (fromHelp == false) {
                     groupIdx = (groupIdx + 1) % grps.size();
+                    //og.d(MainActivity.DEBUGTAG, "groupIdx in folder button = " + groupId);
+
                     groupId = grps.get(groupIdx).getId();
+                    //Log.d(MainActivity.DEBUGTAG, "groupID in folder button = " + groupId);
+
                     groupName = grps.get(groupIdx).getName();
                     lblGroup.setText(groupName);
                     loadNotes(null, sortCol, sortDir, grps.get(groupIdx).getId());
@@ -389,6 +398,7 @@ public class MainActivity extends ActionBarActivity {
 
     private void loadNotes(String search, String order, String dir, int group) {
 
+        //Log.d(MainActivity.DEBUGTAG, "group = " + group);
         notes = db.getNotes(search, order, dir, group);
 
         lblNumNotes = (TextView) findViewById(R.id.lbl_num_notes);
